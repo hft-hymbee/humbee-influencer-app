@@ -1,0 +1,1220 @@
+<title>Humbee Influencer App — Interactive Prototype</title>
+<style>
+:root{
+  --page:#faf8f5; --panel:#ffffff; --panel-2:#f4f0ea;
+  --ink:#2a2521; --ink-2:#544c44; --mute:#7d7469;
+  --rule:#e6e0d7; --rule-2:#d6cec2; --brand:#995a00;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#17140f; --panel:#211d17; --panel-2:#2b2620;
+  --ink:#f2ede5; --ink-2:#cdc4b8; --mute:#9a9084;
+  --rule:#332d25; --rule-2:#433b31; --brand:#d9a04a;
+}}
+:root[data-theme="dark"]{
+  --page:#17140f; --panel:#211d17; --panel-2:#2b2620;
+  --ink:#f2ede5; --ink-2:#cdc4b8; --mute:#9a9084;
+  --rule:#332d25; --rule-2:#433b31; --brand:#d9a04a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+#stage{display:flex;gap:40px;align-items:flex-start;justify-content:center;padding:40px 24px 64px;flex-wrap:wrap}
+
+/* ---------- control panel ---------- */
+#panel{width:290px;flex:0 0 auto}
+#panel h1{font-size:22px;line-height:1.2;letter-spacing:-.02em;margin:0 0 6px;font-weight:680}
+#panel .sub{font-size:13.5px;color:var(--ink-2);line-height:1.55;margin:0 0 22px}
+.pgroup{margin-bottom:20px}
+.plabel{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute);margin-bottom:8px}
+.pset{display:flex;gap:0;border:1px solid var(--rule-2);border-radius:7px;overflow:hidden}
+.pset button{
+  flex:1;padding:8px 6px;font:inherit;font-size:12.5px;font-weight:600;border:0;cursor:pointer;
+  background:var(--panel);color:var(--ink-2);border-right:1px solid var(--rule-2);
+}
+.pset button:last-child{border-right:0}
+.pset button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.pbtn{
+  width:100%;padding:9px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
+  background:var(--panel);color:var(--ink);border:1px solid var(--rule-2);border-radius:7px;
+}
+.pbtn:hover{background:var(--panel-2)}
+#panel .foot{font-size:12px;color:var(--mute);line-height:1.6;margin-top:24px;border-top:1px solid var(--rule);padding-top:16px}
+#panel .foot code{font-family:var(--mono);font-size:11px}
+#crumb{font-family:var(--mono);font-size:11px;color:var(--mute);margin-top:10px;word-break:break-all;min-height:16px}
+
+/* ---------- device ---------- */
+#device{
+  width:360px;height:780px;flex:0 0 auto;position:relative;overflow:hidden;
+  background:#fff;border:1px solid var(--rule-2);border-radius:22px;
+  box-shadow:0 2px 4px rgba(42,37,33,.06),0 24px 60px -24px rgba(42,37,33,.3);
+  display:flex;flex-direction:column;
+  /* app tokens — fixed light, the app is light-themed */
+  --s-bg:#ffffff; --s-ground:#f2f2f2; --s-line:#e5e5e5; --s-line2:#d9d9d9;
+  --s-ink:#333333; --s-body:#666666; --s-mute:#8c8c8c;
+  --s-brand:#995a00; --s-brand-5:rgba(153,90,0,.05); --s-brand-10:rgba(153,90,0,.12);
+  --s-amber:#ffa525;
+  --s-err:#cc0000; --s-err-bg:rgba(204,0,0,.08);
+  --s-ok:#008000; --s-ok-bg:rgba(0,128,0,.08);
+  --s-info:#0081f2; --s-info-bg:rgba(0,129,242,.08);
+  --s-warn:#f2a200; --s-warn-bg:rgba(255,191,64,.10);
+  font-size:13px;line-height:1.45;color:#333;
+}
+.statusbar{height:26px;background:var(--s-ground);display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:10px;color:var(--s-mute);font-family:var(--mono);flex:0 0 auto}
+.appbar{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--s-line);background:var(--s-bg);flex:0 0 auto}
+.appbar .t{font-size:16px;font-weight:700;color:var(--s-ink);flex:1;line-height:1.35}
+.appbar.brand{background:var(--s-brand);border-bottom:0}
+.appbar.brand .t{color:#fff}
+.ib{background:none;border:0;padding:6px;margin:-6px;cursor:pointer;color:var(--s-body);display:flex;border-radius:50%}
+.ib:hover{background:var(--s-ground)}
+.appbar.brand .ib{color:#fff}
+.appbar.brand .ib:hover{background:rgba(255,255,255,.16)}
+.dbody{flex:1;overflow-y:auto;overflow-x:hidden;background:var(--s-ground);-webkit-overflow-scrolling:touch}
+.dbody.plain{background:var(--s-bg)}
+.pad{padding:14px}
+.tabbar{display:flex;border-top:1px solid var(--s-line);background:var(--s-bg);flex:0 0 auto}
+.tabbar button{
+  flex:1;padding:8px 2px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;
+  font:inherit;font-size:9.5px;color:var(--s-mute);font-weight:600;background:none;border:0;cursor:pointer;
+  line-height:1.2;text-align:center;
+}
+.tabbar button.on{color:var(--s-brand)}
+.slide{animation:sl .22s cubic-bezier(.2,.7,.3,1)}
+@keyframes sl{from{transform:translateX(22px);opacity:.4}to{transform:none;opacity:1}}
+
+/* ---------- app atoms ---------- */
+.card{background:var(--s-bg);border:1px solid var(--s-line);border-radius:8px;padding:14px;margin-bottom:12px}
+.card:last-child{margin-bottom:0}
+.card.tap{cursor:pointer}
+.card.tap:active{background:var(--s-brand-5)}
+.lbl{font-size:11px;color:var(--s-mute);text-transform:uppercase;letter-spacing:.07em;font-weight:600}
+.big{font-size:28px;font-weight:700;color:var(--s-ink);line-height:1.15;font-variant-numeric:tabular-nums}
+.med{font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.3;font-variant-numeric:tabular-nums}
+.h{font-size:16px;font-weight:700;color:var(--s-ink);margin-bottom:8px}
+.sub{font-size:13px;color:var(--s-body)}
+.tiny{font-size:11px;color:var(--s-mute);line-height:1.5}
+.row{display:flex;align-items:center;gap:10px}
+.row.sb{justify-content:space-between}
+.row.top{align-items:flex-start}
+.col{display:flex;flex-direction:column;gap:2px;min-width:0}
+.g8{display:flex;flex-direction:column;gap:8px}
+.g12{display:flex;flex-direction:column;gap:12px}
+.av{width:44px;height:44px;border-radius:50%;background:var(--s-line2);flex:0 0 auto}
+.av.sm{width:32px;height:32px}
+.thumb{width:48px;height:48px;border-radius:6px;background:var(--s-line2);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;color:#7a7a7a}
+.ico{width:22px;height:22px;flex:0 0 auto}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:32px;white-space:nowrap;max-width:100%}
+.chip.ok{background:var(--s-ok-bg);color:var(--s-ok)}
+.chip.warn{background:var(--s-warn-bg);color:var(--s-warn)}
+.chip.err{background:var(--s-err-bg);color:var(--s-err)}
+.chip.info{background:var(--s-info-bg);color:var(--s-info)}
+.chip.neu{background:var(--s-ground);color:var(--s-body)}
+.chip.brand{background:var(--s-brand-10);color:var(--s-brand)}
+.dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:0 0 auto}
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 16px;
+  border-radius:8px;background:var(--s-brand);color:#fff;font:inherit;font-size:16px;font-weight:600;
+  border:0;cursor:pointer;width:100%;text-align:center;line-height:1.35;
+}
+.btn:active{opacity:.85}
+.btn.out{background:transparent;border:1px solid var(--s-brand);color:var(--s-brand)}
+.btn.ghost{background:var(--s-ground);color:var(--s-ink);border:1px solid var(--s-line2)}
+.btn.dis{background:#e5e5e5;color:#8c8c8c;cursor:not-allowed}
+.btn.sm{min-height:42px;font-size:14px}
+.field{min-height:52px;border:1px solid var(--s-line2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:16px;color:var(--s-ink);background:var(--s-bg)}
+.field .ph{color:var(--s-mute)}
+.otp{display:flex;gap:8px}
+.otp span{flex:1;min-width:0;height:56px;border:1px solid var(--s-line2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--s-ink);font-variant-numeric:tabular-nums}
+.otp span.f{border-color:var(--s-brand);border-width:2px}
+.seg{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.seg::-webkit-scrollbar{display:none}
+.seg button{font:inherit;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:32px;border:1px solid var(--s-line2);color:var(--s-body);white-space:nowrap;background:var(--s-bg);cursor:pointer}
+.seg button.on{background:var(--s-brand-10);border-color:var(--s-brand);color:var(--s-brand)}
+.divide{height:1px;background:var(--s-line);margin:12px 0}
+.list{background:var(--s-bg);border:1px solid var(--s-line);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.li{padding:13px 14px;border-bottom:1px solid var(--s-line);cursor:pointer;background:var(--s-bg)}
+.li:last-child{border-bottom:0}
+.li:active{background:var(--s-brand-5)}
+.banner{border-radius:8px;padding:14px;background:var(--s-brand);color:#fff;cursor:pointer}
+.banner .lbl{color:rgba(255,255,255,.82)}
+.banner .med,.banner .big{color:#fff}
+.illus{width:100%;height:88px;border-radius:6px;background:var(--s-line2);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:#7a7a7a;letter-spacing:.08em}
+.illus.sq{width:64px;height:64px;flex:0 0 auto}
+/* ---- points-by-brand (adaptive) ---- */
+.brow{display:block;width:100%;text-align:left;background:none;border:0;font:inherit;padding:8px 0;cursor:pointer}
+.brow:active .btrack i{opacity:.75}
+.bhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.bname{font-size:13.5px;font-weight:600;color:var(--s-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bname.other{color:var(--s-body);font-weight:500}
+.bval{font-size:14px;font-weight:700;color:var(--s-ink);font-variant-numeric:tabular-nums;flex:0 0 auto}
+.btrack{height:10px;border-radius:5px;background:var(--s-brand-5);overflow:hidden;margin-top:6px}
+.btrack i{display:block;height:100%;background:var(--s-brand);border-radius:0 4px 4px 0;
+  transform-origin:left;animation:bargrow .62s cubic-bezier(.2,.8,.2,1) both}
+.btrack.mute i{background:var(--s-mute)}
+@keyframes bargrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.bsub{font-size:11px;color:var(--s-mute);margin-top:5px}
+.spark{display:block;width:100%;height:44px;margin:12px 0 2px;overflow:visible}
+.tile-val{font-size:40px;font-weight:700;color:var(--s-ink);line-height:1.05;letter-spacing:-.025em}
+.step{display:flex;align-items:flex-start;gap:10px}
+.step .pin{width:20px;height:20px;border-radius:50%;border:2px solid var(--s-line2);flex:0 0 auto;margin-top:2px;background:var(--s-bg)}
+.step.done .pin{background:var(--s-ok);border-color:var(--s-ok)}
+.step.now .pin{border-color:var(--s-brand);border-width:3px}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl td{padding:8px 0;border-bottom:1px solid var(--s-line);color:var(--s-body);vertical-align:top}
+.tbl td:last-child{text-align:right;color:var(--s-ink);font-weight:600;font-variant-numeric:tabular-nums}
+.tbl tr:last-child td{border-bottom:0}
+.ledg{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--s-line);cursor:pointer}
+.ledg:last-child{border-bottom:0}
+.plus{color:var(--s-ok);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.minus{color:var(--s-err);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.strip{font-size:12px;font-weight:600;padding:8px 14px;display:flex;align-items:center;gap:8px;flex:0 0 auto}
+.strip.warn{background:var(--s-warn-bg);color:var(--s-warn)}
+.strip.info{background:var(--s-info-bg);color:var(--s-info)}
+.qr{width:120px;height:120px;border-radius:8px;background:var(--s-ink);margin:0 auto}
+.sheetwrap{position:absolute;inset:0;z-index:9;display:flex;flex-direction:column;justify-content:flex-end}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.4);border:0;padding:0;cursor:pointer}
+.sheet{position:relative;background:var(--s-bg);border-radius:16px 16px 0 0;padding:12px 16px 20px;max-height:82%;overflow-y:auto;animation:up .24s cubic-bezier(.2,.7,.3,1)}
+@keyframes up{from{transform:translateY(40px)}to{transform:none}}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--s-line2);margin:0 auto 14px}
+.toast{position:absolute;left:14px;right:14px;bottom:76px;z-index:20;background:#333;color:#fff;font-size:13px;font-weight:600;padding:12px 14px;border-radius:8px;display:flex;gap:9px;align-items:center;animation:up .2s}
+
+/* ---------- skeleton ---------- */
+.sk{background:var(--s-line);border-radius:4px;height:12px;position:relative;overflow:hidden}
+.sk::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent);animation:sh 1.15s infinite}
+@keyframes sh{100%{transform:translateX(100%)}}
+.sk.t{height:10px}.sk.b{height:26px}.sk.c{height:44px;border-radius:50%;width:44px}
+@media (prefers-reduced-motion:reduce){
+  .sk::after{animation:none}.slide{animation:none}.sheet{animation:none}.toast{animation:none}
+}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+@media (max-width:760px){
+  #stage{flex-direction:column;align-items:center;padding:24px 16px 48px;gap:24px}
+  #panel{width:360px;max-width:100%}
+  #device{width:100%;max-width:360px;height:720px}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="i-back"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-chev"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-home"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="i-list"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+<g id="i-gift"><path d="M3 11h18v9a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 7h18v4H3zM12 7v14M12 7S10 3 8 4s0 3 4 3zM12 7s2-4 4-3 0 3-4 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+<g id="i-coin"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M9.5 10h5M9.5 14h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+<g id="i-user"><circle cx="12" cy="8.5" r="3.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20a7.5 7.5 0 0115 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+<g id="i-bell"><path d="M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6zM10 19a2 2 0 004 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="i-filter"><path d="M3 5h18l-7 8v6l-4 2v-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="i-phone"><path d="M6 3h4l2 5-2.5 1.5a12 12 0 005 5L16 12l5 2v4a2 2 0 01-2 2A16 16 0 014 5a2 2 0 012-2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+<g id="i-warn"><path d="M12 3l9.5 17H2.5zM12 10v4.5M12 17.2v.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-off"><path d="M3 3l18 18M8 16.5a5.5 5.5 0 017.5-.6M4.5 12.5a11 11 0 015-2.7M2 9a16 16 0 015-3.2M12 20v.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+<g id="i-check"><path d="M4 12.5l5.5 5.5L20 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-cam"><path d="M3 8h4l2-3h6l2 3h4v12H3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.7"/></g>
+<g id="i-trophy"><path d="M7 4h10v5a5 5 0 01-10 0zM7 5H4v2a3 3 0 003 3M17 5h3v2a3 3 0 01-3 3M12 14v4M8.5 21h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-play"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 8.5l6 3.5-6 3.5z" fill="currentColor"/></g>
+<g id="i-share"><circle cx="6" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="6" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.3 10.8l6.4-3.4M8.3 13.2l6.4 3.4" stroke="currentColor" stroke-width="1.7"/></g>
+<g id="i-globe"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18" fill="none" stroke="currentColor" stroke-width="1.7"/></g>
+<g id="i-refresh"><path d="M20 12a8 8 0 11-2.3-5.7M20 4v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-doc"><path d="M6 3h8l4 4v14H6zM14 3v4h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+<g id="i-out"><path d="M15 4h4v16h-4M11 8l-4 4 4 4M7 12h9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>
+</defs></svg>
+
+<div id="stage">
+  <aside id="panel">
+    <h1>Humbee Influencer</h1>
+    <p class="sub">Interactive prototype. Every Phase&nbsp;1 module, real navigation, skeleton loaders on first load. Built on the HUMBEE design system at 360&nbsp;dp.</p>
+
+    <div class="pgroup">
+      <div class="plabel">Language · §4.0</div>
+      <div class="pset" id="c-lang">
+        <button data-lang="hi" aria-pressed="true">हिन्दी</button>
+        <button data-lang="en" aria-pressed="false">English</button>
+      </div>
+    </div>
+
+    <div class="pgroup">
+      <div class="plabel">Connection</div>
+      <div class="pset" id="c-net">
+        <button data-net="on" aria-pressed="true">Online</button>
+        <button data-net="off" aria-pressed="false">Offline</button>
+      </div>
+    </div>
+
+    <div class="pgroup">
+      <div class="plabel">Account state</div>
+      <div class="pset" id="c-acct">
+        <button data-acct="active" aria-pressed="true">Has data</button>
+        <button data-acct="new" aria-pressed="false">Brand new</button>
+      </div>
+    </div>
+
+    <div class="pgroup">
+      <div class="plabel">Brands the user deals in</div>
+      <div class="pset" id="c-brands">
+        <button data-brands="1" aria-pressed="false">1</button>
+        <button data-brands="3" aria-pressed="true">3</button>
+        <button data-brands="8" aria-pressed="false">8</button>
+      </div>
+    </div>
+
+    <div class="pgroup">
+      <button class="pbtn" id="c-restart">Restart from first launch</button>
+    </div>
+
+    <div id="crumb"></div>
+
+    <div class="foot">
+      <p>Skeletons appear on a screen's <b>first</b> load only — afterwards it renders from cache, which is the real offline-first behaviour. Use <b>Refresh</b> in an app bar to force them again.</p>
+      <p>Sample user is the hard case: <b>Ramesh Kumar</b> — Barbender in Steel, Contractor in Cement, Painter in Paints, across two Distributors and one Dealer.</p>
+      <p>Spec: <code>docs/00-PRD.md</code> · <code>HUMBEE-DESIGN-RULES.md</code></p>
+    </div>
+  </aside>
+
+  <div id="device"></div>
+</div>
+
+<script>
+/* ============================================================
+   STATE
+   ============================================================ */
+let LANG='hi', ONLINE=true, ACCT='active', NBRANDS=3;
+let stack=[{s:'lang'}], tab='home', loaded=new Set(), sheet=null, toast=null;
+let subRewards='rewards', filtInd='all', otpLen=3, disputeReason=0;
+
+/* ============================================================
+   I18N
+   ============================================================ */
+const S={
+ chooseLang:{en:'Choose your language',hi:'भाषा चुनें'},
+ continue:{en:'Continue',hi:'आगे बढ़ें'},
+ langsMore:{en:'8 languages · scroll for more',hi:'8 भाषाएँ · और देखने के लिए स्क्रॉल करें'},
+ changeLater:{en:'You can change this later in your profile',hi:'आप इसे बाद में प्रोफ़ाइल में बदल सकते हैं'},
+ welcome:{en:'Welcome to Humbee',hi:'आपका स्वागत है'},
+ loginHelp:{en:'Enter the mobile number your Distributor or Dealer registered for you.',hi:'वह मोबाइल नंबर डालें जो आपके डिस्ट्रीब्यूटर या डीलर ने रजिस्टर किया है।'},
+ mobile:{en:'Mobile number',hi:'मोबाइल नंबर'},
+ smsNote:{en:"We'll send a 6-digit code by SMS.",hi:'हम आपको SMS पर 6 अंकों का कोड भेजेंगे।'},
+ sendCode:{en:'Send code',hi:'कोड भेजें'},
+ needHelp:{en:'Need help? Call 1800 2100 123',hi:'मदद चाहिए? कॉल करें 1800 2100 123'},
+ enterCode:{en:'Enter code',hi:'कोड डालें'},
+ codeSentTo:{en:'Code sent to',hi:'कोड भेजा गया'},
+ change:{en:'Change',hi:'बदलें'},
+ didntGet:{en:"Didn't get it?",hi:'कोड नहीं मिला?'},
+ resendIn:{en:'Resend in 0:24',hi:'0:24 में दोबारा'},
+ verify:{en:'Verify',hi:'सत्यापित करें'},
+ callInstead:{en:'Get code by call instead',hi:'कॉल पर कोड पाएँ'},
+ notRegistered:{en:'Not registered',hi:'रजिस्टर नहीं है'},
+ notRegTitle:{en:"This number isn't on Humbee yet",hi:'यह नंबर अभी Humbee पर नहीं है'},
+ notRegBody:{en:'Ask your Distributor or Dealer to add you. It only takes them a minute.',hi:'अपने डिस्ट्रीब्यूटर या डीलर से कहें कि आपको जोड़ दें। उन्हें बस एक मिनट लगेगा।'},
+ callSupport:{en:'Call Humbee support',hi:'Humbee सहायता को कॉल करें'},
+ whatsapp:{en:'Chat on WhatsApp',hi:'WhatsApp पर बात करें'},
+ tryAnother:{en:'Try a different number',hi:'दूसरा नंबर आज़माएँ'},
+ home:{en:'Home',hi:'होम'},
+ allocations:{en:'Allocations',hi:'आवंटन'},
+ rewards:{en:'Rewards',hi:'इनाम'},
+ points:{en:'Points',hi:'पॉइंट्स'},
+ profile:{en:'Profile',hi:'प्रोफ़ाइल'},
+ industriesPartners:{en:'{i} industries · {p} partners',hi:'{i} उद्योग · {p} पार्टनर'},
+ onePartner:{en:'1 partner',hi:'1 पार्टनर'},
+ pointsBalance:{en:'Points balance',hi:'पॉइंट्स बैलेंस'},
+ thisMonth:{en:'this month',hi:'इस महीने'},
+ partners:{en:'Partners',hi:'पार्टनर'},
+ industries:{en:'Industries',hi:'उद्योग'},
+ pointsByBrand:{en:'Points by brand',hi:'ब्रांड अनुसार पॉइंट्स'},
+ vsLast:{en:'vs last month',hi:'पिछले महीने से'},
+ last12:{en:'Last 12 months',hi:'पिछले 12 महीने'},
+ acrossN:{en:'across {n} brands',hi:'{n} ब्रांड से'},
+ otherBrands:{en:'{n} other brands',hi:'{n} अन्य ब्रांड'},
+ seeAllBrands:{en:'See all {n} brands',hi:'सभी {n} ब्रांड देखें'},
+ brandsTotal:{en:'Points this month',hi:'इस महीने के पॉइंट्स'},
+ tapBrand:{en:'Tap a brand to see its allocations',hi:'आवंटन देखने के लिए ब्रांड दबाएँ'},
+ thisMonthShort:{en:'This month',hi:'इस महीने'},
+ recentActivity:{en:'Recent activity',hi:'हाल की गतिविधि'},
+ seeAll:{en:'See all',hi:'सभी देखें'},
+ invited:{en:"You're invited",hi:'आप आमंत्रित हैं'},
+ daysToGo:{en:'{n} days to go',hi:'{n} दिन बाकी'},
+ allocatedBy:{en:'Allocated by',hi:'आवंटित किया'},
+ all:{en:'All',hi:'सभी'},
+ steel:{en:'Steel',hi:'स्टील'},
+ cement:{en:'Cement',hi:'सीमेंट'},
+ paints:{en:'Paints',hi:'पेंट'},
+ nAllocations:{en:'{n} allocations',hi:'{n} आवंटन'},
+ newestFirst:{en:'Newest first',hi:'नए पहले'},
+ filters:{en:'Filters',hi:'फ़िल्टर'},
+ clearAll:{en:'Clear all',hi:'सब हटाएँ'},
+ industry:{en:'Industry',hi:'उद्योग'},
+ brand:{en:'Brand',hi:'ब्रांड'},
+ allocatedByF:{en:'Allocated by',hi:'किसने दिया'},
+ period:{en:'Period',hi:'अवधि'},
+ last6:{en:'Last 6 months',hi:'पिछले 6 महीने'},
+ allTime:{en:'All time',hi:'सब समय'},
+ showN:{en:'Show {n} allocations',hi:'{n} आवंटन दिखाएँ'},
+ allocation:{en:'Allocation',hi:'आवंटन'},
+ confirmed:{en:'Confirmed',hi:'पुष्टि हुई'},
+ partnerType:{en:'Partner type',hi:'पार्टनर प्रकार'},
+ date:{en:'Date',hi:'तारीख़'},
+ yourRole:{en:'Your role',hi:'आपकी भूमिका'},
+ pointsEarned:{en:'Points earned',hi:'मिले पॉइंट्स'},
+ totalFrom:{en:'Total from {b}',hi:'{b} से कुल'},
+ somethingWrong:{en:'Something wrong here?',hi:'यहाँ कुछ ग़लत है?'},
+ reportProblem:{en:'Report a problem',hi:'समस्या बताएँ'},
+ whatsWrong:{en:"What's wrong?",hi:'क्या ग़लत है?'},
+ aboutThis:{en:'About this allocation',hi:'इस आवंटन के बारे में'},
+ r1:{en:'I never received this',hi:'मुझे यह मिला ही नहीं'},
+ r2:{en:'The quantity is wrong',hi:'मात्रा ग़लत है'},
+ r3:{en:'The brand or product is wrong',hi:'ब्रांड या सामान ग़लत है'},
+ r4:{en:'Something else',hi:'कुछ और'},
+ addPhoto:{en:'Add a photo (optional)',hi:'फ़ोटो जोड़ें (ज़रूरी नहीं)'},
+ sendToHumbee:{en:'Send to Humbee',hi:'Humbee को भेजें'},
+ whoSees:{en:'Humbee support and {p} will both see this.',hi:'Humbee सहायता और {p} दोनों इसे देखेंगे।'},
+ sent:{en:'Sent',hi:'भेज दिया'},
+ sentTitle:{en:'We have your report',hi:'आपकी शिकायत मिल गई'},
+ sentBody:{en:'Humbee support will look into it. You can track it under Help & support.',hi:'Humbee सहायता इसे देखेगी। आप इसे मदद और सहायता में देख सकते हैं।'},
+ ticketNo:{en:'Request no.',hi:'शिकायत नं.'},
+ backToAlloc:{en:'Back to allocations',hi:'आवंटन पर वापस'},
+ luckyDraws:{en:'Lucky draws',hi:'लकी ड्रॉ'},
+ events:{en:'Events',hi:'कार्यक्रम'},
+ reward:{en:'Reward',hi:'इनाम'},
+ whereNow:{en:'Where it is now',hi:'अभी कहाँ है'},
+ grantedBy:{en:'Granted by',hi:'किसने दिया'},
+ through:{en:'Through',hi:'के ज़रिए'},
+ announcedOn:{en:'Announced',hi:'घोषित'},
+ askAbout:{en:'Ask about this reward',hi:'इस इनाम के बारे में पूछें'},
+ confirmReceipt:{en:'I have received this',hi:'मुझे यह मिल गया'},
+ yourEntries:{en:'Your entries',hi:'आपकी एंट्री'},
+ drawOn:{en:'Draw on {d}',hi:'ड्रॉ {d} को'},
+ youWon:{en:'You won',hi:'आपने जीता'},
+ notWon:{en:'Not won',hi:'नहीं जीता'},
+ prize:{en:'Prize',hi:'इनाम'},
+ seeWinners:{en:'See all winners',hi:'सभी विजेता देखें'},
+ comingUp:{en:'Coming up',hi:'आने वाला'},
+ pastEvents:{en:'Past events',hi:'पिछले कार्यक्रम'},
+ attended:{en:'You attended',hi:'आप गए थे'},
+ didNotAttend:{en:'Did not attend',hi:'नहीं गए'},
+ nGift:{en:'{n} gift',hi:'{n} इनाम'},
+ whatYouWon:{en:'What you won',hi:'आपने क्या जीता'},
+ photosFromDay:{en:'Photos from the day',hi:'उस दिन की तस्वीरें'},
+ yourBalance:{en:'Your balance',hi:'आपका बैलेंस'},
+ earnedThisMonth:{en:'+{n} earned this month',hi:'इस महीने +{n} मिले'},
+ since:{en:'Since {d}',hi:'{d} से'},
+ howEarned:{en:'How points are earned',hi:'पॉइंट्स कैसे मिलते हैं'},
+ workedEg:{en:'Your 500 kg of Dalmia TMT gave you 500 points.',hi:'आपके 500 किलो Dalmia TMT से आपको 500 पॉइंट्स मिले।'},
+ expiring:{en:'1,200 points expire on 31 Mar 2026',hi:'1,200 पॉइंट्स 31 मार्च 2026 को ख़त्म होंगे'},
+ seeRedeem:{en:'See what you can get',hi:'देखें क्या मिल सकता है'},
+ pointsHistory:{en:'Points history',hi:'पॉइंट्स इतिहास'},
+ earned:{en:'Earned',hi:'मिले'},
+ used:{en:'Used',hi:'ख़र्च'},
+ expired:{en:'Expired',hi:'ख़त्म'},
+ ledgerNote:{en:'Every entry links back to what caused it.',hi:'हर एंट्री उसके कारण से जुड़ी है।'},
+ notifications:{en:'Notifications',hi:'सूचनाएँ'},
+ kycVerified:{en:'KYC verified',hi:'KYC सत्यापित'},
+ yourRoles:{en:'Your roles',hi:'आपकी भूमिकाएँ'},
+ rolesNote:{en:'Set by your Distributor or Dealer. Contact them to change.',hi:'आपके डिस्ट्रीब्यूटर या डीलर ने तय किया है। बदलने के लिए उनसे कहें।'},
+ myCard:{en:'My Humbee card',hi:'मेरा Humbee कार्ड'},
+ linkedPartners:{en:'Linked partners ({n})',hi:'जुड़े पार्टनर ({n})'},
+ referFriend:{en:'Refer a friend',hi:'दोस्त को बुलाएँ'},
+ helpSupport:{en:'Help & support',hi:'मदद और सहायता'},
+ learn:{en:'Learn',hi:'सीखें'},
+ leaderboard:{en:'Leaderboard',hi:'लीडरबोर्ड'},
+ language:{en:'Language',hi:'भाषा'},
+ logOut:{en:'Log out',hi:'लॉग आउट'},
+ usedInArea:{en:'Used in your area',hi:'आपके इलाक़े में'},
+ allLanguages:{en:'All languages',hi:'सभी भाषाएँ'},
+ smsNote2:{en:'Your SMS and app messages will also come in this language.',hi:'आपके SMS और ऐप संदेश भी इसी भाषा में आएंगे।'},
+ memberSince:{en:'Member since {d}',hi:'{d} से सदस्य'},
+ steelHandled:{en:'Steel handled',hi:'स्टील संभाला'},
+ withHumbee:{en:'With Humbee',hi:'Humbee के साथ'},
+ shareCard:{en:'Share my card',hi:'मेरा कार्ड भेजें'},
+ yrs:{en:'{n} yrs',hi:'{n} साल'},
+ refBody:{en:'Give this code to a fellow tradesman. When their Distributor adds them, you both earn points.',hi:'यह कोड अपने साथी को दें। जब उनका डिस्ट्रीब्यूटर उन्हें जोड़ेगा, दोनों को पॉइंट्स मिलेंगे।'},
+ shareWA:{en:'Share on WhatsApp',hi:'WhatsApp पर भेजें'},
+ yourReferrals:{en:'Your referrals',hi:'आपके रेफ़रल'},
+ tollFree:{en:'Toll free · 9am–7pm',hi:'टोल फ्री · सुबह 9 – शाम 7'},
+ commonQ:{en:'Common questions',hi:'आम सवाल'},
+ myRequests:{en:'My past requests ({n})',hi:'मेरी पिछली शिकायतें ({n})'},
+ topBarbenders:{en:'Top Barbenders · Sharma Steel network · Jan–Mar',hi:'शीर्ष बारबेंडर · Sharma Steel नेटवर्क · जन–मार्च'},
+ you:{en:'You',hi:'आप'},
+ thisQuarter:{en:'{n} this quarter',hi:'इस तिमाही {n}'},
+ offlineStrip:{en:'No internet · showing data from 12 Feb, 9:20 am',hi:'इंटरनेट नहीं · 12 फ़र, सुबह 9:20 का डेटा'},
+ pendingSync:{en:'Waiting to send',hi:'भेजने का इंतज़ार'},
+ pendingBody:{en:"Your report will be sent when you're back online.",hi:'इंटरनेट आते ही आपकी शिकायत भेज दी जाएगी।'},
+ emptyTitle:{en:'Welcome to Humbee, Ramesh',hi:'Humbee में आपका स्वागत है, रमेश'},
+ emptyBody:{en:"Sharma Steel Traders has added you. As soon as they record your first allocation, you'll see it here.",hi:'Sharma Steel Traders ने आपको जोड़ा है। जैसे ही वे आपका पहला आवंटन दर्ज करेंगे, वह यहाँ दिखेगा।'},
+ whileYouWait:{en:'While you wait',hi:'तब तक'},
+ completeProfile:{en:'Complete your profile',hi:'प्रोफ़ाइल पूरी करें'},
+ watchVideo:{en:'Watch a safety video',hi:'सुरक्षा वीडियो देखें'},
+ emptyAlloc:{en:'No allocations yet',hi:'अभी कोई आवंटन नहीं'},
+ emptyAllocBody:{en:'When Sharma Steel Traders records an allocation for you, it will appear here.',hi:'जब Sharma Steel Traders आपके लिए आवंटन दर्ज करेंगे, वह यहाँ दिखेगा।'},
+ emptyRewards:{en:'No rewards yet',hi:'अभी कोई इनाम नहीं'},
+ emptyRewardsBody:{en:'Rewards you win from brands and your partners will show up here.',hi:'ब्रांड और पार्टनर से मिले इनाम यहाँ दिखेंगे।'},
+ zeroPoints:{en:'Start earning',hi:'कमाना शुरू करें'},
+ refresh:{en:'Refresh',hi:'ताज़ा करें'},
+ moreLangs:{en:'More languages coming soon',hi:'और भाषाएँ जल्द आएँगी'},
+ saved:{en:'Language changed',hi:'भाषा बदल दी'},
+ receiptSaved:{en:'Thanks — marked as received',hi:'धन्यवाद — मिल गया दर्ज हुआ'},
+ copied:{en:'Code copied',hi:'कोड कॉपी हुआ'},
+ offlineQueued:{en:'Saved. Will send when online.',hi:'सेव हुआ। इंटरनेट आने पर भेजेंगे।'}
+};
+const t=(k,v)=>{let s=(S[k]&&(S[k][LANG]||S[k].en))||k;if(v)for(const x in v)s=s.replace('{'+x+'}',v[x]);return s};
+const L=o=>!o?'':(typeof o==='string'?o:(o[LANG]||o.en));
+
+/* ============================================================
+   DATA
+   ============================================================ */
+const LANGS=[
+ {c:'hi',n:'हिन्दी',lat:{en:'Hindi',hi:'Hindi',ta:'இந்தி'}},
+ {c:'en',n:'English',lat:{en:'English',hi:'अंग्रेज़ी'}},
+ {c:'gu',n:'ગુજરાતી',lat:{en:'Gujarati',hi:'Gujarati'}},
+ {c:'mr',n:'मराठी',lat:{en:'Marathi',hi:'Marathi'}},
+ {c:'ta',n:'தமிழ்',lat:{en:'Tamil',hi:'Tamil'}},
+ {c:'te',n:'తెలుగు',lat:{en:'Telugu',hi:'Telugu'}},
+ {c:'kn',n:'ಕನ್ನಡ',lat:{en:'Kannada',hi:'Kannada'}},
+ {c:'bn',n:'বাংলা',lat:{en:'Bengali',hi:'Bengali'}}
+];
+const R_BARB={en:'Barbender',hi:'बारबेंडर'},R_CONT={en:'Contractor',hi:'ठेकेदार'},R_PAIN={en:'Painter',hi:'पेंटर'};
+const U_KG={en:'kg',hi:'किलो'},U_BAG={en:'bags',hi:'बोरी'},U_L={en:'litres',hi:'लीटर'};
+const DIST={en:'Distributor',hi:'डिस्ट्रीब्यूटर'},DEAL={en:'Dealer',hi:'डीलर'};
+
+const D={
+ user:{name:{en:'Ramesh Kumar',hi:'रमेश कुमार'},phone:'+91 98765 43210',since:{en:'Apr 2022',hi:'अप्रैल 2022'},points:'12,480',partners:5,industries:3,rewards:7},
+ roles:[{ind:{en:'Steel (TMT)',hi:'स्टील (TMT)'},role:R_BARB,brand:'Dalmia TMT',by:'Sharma Steel Traders'},
+        {ind:{en:'Cement',hi:'सीमेंट'},role:R_CONT,brand:'Vastav Cement',by:'Rathore Cement Co.'},
+        {ind:{en:'Paints',hi:'पेंट'},role:R_PAIN,brand:'MasterChow',by:'Verma Paints'}],
+ brands:[
+  {n:'Dalmia TMT',p:980,v:'980',u:U_KG,i:{en:'Steel',hi:'स्टील'},ind:'steel',sp:[38,44,41,52,49,58,63,60,71,68,80,88]},
+  {n:'Vastav Cement',p:620,v:'620',u:U_BAG,i:{en:'Cement',hi:'सीमेंट'},ind:'cement'},
+  {n:'MasterChow',p:340,v:'340',u:U_L,i:{en:'Paints',hi:'पेंट'},ind:'paints'},
+  {n:'Shakti TMT',p:280,v:'280',u:U_KG,i:{en:'Steel',hi:'स्टील'},ind:'steel'},
+  {n:'Ambuja Star',p:210,v:'210',u:U_BAG,i:{en:'Cement',hi:'सीमेंट'},ind:'cement'},
+  {n:'Nerolac Pro',p:155,v:'155',u:U_L,i:{en:'Paints',hi:'पेंट'},ind:'paints'},
+  {n:'JSW Neo',p:120,v:'120',u:U_KG,i:{en:'Steel',hi:'स्टील'},ind:'steel'},
+  {n:'Birla Opus',p:75,v:'75',u:U_L,i:{en:'Paints',hi:'पेंट'},ind:'paints'}
+ ],
+ allocations:[
+  {id:1,ind:'steel',brand:'Dalmia TMT',role:R_BARB,qty:'500',unit:U_KG,prod:{en:'TMT Bars 12 mm',hi:'TMT सरिया 12 मिमी'},by:'Sharma Steel Traders',byT:DIST,date:{en:'12 Feb 2026',hi:'12 फ़र 2026'},ago:{en:'2 days ago',hi:'2 दिन पहले'},pts:'500',tot:{en:'8,240 kg',hi:'8,240 किलो'},totN:{en:'Across 14 allocations since Apr 2025',hi:'अप्रैल 2025 से 14 आवंटन में'},indN:{en:'Steel (TMT)',hi:'स्टील (TMT)'}},
+  {id:2,ind:'cement',brand:'Vastav Cement',role:R_CONT,qty:'120',unit:U_BAG,prod:{en:'OPC 53 Grade',hi:'OPC 53 ग्रेड'},by:'Gupta Traders',byT:DEAL,date:{en:'10 Feb 2026',hi:'10 फ़र 2026'},ago:{en:'4 days ago',hi:'4 दिन पहले'},pts:'120',tot:{en:'2,960 bags',hi:'2,960 बोरी'},totN:{en:'Across 9 allocations since Jun 2025',hi:'जून 2025 से 9 आवंटन में'},indN:{en:'Cement',hi:'सीमेंट'}},
+  {id:3,ind:'paints',brand:'MasterChow',role:R_PAIN,qty:'45',unit:U_L,prod:{en:'Interior Emulsion',hi:'इंटीरियर इमल्शन'},by:'Verma Paints',byT:DEAL,date:{en:'6 Feb 2026',hi:'6 फ़र 2026'},ago:{en:'1 week ago',hi:'1 हफ़्ता पहले'},pts:'45',tot:{en:'610 litres',hi:'610 लीटर'},totN:{en:'Across 11 allocations since Aug 2025',hi:'अगस्त 2025 से 11 आवंटन में'},indN:{en:'Paints',hi:'पेंट'}},
+  {id:4,ind:'steel',brand:'Dalmia TMT',role:R_BARB,qty:'750',unit:U_KG,prod:{en:'TMT Bars 16 mm',hi:'TMT सरिया 16 मिमी'},by:'Sharma Steel Traders',byT:DIST,date:{en:'28 Jan 2026',hi:'28 जन 2026'},ago:{en:'3 weeks ago',hi:'3 हफ़्ते पहले'},pts:'750',tot:{en:'8,240 kg',hi:'8,240 किलो'},totN:{en:'Across 14 allocations since Apr 2025',hi:'अप्रैल 2025 से 14 आवंटन में'},indN:{en:'Steel (TMT)',hi:'स्टील (TMT)'}},
+  {id:5,ind:'cement',brand:'Vastav Cement',role:R_CONT,qty:'200',unit:U_BAG,prod:{en:'PPC Grade',hi:'PPC ग्रेड'},by:'Rathore Cement Co.',byT:DIST,date:{en:'19 Jan 2026',hi:'19 जन 2026'},ago:{en:'1 month ago',hi:'1 महीना पहले'},pts:'200',tot:{en:'2,960 bags',hi:'2,960 बोरी'},totN:{en:'Across 9 allocations since Jun 2025',hi:'जून 2025 से 9 आवंटन में'},indN:{en:'Cement',hi:'सीमेंट'}}
+ ],
+ rewards:[
+  {id:1,name:{en:'Refrigerator — 190 L',hi:'फ्रिज — 190 लीटर'},scheme:{en:'Dalmia TMT · Top 20 Barbenders',hi:'Dalmia TMT · शीर्ष 20 बारबेंडर'},rule:{en:'Top 20 Barbenders — Dalmia TMT, Jan–Jun 2026',hi:'शीर्ष 20 बारबेंडर — Dalmia TMT, जन–जून 2026'},st:'processing',by:'Dalmia TMT',via:'Sharma Steel Traders',ann:{en:'18 Jan 2026',hi:'18 जन 2026'},stage:1},
+  {id:2,name:{en:'₹5,000 cash',hi:'₹5,000 नक़द'},scheme:{en:'Vastav Cement · Monsoon Drive',hi:'Vastav Cement · मानसून ड्राइव'},rule:{en:'Top 100 Contractors — Jul–Sep 2025',hi:'शीर्ष 100 ठेकेदार — जुल–सित 2025'},st:'credited',by:'Vastav Cement',via:'Gupta Traders',ann:{en:'2 Oct 2025',hi:'2 अक्तू 2025'},stage:2},
+  {id:3,name:{en:'Steel water bottle set',hi:'स्टील बोतल सेट'},scheme:{en:'Dalmia TMT · Q3 Volume Drive',hi:'Dalmia TMT · Q3 वॉल्यूम ड्राइव'},rule:{en:'Top 50 Barbenders — Q3 Dalmia TMT Volume Drive',hi:'शीर्ष 50 बारबेंडर — Q3 Dalmia TMT'},st:'received',by:'Dalmia TMT',via:'Sharma Steel Traders',ann:{en:'14 Aug 2025',hi:'14 अग 2025'},stage:3},
+  {id:4,name:{en:'Safety helmet + gloves',hi:'सुरक्षा हेलमेट + दस्ताने'},scheme:{en:'MasterChow · Onboarding gift',hi:'MasterChow · स्वागत उपहार'},rule:{en:'All new Painters — Aug 2025',hi:'सभी नए पेंटर — अग 2025'},st:'received',by:'MasterChow',via:'Verma Paints',ann:{en:'20 Aug 2025',hi:'20 अग 2025'},stage:3}
+ ],
+ draws:[
+  {id:1,brand:'Dalmia TMT',name:{en:'Monsoon Mega Draw',hi:'मानसून मेगा ड्रॉ'},st:'pending',entries:8,basis:{en:'1 entry per 1 tonne · You bought 8 t',hi:'1 टन पर 1 एंट्री · आपने 8 टन लिया'},d:{en:'28 Feb',hi:'28 फ़र'}},
+  {id:2,brand:'Vastav Cement',name:{en:'Diwali Dhamaka Draw',hi:'दिवाली धमाका ड्रॉ'},st:'won',prize:{en:'Smartphone',hi:'स्मार्टफ़ोन'},meta:{en:'Drawn 4 Nov 2025 · 3 entries',hi:'4 नव 2025 को निकला · 3 एंट्री'}},
+  {id:3,brand:'MasterChow',name:{en:'Festive Paint Draw',hi:'त्योहार पेंट ड्रॉ'},st:'lost',meta:{en:'Drawn 12 Oct 2025 · 2 entries',hi:'12 अक्तू 2025 को निकला · 2 एंट्री'}}
+ ],
+ events:[
+  {id:1,up:true,name:{en:'Umang Utsav 2026',hi:'उमंग उत्सव 2026'},when:{en:'14 March 2026 · Jaipur',hi:'14 मार्च 2026 · जयपुर'},elig:{en:'Open to Top 100 performers — Jul–Dec 2025 cycle',hi:'शीर्ष 100 के लिए — जुल–दिस 2025 चक्र'},days:32},
+  {id:2,up:false,name:{en:'Umang Utsav 2025',hi:'उमंग उत्सव 2025'},when:{en:'8 March 2025 · Udaipur',hi:'8 मार्च 2025 · उदयपुर'},att:true,gifts:1,venue:{en:'Udaipur · Hotel Rajdarshan',hi:'उदयपुर · होटल राजदर्शन'},date:{en:'8 March 2025',hi:'8 मार्च 2025'},
+   gift:{name:{en:'LG 7 kg washing machine',hi:'LG 7 किलो वॉशिंग मशीन'},basis:{en:'Top 20 Barbenders · Dalmia TMT · Jan–Jun 2025',hi:'शीर्ष 20 बारबेंडर · Dalmia TMT · जन–जून 2025'},by:{en:'Granted by Dalmia TMT through Sharma Steel Traders',hi:'Dalmia TMT ने Sharma Steel Traders के ज़रिए दिया'},st:{en:'Handed over at event',hi:'कार्यक्रम में मिल गया'}}},
+  {id:3,up:false,name:{en:'Umang Utsav 2024',hi:'उमंग उत्सव 2024'},when:{en:'2 March 2024 · Jodhpur',hi:'2 मार्च 2024 · जोधपुर'},att:false,gifts:0}
+ ],
+ ledger:[
+  {t:{en:'Dalmia TMT · 500 kg',hi:'Dalmia TMT · 500 किलो'},m:{en:'12 Feb 2026 · Steel · Allocation',hi:'12 फ़र 2026 · स्टील · आवंटन'},v:'+500',k:'p',a:1},
+  {t:{en:'Vastav Cement · 120 bags',hi:'Vastav Cement · 120 बोरी'},m:{en:'10 Feb 2026 · Cement · Allocation',hi:'10 फ़र 2026 · सीमेंट · आवंटन'},v:'+120',k:'p',a:2},
+  {t:{en:'Referral bonus — Suresh',hi:'रेफ़रल बोनस — सुरेश'},m:{en:'8 Feb 2026 · Referral verified',hi:'8 फ़र 2026 · रेफ़रल सत्यापित'},v:'+250',k:'p'},
+  {t:{en:'Weekly check-in',hi:'साप्ताहिक चेक-इन'},m:{en:'5 Feb 2026 · Engagement',hi:'5 फ़र 2026 · सक्रियता'},v:'+10',k:'p'},
+  {t:{en:'MasterChow · 45 litres',hi:'MasterChow · 45 लीटर'},m:{en:'6 Feb 2026 · Paints · Allocation',hi:'6 फ़र 2026 · पेंट · आवंटन'},v:'+45',k:'p',a:3},
+  {t:{en:'Voucher — ₹500 Amazon',hi:'वाउचर — ₹500 Amazon'},m:{en:'28 Jan 2026 · Redeemed',hi:'28 जन 2026 · भुनाया'},v:'−2,500',k:'m'}
+ ],
+ notifs:[
+  {u:true,t:{en:"Umang Utsav 2026 — you're invited",hi:'उमंग उत्सव 2026 — आप आमंत्रित हैं'},b:{en:'14 March in Jaipur. Tap to see details.',hi:'14 मार्च, जयपुर। देखने के लिए दबाएँ।'},a:{en:'2 hours ago',hi:'2 घंटे पहले'},go:'eventDetail',p:{id:1}},
+  {u:true,t:{en:'Sharma Steel Traders allocated 500 kg of Dalmia TMT to you',hi:'Sharma Steel Traders ने आपको 500 किलो Dalmia TMT दिया'},a:{en:'2 days ago',hi:'2 दिन पहले'},go:'allocDetail',p:{id:1}},
+  {u:false,t:{en:'1,200 points expire on 31 March',hi:'1,200 पॉइंट्स 31 मार्च को ख़त्म होंगे'},a:{en:'3 days ago',hi:'3 दिन पहले'},go:'points'},
+  {u:false,t:{en:'Your reward "Refrigerator — 190 L" is now Processing',hi:'आपका इनाम "फ्रिज — 190 लीटर" अब प्रक्रिया में है'},a:{en:'1 week ago',hi:'1 हफ़्ता पहले'},go:'rewardDetail',p:{id:1}}
+ ],
+ referrals:[
+  {n:{en:'Suresh Yadav',hi:'सुरेश यादव'},m:{en:'Joined 8 Feb',hi:'8 फ़र को जुड़े'},st:'ok',v:{en:'+250 earned',hi:'+250 मिले'}},
+  {n:{en:'Dinesh Patel',hi:'दिनेश पटेल'},m:{en:'Verifying',hi:'सत्यापन जारी'},st:'warn',v:{en:'Pending',hi:'बाक़ी'}},
+  {n:{en:'Manoj Singh',hi:'मनोज सिंह'},m:{en:'Code shared 2 Feb',hi:'2 फ़र को कोड दिया'},st:'neu',v:{en:'Invited',hi:'बुलाया'}}
+ ],
+ faqs:[
+  {en:'Why is an allocation missing?',hi:'आवंटन क्यों नहीं दिख रहा?'},
+  {en:'When will I get my gift?',hi:'मेरा इनाम कब मिलेगा?'},
+  {en:'How are points calculated?',hi:'पॉइंट्स कैसे गिने जाते हैं?'},
+  {en:'How do I add a new Distributor?',hi:'नया डिस्ट्रीब्यूटर कैसे जोड़ें?'}
+ ],
+ learn:[
+  {t:{en:'Correct bar bending — avoiding weak joints',hi:'सही सरिया मोड़ना — कमज़ोर जोड़ से बचें'},b:'Dalmia TMT',d:'4 min',tag:{en:'Safety',hi:'सुरक्षा'},hero:true},
+  {t:{en:'Mixing cement in monsoon',hi:'बारिश में सीमेंट मिलाना'},b:'Vastav Cement',d:'6 min'},
+  {t:{en:'Primer coats that last',hi:'टिकाऊ प्राइमर कोट'},b:'MasterChow',d:'3 min'}
+ ],
+ board:[
+  {r:1,n:{en:'Mohan L.',hi:'मोहन ल.'},v:{en:'14,100 kg',hi:'14,100 किलो'},top:true},
+  {r:2,n:{en:'Anil K.',hi:'अनिल क.'},v:{en:'12,850 kg',hi:'12,850 किलो'}},
+  {r:3,n:{en:'Prakash S.',hi:'प्रकाश स.'},v:{en:'11,400 kg',hi:'11,400 किलो'}},
+  {r:4,n:{en:'Vijay R.',hi:'विजय र.'},v:{en:'9,900 kg',hi:'9,900 किलो'}}
+ ],
+ partnersList:[
+  {n:'Sharma Steel Traders',t:DIST,i:{en:'Steel · Dalmia TMT',hi:'स्टील · Dalmia TMT'}},
+  {n:'Rathore Cement Co.',t:DIST,i:{en:'Cement · Vastav',hi:'सीमेंट · Vastav'}},
+  {n:'Gupta Traders',t:DEAL,i:{en:'Cement · Vastav',hi:'सीमेंट · Vastav'}},
+  {n:'Verma Paints',t:DEAL,i:{en:'Paints · MasterChow',hi:'पेंट · MasterChow'}},
+  {n:'Jain Hardware',t:DEAL,i:{en:'Steel · Dalmia TMT',hi:'स्टील · Dalmia TMT'}}
+ ]
+};
+const STAGES=[{en:'Announced',hi:'घोषित'},{en:'Processing',hi:'प्रक्रिया में'},{en:'Dispatched / Credited',hi:'भेजा / जमा'},{en:'Received by you',hi:'आपको मिला'}];
+const ST_CHIP={processing:['warn','Processing','प्रक्रिया में'],credited:['info','Credited','जमा हुआ'],received:['ok','Received','मिल गया'],announced:['info','Announced','घोषित']};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const ic=(id,cls='ico',st='')=>`<svg class="${cls}" style="${st}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const roleChip=(brand,role)=>`<span class="chip brand">${esc(brand)} · ${esc(L(role))}</span>`;
+const stChip=k=>{const[c,en,hi]=ST_CHIP[k];const ico=k==='received'?ic('i-check','ico',"width:12px;height:12px"):'<span class="dot"></span>';return `<span class="chip ${c}">${ico}${LANG==='hi'?hi:en}</span>`};
+const alloc=id=>D.allocations.find(a=>a.id===id);
+
+/* ---------- Points by brand — adaptive to how many brands exist ----------
+   1 brand   → stat tile + sparkline   (a one-bar bar chart says nothing)
+   2–3       → ranked horizontal bars, all shown
+   4+        → top 3 + aggregated "N other brands" + See all
+   Horizontal because brand names are long and the list must grow; one hue
+   because the job is magnitude, not identity.                              */
+const brands=()=>D.brands.slice(0,NBRANDS);
+const brandTotal=()=>brands().reduce((s,b)=>s+b.p,0);
+const nfmt=n=>n.toLocaleString('en-IN');
+
+function sparkline(pts){
+  const w=280,h=40,mx=Math.max(...pts),mn=Math.min(...pts);
+  const x=i=>i*(w/(pts.length-1)), y=v=>h-((v-mn)/(mx-mn||1))*(h-6)-3;
+  const d=pts.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join(' ');
+  const last=pts.length-1;
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+    <path d="${d}" fill="none" stroke="var(--s-line2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M${x(last-1).toFixed(1)} ${y(pts[last-1]).toFixed(1)} L${x(last).toFixed(1)} ${y(pts[last]).toFixed(1)}"
+      fill="none" stroke="var(--s-brand)" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="${x(last).toFixed(1)}" cy="${y(pts[last]).toFixed(1)}" r="4" fill="var(--s-brand)" stroke="#fff" stroke-width="2"/>
+  </svg>`;
+}
+function brandRow(name,pts,max,sub,muted,act,delay){
+  return `<button class="brow" ${act?`data-act="${act}"`:'style="cursor:default"'}>
+    <div class="bhead"><span class="bname${muted?' other':''}">${esc(name)}</span><span class="bval">${nfmt(pts)}</span></div>
+    <div class="btrack${muted?' mute':''}"><i style="width:${Math.max(3,Math.round(pts/max*100))}%;animation-delay:${delay}ms"></i></div>
+    ${sub?`<div class="bsub">${sub}</div>`:''}</button>`;
+}
+function brandCard(){
+  const bs=brands(),total=brandTotal();
+  const head=`<div class="row sb" style="margin-bottom:10px">
+    <span class="h" style="margin:0">${t('pointsByBrand')}</span><span class="tiny">${t('thisMonthShort')}</span></div>`;
+
+  /* --- one brand: a stat tile, not a chart --- */
+  if(bs.length===1){
+    const b=bs[0];
+    return `<div class="card">${head}
+      <div class="lbl" style="margin-bottom:2px">${esc(b.n)}</div>
+      <div class="row sb" style="align-items:flex-end">
+        <span class="tile-val">${nfmt(b.p)}</span>
+        <span class="chip ok"><span class="dot"></span>+120 ${t('vsLast')}</span></div>
+      ${sparkline(b.sp||[38,44,41,52,49,58,63,60,71,68,80,88])}
+      <div class="tiny">${t('last12')} · ${b.v} ${L(b.u)} ${t('thisMonthShort').toLowerCase()}</div>
+    </div>`;
+  }
+
+  /* --- many brands: rank, cap at 3, fold the tail --- */
+  const shown=bs.length<=3?bs:bs.slice(0,3);
+  const rest=bs.slice(3), restPts=rest.reduce((s,b)=>s+b.p,0);
+  const max=Math.max(...bs.map(b=>b.p));
+  return `<div class="card">${head}
+    <div class="row sb" style="align-items:flex-end;margin-bottom:12px">
+      <div class="col"><span class="med" style="font-size:22px">${nfmt(total)}</span>
+        <span class="tiny">${t('acrossN',{n:bs.length})}</span></div>
+      <span class="chip ok"><span class="dot"></span>+840 ${t('vsLast')}</span></div>
+    <div class="divide" style="margin:0 0 4px"></div>
+    ${shown.map((b,i)=>brandRow(b.n,b.p,max,`${b.v} ${L(b.u)} · ${L(b.i)}`,false,'go:brands',i*70)).join('')}
+    ${rest.length?brandRow(t('otherBrands',{n:rest.length}),restPts,max,'',true,'go:brands',260):''}
+    ${bs.length>3?`<button class="btn ghost sm" data-act="go:brands" style="margin-top:10px">${t('seeAllBrands',{n:bs.length})}</button>`:''}
+  </div>`;
+}
+function vBrands(){
+  const bs=brands().slice().sort((a,b)=>b.p-a.p),total=brandTotal(),max=bs[0].p;
+  return `<div class="pad">
+    <div class="card">
+      <div class="lbl" style="margin-bottom:2px">${t('brandsTotal')}</div>
+      <div class="row sb" style="align-items:flex-end">
+        <span class="tile-val" style="font-size:34px">${nfmt(total)}</span>
+        <span class="chip ok"><span class="dot"></span>+840 ${t('vsLast')}</span></div>
+      <div class="tiny" style="margin-top:6px">${t('acrossN',{n:bs.length})}</div></div>
+    <div class="card">
+      ${bs.map((b,i)=>brandRow(b.n,b.p,max,`${b.v} ${L(b.u)} · ${L(b.i)}`,false,'go:allocations',i*55)).join('')}
+    </div>
+    <div class="tiny" style="text-align:center">${t('tapBrand')}</div>
+  </div>`;
+}
+const rew=id=>D.rewards.find(r=>r.id===id);
+const evt=id=>D.events.find(e=>e.id===id);
+const isNew=()=>ACCT==='new';
+
+/* ============================================================
+   SKELETONS
+   ============================================================ */
+const skRow=()=>`<div class="card"><div class="row sb" style="margin-bottom:9px"><div class="sk" style="width:44%"></div><div class="sk t" style="width:20%"></div></div><div class="sk b" style="width:34%;margin-bottom:9px"></div><div class="sk t" style="width:64%"></div></div>`;
+const skList=n=>Array.from({length:n},skRow).join('');
+const skForm=()=>`<div class="pad"><div class="sk c" style="margin-bottom:22px"></div><div class="sk b" style="width:62%;margin-bottom:12px"></div><div class="sk t" style="width:88%;margin-bottom:8px"></div><div class="sk t" style="width:70%;margin-bottom:26px"></div><div class="sk" style="height:52px;margin-bottom:14px"></div><div class="sk" style="height:48px"></div></div>`;
+const skHome=()=>`<div class="pad"><div class="card"><div class="sk t" style="width:34%;margin-bottom:10px"></div><div class="sk" style="height:32px;width:52%;margin-bottom:14px"></div><div class="row sb"><div class="sk t" style="width:22%"></div><div class="sk t" style="width:22%"></div><div class="sk t" style="width:22%"></div></div></div><div class="sk" style="height:92px;border-radius:8px;margin-bottom:12px"></div><div class="card"><div class="sk t" style="width:40%;margin-bottom:14px"></div><div class="sk" style="height:88px"></div></div>${skRow()}</div>`;
+const skPoints=()=>`<div class="pad"><div class="sk" style="height:118px;border-radius:8px;margin-bottom:12px"></div><div class="card"><div class="sk t" style="width:46%;margin-bottom:14px"></div><div class="sk t" style="width:100%;margin-bottom:9px"></div><div class="sk t" style="width:100%;margin-bottom:9px"></div><div class="sk t" style="width:100%"></div></div></div>`;
+const skProfile=()=>`<div class="pad"><div class="card" style="text-align:center"><div class="sk c" style="width:76px;height:76px;margin:0 auto 12px"></div><div class="sk b" style="width:52%;margin:0 auto 8px"></div><div class="sk t" style="width:38%;margin:0 auto"></div></div><div class="card"><div class="sk t" style="width:34%;margin-bottom:14px"></div><div class="sk t" style="width:100%;margin-bottom:10px"></div><div class="sk t" style="width:100%;margin-bottom:10px"></div><div class="sk t" style="width:100%"></div></div>${skRow()}</div>`;
+const skDetail=()=>`<div class="pad"><div class="card"><div class="sk t" style="width:48%;margin-bottom:12px"></div><div class="sk" style="height:32px;width:38%;margin-bottom:10px"></div><div class="sk t" style="width:56%"></div></div><div class="card"><div class="sk t" style="width:100%;margin-bottom:11px"></div><div class="sk t" style="width:100%;margin-bottom:11px"></div><div class="sk t" style="width:100%;margin-bottom:11px"></div><div class="sk t" style="width:100%"></div></div></div>`;
+const skLang=()=>`<div class="pad" style="padding:24px 20px"><div class="sk c" style="width:34px;height:34px;margin:0 auto 16px"></div><div class="sk b" style="width:44%;margin:0 auto 22px"></div>${Array.from({length:5},()=>`<div class="sk" style="height:46px;margin-bottom:8px"></div>`).join('')}</div>`;
+
+/* ============================================================
+   SCREEN VIEWS
+   ============================================================ */
+function vLang(){
+  const rows=LANGS.map(l=>{
+    const on=l.c===LANG;
+    return `<button class="li" data-act="setlang:${l.c}" style="display:block;width:100%;text-align:left;border:0;font:inherit;${on?'background:var(--s-brand-5)':''}">
+      <div class="row sb"><div class="col">
+        <span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">${esc(l.n)}</span>
+        <span class="tiny">${esc(L(l.lat))}</span></div>
+        ${on?ic('i-check','ico','width:22px;height:22px;color:var(--s-brand)'):''}
+      </div></button>`}).join('');
+  return `<div class="pad" style="padding:24px 20px 6px">
+      ${ic('i-globe','ico','width:34px;height:34px;color:var(--s-brand);display:block;margin:0 auto 14px')}
+      <div class="med" style="text-align:center;font-size:20px">भाषा चुनें</div>
+      <div class="sub" style="text-align:center;margin-bottom:16px">Choose your language</div>
+    </div>
+    <div style="padding:0 20px"><div class="list">${rows}</div></div>
+    <div style="padding:6px 20px 20px">
+      <div class="tiny" style="text-align:center;margin-bottom:10px">${t('langsMore')}</div>
+      <button class="btn" data-act="go:login">${t('continue')}</button>
+      <div class="tiny" style="text-align:center;margin-top:12px">${t('changeLater')}</div>
+    </div>`;
+}
+function vLogin(){
+  return `<div class="pad" style="padding:26px 20px">
+    <div class="illus sq" style="border-radius:12px;margin-bottom:22px">LOGO</div>
+    <div class="med" style="font-size:22px;margin-bottom:10px">${t('welcome')}</div>
+    <div class="sub" style="margin-bottom:22px">${t('loginHelp')}</div>
+    <div class="lbl" style="margin-bottom:6px">${t('mobile')}</div>
+    <div class="field" style="margin-bottom:8px"><b style="color:var(--s-body)">+91</b><span class="ph">98765 43210</span></div>
+    <div class="tiny" style="margin-bottom:18px">${t('smsNote')}</div>
+    <button class="btn" data-act="go:otp" style="margin-bottom:10px">${t('sendCode')}</button>
+    <button class="btn ghost sm" data-act="go:notreg">${LANG==='hi'?'अनजान नंबर आज़माएँ (डेमो)':'Try an unknown number (demo)'}</button>
+    <div class="divide" style="margin:20px 0"></div>
+    <div class="row" style="gap:8px;justify-content:center">${ic('i-phone','ico','width:18px;height:18px;color:var(--s-brand)')}<span class="sub" style="color:var(--s-brand);font-weight:600">${t('needHelp')}</span></div>
+  </div>`;
+}
+function vOtp(){
+  const boxes=Array.from({length:6},(_,i)=>`<span class="${i===otpLen?'f':''}">${i<otpLen?'472819'[i]:'&nbsp;'}</span>`).join('');
+  const full=otpLen>=6;
+  return `<div class="pad" style="padding:22px 20px">
+    <div class="sub" style="margin-bottom:4px">${t('codeSentTo')}</div>
+    <div class="row sb" style="margin-bottom:20px"><span class="med" style="font-size:17px">${D.user.phone}</span><button class="chip brand" data-act="back" style="border:0;font:inherit;cursor:pointer">${t('change')}</button></div>
+    <div class="otp" style="margin-bottom:14px">${boxes}</div>
+    <div class="row sb" style="margin-bottom:20px"><span class="tiny">${t('didntGet')}</span><span class="tiny" style="font-weight:600">${t('resendIn')}</span></div>
+    <button class="btn ${full?'':'dis'}" ${full?'data-act="login"':''}>${t('verify')}</button>
+    <div class="tiny" style="text-align:center;margin-top:10px">${LANG==='hi'?'डेमो: बॉक्स भरने के लिए दबाएँ':'Demo: tap to fill the code'}</div>
+    <button class="btn ghost sm" data-act="typeotp" style="margin-top:8px">${LANG==='hi'?'कोड भरें':'Fill code'}</button>
+    <div class="divide" style="margin:20px 0"></div>
+    <div class="row" style="gap:8px;justify-content:center">${ic('i-phone','ico','width:18px;height:18px;color:var(--s-brand)')}<span class="sub" style="color:var(--s-brand);font-weight:600">${t('callInstead')}</span></div>
+  </div>`;
+}
+function vNotReg(){
+  return `<div class="pad" style="padding:26px 20px">
+    <div class="illus sq" style="margin:0 auto 20px;border-radius:50%">ILLUS</div>
+    <div class="h" style="text-align:center;font-size:18px;margin-bottom:10px">${t('notRegTitle')}</div>
+    <div class="sub" style="text-align:center;margin-bottom:4px">+91 91234 00000</div>
+    <div class="sub" style="text-align:center;margin-bottom:22px">${t('notRegBody')}</div>
+    <div class="g8">
+      <button class="btn">${ic('i-phone','ico','width:20px;height:20px;color:#fff')}${t('callSupport')}</button>
+      <button class="btn out">${t('whatsapp')}</button>
+      <button class="btn ghost" data-act="back">${t('tryAnother')}</button>
+    </div>
+  </div>`;
+}
+function vHome(){
+  if(isNew())return `<div class="pad" style="padding:26px 20px">
+    <div class="illus sq" style="margin:0 auto 18px;border-radius:50%">ILLUS</div>
+    <div class="h" style="text-align:center;font-size:17px;margin-bottom:8px">${t('emptyTitle')}</div>
+    <div class="sub" style="text-align:center;margin-bottom:20px">${t('emptyBody')}</div>
+    <div class="card"><div class="h" style="font-size:14px">${t('whileYouWait')}</div><div class="g8">
+      <button class="row sb" data-act="tab:profile" style="border:0;background:none;font:inherit;padding:0;cursor:pointer;width:100%"><span class="sub">${t('completeProfile')}</span><span class="chip brand">+50</span></button>
+      <button class="row sb" data-act="go:learn" style="border:0;background:none;font:inherit;padding:0;cursor:pointer;width:100%"><span class="sub">${t('watchVideo')}</span><span class="chip brand">+20</span></button>
+      <button class="row sb" data-act="go:referral" style="border:0;background:none;font:inherit;padding:0;cursor:pointer;width:100%"><span class="sub">${t('referFriend')}</span><span class="chip brand">+250</span></button>
+    </div></div></div>`;
+  const ev=D.events[0];
+  const feed=D.allocations.slice(0,2).map(a=>`<div class="li" data-act="go:allocDetail:${a.id}">
+      <div class="row sb" style="margin-bottom:5px">${roleChip(a.brand,a.role)}<span class="tiny">${L(a.ago)}</span></div>
+      <div class="med" style="font-size:18px">${a.qty} ${L(a.unit)}</div>
+      <div class="tiny" style="margin-top:2px">${t('allocatedBy')} ${esc(a.by)} · ${L(a.byT)}</div></div>`).join('')
+    +`<div class="li" data-act="go:rewardDetail:3">
+      <div class="row sb" style="margin-bottom:5px">${stChip('received')}<span class="tiny">${LANG==='hi'?'1 हफ़्ता पहले':'1 week ago'}</span></div>
+      <div class="med" style="font-size:16px">${L(D.rewards[2].name)}</div>
+      <div class="tiny" style="margin-top:2px">${L(D.rewards[2].scheme)}</div></div>`;
+  return `<div class="pad">
+    <div class="card">
+      <div class="lbl" style="margin-bottom:4px">${t('pointsBalance')}</div>
+      <div class="row sb" style="align-items:flex-end"><span class="big">${D.user.points}</span><span class="chip ok"><span class="dot"></span>+840 ${t('thisMonth')}</span></div>
+      <div class="divide"></div>
+      <div class="row sb">
+        <div class="col"><span class="med" style="font-size:17px">${D.user.partners}</span><span class="tiny">${t('partners')}</span></div>
+        <div class="col"><span class="med" style="font-size:17px">${D.user.industries}</span><span class="tiny">${t('industries')}</span></div>
+        <div class="col"><span class="med" style="font-size:17px">${D.user.rewards}</span><span class="tiny">${t('rewards')}</span></div>
+      </div>
+    </div>
+    <div class="banner" data-act="go:eventDetail:1" style="margin-bottom:12px"><div class="row" style="gap:12px">
+      <div class="illus sq" style="width:52px;height:52px;background:rgba(255,255,255,.22);color:rgba(255,255,255,.8)">UTSAV</div>
+      <div class="col" style="flex:1"><span class="lbl">${L(ev.name)}</span><span class="med" style="font-size:16px">${L(ev.when)}</span>
+      <span style="font-size:12px;color:rgba(255,255,255,.85)">${t('invited')} · ${t('daysToGo',{n:ev.days})}</span></div>
+      ${ic('i-chev','ico','color:#fff')}</div></div>
+    ${brandCard()}
+    <div class="row sb" style="margin:4px 0 10px"><span class="h" style="margin:0">${t('recentActivity')}</span>
+      <button class="sub" data-act="tab:allocations" style="color:var(--s-brand);font-weight:600;border:0;background:none;font-family:inherit;cursor:pointer">${t('seeAll')}</button></div>
+    <div class="list">${feed}</div>
+  </div>`;
+}
+function vAllocations(){
+  if(isNew())return empty('emptyAlloc','emptyAllocBody');
+  const list=D.allocations.filter(a=>filtInd==='all'||a.ind===filtInd);
+  const chips=[['all','all'],['steel','steel'],['cement','cement'],['paints','paints']]
+    .map(([k,l])=>`<button class="${filtInd===k?'on':''}" data-act="filt:${k}">${t(l)}</button>`).join('');
+  const rows=list.map(a=>`<div class="li" data-act="go:allocDetail:${a.id}">
+      <div class="row sb" style="margin-bottom:5px">${roleChip(a.brand,a.role)}${ic('i-chev','ico','width:18px;height:18px;color:var(--s-mute)')}</div>
+      <div class="med" style="font-size:19px">${a.qty} ${L(a.unit)}</div>
+      <div class="tiny" style="margin:2px 0 6px">${L(a.prod)}</div>
+      <div class="row sb"><span class="tiny">${esc(a.by)}</span><span class="tiny">${L(a.date)}</span></div></div>`).join('');
+  return `<div style="padding:10px 14px;background:var(--s-bg);border-bottom:1px solid var(--s-line)"><div class="seg">${chips}</div></div>
+    <div class="pad">
+      <div class="row sb" style="margin-bottom:10px"><span class="tiny">${t('nAllocations',{n:list.length})}</span><span class="tiny" style="font-weight:600">${t('newestFirst')}</span></div>
+      <div class="list">${rows}</div>
+      ${ONLINE?'':`<div class="card" style="border-style:dashed;text-align:center"><div class="sub" style="margin-bottom:8px">${t('pendingBody')}</div><span class="chip warn"><span class="dot"></span>${t('pendingSync')}</span></div>`}
+    </div>`;
+}
+function vAllocDetail(p){
+  const a=alloc(p.id);
+  return `<div class="pad">
+    <div class="card">${roleChip(a.brand,a.role)}
+      <div class="big" style="margin:10px 0 2px">${a.qty} ${L(a.unit)}</div>
+      <div class="sub" style="margin-bottom:12px">${L(a.prod)}</div>${stChip('received').replace('Received',LANG==='hi'?'पुष्टि हुई':'Confirmed').replace('मिल गया',LANG==='hi'?'पुष्टि हुई':'Confirmed')}</div>
+    <div class="card"><table class="tbl">
+      <tr><td>${t('allocatedBy')}</td><td>${esc(a.by)}</td></tr>
+      <tr><td>${t('partnerType')}</td><td>${L(a.byT)}</td></tr>
+      <tr><td>${t('date')}</td><td>${L(a.date)}</td></tr>
+      <tr><td>${t('industry')}</td><td>${L(a.indN)}</td></tr>
+      <tr><td>${t('yourRole')}</td><td>${L(a.role)}</td></tr>
+      <tr><td>${t('pointsEarned')}</td><td>${a.pts}</td></tr>
+    </table></div>
+    <div class="card"><div class="lbl" style="margin-bottom:6px">${t('totalFrom',{b:a.brand})}</div>
+      <div class="med">${L(a.tot)}</div><div class="tiny">${L(a.totN)}</div></div>
+    <div class="card"><div class="row" style="gap:10px;margin-bottom:10px">${ic('i-warn','ico','width:20px;height:20px;color:var(--s-body)')}<span class="sub" style="font-weight:600;color:var(--s-ink)">${t('somethingWrong')}</span></div>
+      <button class="btn out sm" data-act="go:dispute:${a.id}">${t('reportProblem')}</button></div>
+  </div>`;
+}
+function vDispute(p){
+  const a=alloc(p.id);
+  const opts=[t('r1'),t('r2'),t('r3'),t('r4')].map((r,i)=>
+    `<button class="card tap" data-act="reason:${i}" style="margin:0;width:100%;text-align:left;font:inherit;${i===disputeReason?'border-color:var(--s-brand);background:var(--s-brand-5)':''}">
+      <div class="row sb"><span class="sub" style="${i===disputeReason?'font-weight:600;color:var(--s-ink)':''}">${r}</span>
+      ${i===disputeReason?ic('i-check','ico','width:20px;height:20px;color:var(--s-brand)'):''}</div></button>`).join('');
+  return `<div class="pad">
+    <div class="card"><div class="tiny" style="margin-bottom:4px">${t('aboutThis')}</div>
+      <div class="sub" style="font-weight:600;color:var(--s-ink)">${a.brand} · ${a.qty} ${L(a.unit)} · ${L(a.date)}</div></div>
+    <div class="h">${t('whatsWrong')}</div>
+    <div class="g8" style="margin-bottom:14px">${opts}</div>
+    <div class="card" style="border-style:dashed"><div class="row" style="gap:10px;justify-content:center">${ic('i-cam','ico','color:var(--s-brand)')}<span class="sub" style="color:var(--s-brand);font-weight:600">${t('addPhoto')}</span></div></div>
+    <button class="btn" data-act="go:disputeSent">${t('sendToHumbee')}</button>
+    <div class="tiny" style="text-align:center;margin-top:10px">${t('whoSees',{p:esc(a.by)})}</div>
+  </div>`;
+}
+function vDisputeSent(){
+  return `<div class="pad" style="padding:30px 20px;text-align:center">
+    <div style="width:64px;height:64px;border-radius:50%;background:var(--s-ok-bg);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">${ic('i-check','ico','width:30px;height:30px;color:var(--s-ok)')}</div>
+    <div class="h" style="font-size:18px;margin-bottom:8px">${ONLINE?t('sentTitle'):t('pendingSync')}</div>
+    <div class="sub" style="margin-bottom:16px">${ONLINE?t('sentBody'):t('pendingBody')}</div>
+    ${ONLINE?`<div class="card"><div class="row sb"><span class="tiny">${t('ticketNo')}</span><span class="sub" style="font-weight:700;color:var(--s-ink)">HB-24817</span></div></div>`:''}
+    <button class="btn out" data-act="tab:allocations" style="margin-top:6px">${t('backToAlloc')}</button>
+  </div>`;
+}
+function vRewards(){
+  const tabs=[['rewards','rewards'],['draws','luckyDraws'],['events','events']]
+    .map(([k,l])=>`<button class="${subRewards===k?'on':''}" data-act="sub:${k}">${t(l)}</button>`).join('');
+  let body='';
+  if(isNew()) body=empty('emptyRewards','emptyRewardsBody');
+  else if(subRewards==='rewards') body=`<div class="pad">${D.rewards.map(r=>`<div class="card tap" data-act="go:rewardDetail:${r.id}"><div class="row" style="gap:12px">
+      <div class="thumb">PHOTO</div><div class="col" style="flex:1">
+      <span class="sub" style="font-weight:700;color:var(--s-ink);font-size:15px">${L(r.name)}</span>
+      <span class="tiny">${L(r.scheme)}</span>
+      <span style="margin-top:6px">${stChip(r.st)}</span></div></div></div>`).join('')}</div>`;
+  else if(subRewards==='draws') body=`<div class="pad">${D.draws.map(d=>{
+      if(d.st==='pending')return `<div class="card"><div class="row sb" style="margin-bottom:8px"><span class="chip brand">${d.brand}</span><span class="chip warn"><span class="dot"></span>${t('drawOn',{d:L(d.d)})}</span></div>
+        <div class="sub" style="font-weight:700;color:var(--s-ink);font-size:15px;margin-bottom:8px">${L(d.name)}</div>
+        <div class="row sb" style="align-items:flex-end"><div class="col"><span class="big" style="font-size:26px">${d.entries}</span><span class="tiny">${t('yourEntries')}</span></div>
+        <span class="tiny" style="text-align:right;max-width:160px">${L(d.basis)}</span></div></div>`;
+      const won=d.st==='won';
+      return `<div class="card"><div class="row sb" style="margin-bottom:8px"><span class="chip brand">${d.brand}</span>
+        ${won?`<span class="chip ok">${ic('i-check','ico','width:12px;height:12px')}${t('youWon')}</span>`:`<span class="chip neu"><span class="dot"></span>${t('notWon')}</span>`}</div>
+        <div class="sub" style="font-weight:700;color:var(--s-ink);font-size:15px;margin-bottom:4px">${L(d.name)}</div>
+        ${won?`<div class="sub">${t('prize')}: ${L(d.prize)}</div>`:''}
+        <div class="divide"></div>
+        <div class="row sb"><span class="tiny">${L(d.meta)}</span><span class="tiny" style="color:var(--s-brand);font-weight:600">${t('seeWinners')}</span></div></div>`}).join('')}</div>`;
+  else{
+    const up=D.events.filter(e=>e.up),past=D.events.filter(e=>!e.up);
+    body=`<div class="pad">
+      <div class="lbl" style="margin-bottom:8px">${t('comingUp')}</div>
+      ${up.map(e=>`<div class="card tap" data-act="go:eventDetail:${e.id}" style="border-color:var(--s-brand);border-width:2px">
+        <div class="illus" style="margin-bottom:12px">EVENT BANNER</div>
+        <div class="row sb" style="margin-bottom:6px"><span class="med" style="font-size:17px">${L(e.name)}</span><span class="chip ok">${ic('i-check','ico','width:12px;height:12px')}${LANG==='hi'?'आमंत्रित':'Invited'}</span></div>
+        <div class="sub" style="margin-bottom:2px">${L(e.when)}</div>
+        <div class="tiny" style="margin-bottom:12px">${L(e.elig)}</div>
+        <div class="row sb" style="background:var(--s-brand-5);padding:10px 12px;border-radius:6px">
+          <span class="sub" style="font-weight:600;color:var(--s-brand)">${t('daysToGo',{n:e.days})}</span>${ic('i-chev','ico','width:18px;height:18px;color:var(--s-brand)')}</div></div>`).join('')}
+      <div class="lbl" style="margin:18px 0 8px">${t('pastEvents')}</div>
+      ${past.map(e=>`<div class="card tap" data-act="go:eventDetail:${e.id}"><div class="row" style="gap:12px">
+        <div class="illus sq">UTSAV</div><div class="col" style="flex:1">
+        <span class="sub" style="font-weight:700;color:var(--s-ink)">${L(e.name)}</span>
+        <span class="tiny">${L(e.when)}</span>
+        <span style="margin-top:6px">${e.att?`<span class="chip ok">${ic('i-check','ico','width:12px;height:12px')}${t('attended')} · ${t('nGift',{n:e.gifts})}</span>`:`<span class="chip neu">${t('didNotAttend')}</span>`}</span>
+        </div></div></div>`).join('')}
+    </div>`;
+  }
+  return `<div style="padding:10px 14px;background:var(--s-bg);border-bottom:1px solid var(--s-line)"><div class="seg">${tabs}</div></div>${body}`;
+}
+function vRewardDetail(p){
+  const r=rew(p.id);
+  const steps=STAGES.map((s,i)=>{
+    const cls=i<r.stage?'done':(i===r.stage?'now':'');
+    return `<div class="step ${cls}"><div class="pin"></div><div class="col">
+      <span class="sub" style="${i<=r.stage?'font-weight:600;color:var(--s-ink)':'color:var(--s-mute)'}">${L(s)}</span>
+      ${i===0?`<span class="tiny">${L(r.ann)}</span>`:''}</div></div>`}).join('');
+  return `<div class="pad">
+    <div class="card"><div class="illus" style="margin-bottom:12px">PHOTO</div>
+      <div class="med" style="font-size:18px;margin-bottom:2px">${L(r.name)}</div>
+      <div class="tiny">${L(r.rule)}</div></div>
+    <div class="card"><div class="h">${t('whereNow')}</div><div class="g8">${steps}</div></div>
+    <div class="card"><table class="tbl">
+      <tr><td>${t('grantedBy')}</td><td>${esc(r.by)}</td></tr>
+      <tr><td>${t('through')}</td><td>${esc(r.via)}</td></tr>
+      <tr><td>${t('announcedOn')}</td><td>${L(r.ann)}</td></tr></table></div>
+    ${r.stage===2?`<button class="btn" data-act="receipt" style="margin-bottom:10px">${ic('i-check','ico','width:20px;height:20px;color:#fff')}${t('confirmReceipt')}</button>`:''}
+    <button class="btn ghost" data-act="go:support">${t('askAbout')}</button>
+  </div>`;
+}
+function vEventDetail(p){
+  const e=evt(p.id);
+  if(e.up)return `<div class="pad">
+    <div class="card" style="padding:0;overflow:hidden"><div class="illus" style="height:120px;border-radius:0">EVENT BANNER</div>
+      <div style="padding:14px"><div class="row sb" style="margin-bottom:8px">
+        <div class="col"><span class="med" style="font-size:17px">${L(e.name)}</span><span class="tiny">${L(e.when)}</span></div>
+        <span class="chip ok">${ic('i-check','ico','width:12px;height:12px')}${LANG==='hi'?'आमंत्रित':'Invited'}</span></div>
+        <div class="tiny">${L(e.elig)}</div></div></div>
+    <div class="card" style="text-align:center;background:var(--s-brand);border-color:var(--s-brand)">
+      <div class="big" style="color:#fff;font-size:32px">${e.days}</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.85)">${t('daysToGo',{n:e.days}).replace(String(e.days),'').trim()}</div></div>
+    <button class="btn out">${t('shareCard')}</button></div>`;
+  if(!e.att)return `<div class="pad">
+    <div class="card"><div class="illus" style="margin-bottom:12px">EVENT PHOTO</div>
+      <div class="med" style="font-size:17px">${L(e.name)}</div><div class="tiny">${L(e.when)}</div>
+      <div style="margin-top:10px"><span class="chip neu">${t('didNotAttend')}</span></div></div></div>`;
+  const g=e.gift;
+  return `<div class="pad">
+    <div class="card" style="padding:0;overflow:hidden"><div class="illus" style="height:120px;border-radius:0">EVENT PHOTO</div>
+      <div style="padding:14px"><div class="row sb">
+        <div class="col"><span class="med" style="font-size:17px">${L(e.date)}</span><span class="tiny">${L(e.venue)}</span></div>
+        <span class="chip ok">${ic('i-check','ico','width:12px;height:12px')}${t('attended')}</span></div></div></div>
+    <div class="card"><div class="h">${t('whatYouWon')}</div>
+      <div class="row" style="gap:12px;margin-bottom:12px"><div class="thumb">PHOTO</div><div class="col" style="flex:1">
+        <span class="sub" style="font-weight:700;color:var(--s-ink)">${L(g.name)}</span>
+        <span class="tiny">${L(g.basis)}</span>
+        <span style="margin-top:6px"><span class="chip ok">${ic('i-check','ico','width:12px;height:12px')}${L(g.st)}</span></span></div></div>
+      <div class="divide"></div><div class="tiny">${L(g.by)}</div></div>
+    <div class="card"><div class="h">${t('photosFromDay')}</div>
+      <div class="row" style="gap:8px">${'<div class="illus sq" style="flex:1;width:auto">PHOTO</div>'.repeat(3)}</div>
+      <div class="tiny" style="margin-top:8px">Phase 1.1</div></div>
+  </div>`;
+}
+function vPoints(){
+  if(isNew())return `<div class="pad" style="padding:26px 20px;text-align:center">
+    <div class="illus sq" style="margin:0 auto 18px;border-radius:50%">ILLUS</div>
+    <div class="h" style="font-size:17px;margin-bottom:8px">${t('zeroPoints')}</div>
+    <div class="big" style="margin-bottom:14px">0</div>
+    <div class="sub">${t('emptyAllocBody')}</div></div>`;
+  return `<div class="pad">
+    <div class="card" style="background:var(--s-brand);border-color:var(--s-brand)">
+      <div class="lbl" style="color:rgba(255,255,255,.82)">${t('yourBalance')}</div>
+      <div class="big" style="color:#fff;font-size:38px;margin:4px 0 8px">${D.user.points}</div>
+      <div class="row sb"><span style="font-size:12px;color:rgba(255,255,255,.85)">${t('earnedThisMonth',{n:840})}</span>
+      <span class="chip" style="background:rgba(255,255,255,.2);color:#fff">${t('since',{d:L(D.user.since)})}</span></div></div>
+    <div class="card"><div class="h">${t('howEarned')}</div><table class="tbl">
+      <tr><td>${t('steel')} — 1 ${L(U_KG)}</td><td>1</td></tr>
+      <tr><td>${t('cement')} — 1 ${LANG==='hi'?'बोरी':'bag'}</td><td>1</td></tr>
+      <tr><td>${t('paints')} — 1 ${LANG==='hi'?'लीटर':'litre'}</td><td>1</td></tr></table>
+      <div class="tiny" style="margin-top:10px">${t('workedEg')}</div></div>
+    <div class="card tap" data-act="go:ledger"><div class="row sb"><span class="sub" style="font-weight:600;color:var(--s-ink)">${t('pointsHistory')}</span>${ic('i-chev','ico','width:18px;height:18px;color:var(--s-mute)')}</div></div>
+    <div class="strip info" style="border-radius:8px;margin-bottom:12px">${ic('i-warn','ico','width:18px;height:18px')}${t('expiring')}</div>
+    <button class="btn out">${t('seeRedeem')}</button></div>`;
+}
+function vLedger(){
+  return `<div style="padding:10px 14px;background:var(--s-bg);border-bottom:1px solid var(--s-line)"><div class="seg">
+    <button class="on">${t('all')}</button><button>${t('earned')}</button><button>${t('used')}</button><button>${t('expired')}</button></div></div>
+    <div class="pad"><div class="card">${D.ledger.map(l=>`<div class="ledg" ${l.a?`data-act="go:allocDetail:${l.a}"`:''}>
+      <div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">${L(l.t)}</span><span class="tiny">${L(l.m)}</span></div>
+      <span class="${l.k==='p'?'plus':'minus'}">${l.v}</span></div>`).join('')}</div>
+      <div class="tiny" style="text-align:center">${t('ledgerNote')}</div></div>`;
+}
+function vNotifs(){
+  return `<div class="pad">${D.notifs.map(n=>`<div class="card tap" data-act="go:${n.go}${n.p?':'+n.p.id:''}" style="${n.u?'background:var(--s-brand-5);border-color:var(--s-brand-10)':''}">
+    <div class="row top" style="gap:10px"><div class="illus sq" style="width:36px;height:36px;border-radius:50%;font-size:14px">•</div>
+    <div class="col" style="flex:1"><span class="sub" style="font-weight:${n.u?'700':'600'};color:var(--s-ink)">${L(n.t)}</span>
+    ${n.b?`<span class="tiny" style="margin:2px 0 4px">${L(n.b)}</span>`:''}
+    <span class="tiny" style="margin-top:4px">${L(n.a)}</span></div></div></div>`).join('')}</div>`;
+}
+function vProfile(){
+  const menu=[['card','myCard'],['partners','linkedPartners'],['referral','referFriend'],['leaderboard','leaderboard'],['learn','learn'],['support','helpSupport']]
+    .map(([g,l])=>`<button class="li" data-act="go:${g}" style="display:block;width:100%;text-align:left;border:0;font:inherit;background:var(--s-bg)">
+      <div class="row sb"><span class="sub" style="font-weight:600;color:var(--s-ink)">${t(l,{n:D.user.partners})}</span>${ic('i-chev','ico','width:18px;height:18px;color:var(--s-mute)')}</div></button>`).join('')
+    +`<button class="li" data-act="go:langSettings" style="display:block;width:100%;text-align:left;border:0;font:inherit;background:var(--s-bg)">
+      <div class="row sb"><span class="sub" style="font-weight:600;color:var(--s-ink)">${t('language')}</span>
+      <span class="row" style="gap:8px"><span class="sub">${LANGS.find(l=>l.c===LANG).n}</span>${ic('i-chev','ico','width:18px;height:18px;color:var(--s-mute)')}</span></div></button>`;
+  return `<div class="pad">
+    <div class="card" style="text-align:center">
+      <div style="position:relative;width:76px;margin:0 auto 10px"><div class="av" style="width:76px;height:76px"></div>
+      <div style="position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;background:var(--s-brand);display:flex;align-items:center;justify-content:center">${ic('i-cam','ico','width:15px;height:15px;color:#fff')}</div></div>
+      <div class="med" style="font-size:18px">${L(D.user.name)}</div>
+      <div class="tiny">${D.user.phone}</div>
+      <div style="margin-top:8px"><span class="chip ok">${ic('i-check','ico','width:12px;height:12px')}${t('kycVerified')}</span></div></div>
+    <div class="card"><div class="h">${t('yourRoles')}</div><div class="g12">
+      ${D.roles.map(r=>`<div><div class="row sb" style="margin-bottom:3px">
+        <span class="sub" style="font-weight:600;color:var(--s-ink)">${L(r.ind)}</span><span class="chip brand">${L(r.role)}</span></div>
+        <div class="tiny">${r.brand} · ${LANG==='hi'?'द्वारा':'set by'} ${r.by}</div></div>`).join('')}</div>
+      <div class="divide"></div><div class="tiny">${t('rolesNote')}</div></div>
+    <div class="list">${menu}</div>
+    <button class="btn ghost" data-act="logout">${ic('i-out','ico','width:20px;height:20px')}${t('logOut')}</button>
+  </div>`;
+}
+function vLangSettings(){
+  const row=l=>`<button class="li" data-act="setlang2:${l.c}" style="display:block;width:100%;text-align:left;border:0;font:inherit;${l.c===LANG?'background:var(--s-brand-5)':'background:var(--s-bg)'}">
+    <div class="row sb"><div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">${esc(l.n)}</span><span class="tiny">${esc(L(l.lat))}</span></div>
+    ${l.c===LANG?ic('i-check','ico','width:22px;height:22px;color:var(--s-brand)'):''}</div></button>`;
+  const near=['hi','mr','gu'],rest=LANGS.filter(l=>!near.includes(l.c));
+  return `<div class="pad">
+    <div class="lbl" style="margin-bottom:8px">${t('usedInArea')}</div>
+    <div class="list">${LANGS.filter(l=>near.includes(l.c)).map(row).join('')}</div>
+    <div class="lbl" style="margin-bottom:8px">${t('allLanguages')}</div>
+    <div class="list">${rest.map(row).join('')}</div>
+    <div class="card" style="border-style:dashed"><div class="row top" style="gap:10px">${ic('i-bell','ico','width:20px;height:20px;color:var(--s-body)')}<span class="tiny">${t('smsNote2')}</span></div></div>
+  </div>`;
+}
+function vCard(){
+  return `<div class="pad">
+    <div class="card" style="background:var(--s-brand);border-color:var(--s-brand);padding:18px">
+      <div class="row sb" style="margin-bottom:14px"><span class="lbl" style="color:rgba(255,255,255,.82)">Humbee Influencer</span>
+        <div class="illus sq" style="width:28px;height:28px;background:rgba(255,255,255,.25);color:#fff;border-radius:5px;font-size:13px">H</div></div>
+      <div class="row" style="gap:12px;margin-bottom:14px"><div class="av" style="width:52px;height:52px;background:rgba(255,255,255,.28)"></div>
+        <div class="col" style="flex:1"><span style="font-size:17px;font-weight:700;color:#fff">${L(D.user.name)}</span>
+        <span style="font-size:12px;color:rgba(255,255,255,.85)">${t('memberSince',{d:L(D.user.since)})}</span></div></div>
+      <div style="background:#fff;border-radius:8px;padding:12px"><div class="qr"></div></div>
+      <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:14px">
+        ${D.roles.map(r=>`<span class="chip" style="background:rgba(255,255,255,.2);color:#fff">${L(r.ind).replace(' (TMT)','')} · ${L(r.role)}</span>`).join('')}</div></div>
+    <div class="card"><div class="row sb">
+      <div class="col"><span class="med" style="font-size:17px">8,240 ${L(U_KG)}</span><span class="tiny">${t('steelHandled')}</span></div>
+      <div class="col"><span class="med" style="font-size:17px">${t('yrs',{n:4})}</span><span class="tiny">${t('withHumbee')}</span></div></div></div>
+    <button class="btn out">${ic('i-share','ico','width:20px;height:20px')}${t('shareCard')}</button></div>`;
+}
+function vReferral(){
+  const chip=s=>s==='ok'?'ok':(s==='warn'?'warn':'neu');
+  return `<div class="pad">
+    <div class="card" style="text-align:center"><div class="illus sq" style="margin:0 auto 12px;border-radius:50%">ILLUS</div>
+      <div class="sub" style="margin-bottom:14px">${t('refBody')}</div>
+      <button data-act="copy" style="border:2px dashed var(--s-brand);border-radius:8px;padding:14px;margin-bottom:12px;background:none;width:100%;cursor:pointer">
+        <div class="big" style="letter-spacing:.12em;font-size:26px">RK4821</div></button>
+      <button class="btn out">${ic('i-share','ico','width:20px;height:20px')}${t('shareWA')}</button></div>
+    <div class="card"><div class="h">${t('yourReferrals')}</div><div class="g12">
+      ${D.referrals.map(r=>`<div class="row sb"><div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">${L(r.n)}</span><span class="tiny">${L(r.m)}</span></div>
+      <span class="chip ${chip(r.st)}">${r.st==='ok'?ic('i-check','ico','width:12px;height:12px'):'<span class="dot"></span>'}${L(r.v)}</span></div>`).join('')}</div></div>
+  </div>`;
+}
+function vSupport(){
+  return `<div class="pad">
+    <div class="card" style="background:var(--s-brand);border-color:var(--s-brand);padding:16px">
+      <div class="row" style="gap:12px">${ic('i-phone','ico','width:28px;height:28px;color:#fff')}
+        <div class="col" style="flex:1"><span style="font-size:12px;color:rgba(255,255,255,.85)">${t('tollFree')}</span>
+        <span style="font-size:19px;font-weight:700;color:#fff">1800 2100 123</span></div></div></div>
+    <button class="btn out" style="margin-bottom:16px">${t('whatsapp')}</button>
+    <div class="h">${t('commonQ')}</div>
+    <div class="list">${D.faqs.map(f=>`<div class="li"><div class="row sb"><span class="sub">${L(f)}</span>${ic('i-chev','ico','width:18px;height:18px;color:var(--s-mute)')}</div></div>`).join('')}</div>
+    <div class="card tap"><div class="row sb"><span class="sub" style="font-weight:600;color:var(--s-ink)">${t('myRequests',{n:2})}</span>${ic('i-chev','ico','width:18px;height:18px;color:var(--s-mute)')}</div></div>
+  </div>`;
+}
+function vLearn(){
+  const h=D.learn[0];
+  return `<div style="padding:10px 14px;background:var(--s-bg);border-bottom:1px solid var(--s-line)"><div class="seg">
+      <button class="${LANG==='hi'?'on':''}" data-act="setlang2:hi">हिन्दी</button><button class="${LANG==='en'?'on':''}" data-act="setlang2:en">English</button></div></div>
+    <div class="pad">
+      <div class="card" style="padding:0;overflow:hidden"><div class="illus" style="height:104px;border-radius:0">VIDEO</div>
+        <div style="padding:14px"><div class="row" style="gap:8px;margin-bottom:6px"><span class="chip brand">${L(h.tag)}</span><span class="chip neu">${h.d}</span></div>
+        <div class="sub" style="font-weight:700;color:var(--s-ink)">${L(h.t)}</div><div class="tiny" style="margin-top:4px">${h.b}</div></div></div>
+      ${D.learn.slice(1).map(v=>`<div class="card tap"><div class="row" style="gap:12px">
+        <div class="thumb">${ic('i-play','ico','width:20px;height:20px;color:#fff')}</div>
+        <div class="col" style="flex:1"><span class="sub" style="font-weight:600;color:var(--s-ink)">${L(v.t)}</span>
+        <span class="tiny">${v.b} · ${v.d}</span></div></div></div>`).join('')}
+    </div>`;
+}
+function vBoard(){
+  return `<div style="padding:10px 14px;background:var(--s-bg);border-bottom:1px solid var(--s-line)"><div class="seg">
+      <button class="on">${t('steel')}</button><button>${t('cement')}</button><button>${t('paints')}</button></div></div>
+    <div class="pad">
+      <div class="card" style="background:var(--s-brand-5);border-color:var(--s-brand)"><div class="row" style="gap:12px">
+        <span class="big" style="font-size:24px;color:var(--s-brand)">#7</span>
+        <div class="col" style="flex:1"><span class="sub" style="font-weight:700;color:var(--s-ink)">${t('you')} — ${L(D.user.name)}</span>
+        <span class="tiny">${t('thisQuarter',{n:'8,240 '+L(U_KG)})}</span></div></div></div>
+      <div class="list">${D.board.map(b=>`<div class="li" style="cursor:default"><div class="row" style="gap:12px">
+        <span class="med" style="font-size:15px;width:24px">${b.r}</span><div class="av sm"></div>
+        <div class="col" style="flex:1"><span class="sub" style="font-weight:600;color:var(--s-ink)">${L(b.n)}</span><span class="tiny">${L(b.v)}</span></div>
+        ${b.top?ic('i-trophy','ico','width:18px;height:18px;color:var(--s-brand)'):''}</div></div>`).join('')}</div>
+      <div class="tiny" style="text-align:center">${t('topBarbenders')}</div></div>`;
+}
+function vPartners(){
+  return `<div class="pad"><div class="list">${D.partnersList.map(p=>`<div class="li" style="cursor:default"><div class="row sb">
+    <div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">${esc(p.n)}</span><span class="tiny">${L(p.i)}</span></div>
+    <span class="chip neu">${L(p.t)}</span></div></div>`).join('')}</div></div>`;
+}
+function empty(k1,k2){
+  return `<div class="pad" style="padding:30px 20px;text-align:center">
+    <div class="illus sq" style="margin:0 auto 18px;border-radius:50%">ILLUS</div>
+    <div class="h" style="font-size:17px;margin-bottom:8px">${t(k1)}</div>
+    <div class="sub" style="margin-bottom:18px">${t(k2)}</div>
+    <button class="btn out sm" data-act="go:support">${t('helpSupport')}</button></div>`;
+}
+
+/* ============================================================
+   REGISTRY
+   ============================================================ */
+const SC={
+ lang:{chrome:0,view:vLang,sk:skLang,plain:1},
+ login:{chrome:0,view:vLogin,sk:skForm,plain:1},
+ otp:{chrome:'back',title:'enterCode',view:vOtp,sk:skForm,plain:1},
+ notreg:{chrome:'back',title:'notRegistered',view:vNotReg,sk:skForm,plain:1},
+ home:{chrome:'brand',tabs:1,view:vHome,sk:skHome},
+ allocations:{chrome:'bar',title:'allocations',tabs:1,act:'filter',view:vAllocations,sk:()=>`<div class="pad">${skList(4)}</div>`},
+ rewards:{chrome:'bar',title:'rewards',tabs:1,view:vRewards,sk:()=>`<div class="pad">${skList(3)}</div>`},
+ points:{chrome:'bar',title:'points',tabs:1,view:vPoints,sk:skPoints},
+ profile:{chrome:'bar',title:'profile',tabs:1,view:vProfile,sk:skProfile},
+ allocDetail:{chrome:'back',title:'allocation',view:vAllocDetail,sk:skDetail},
+ dispute:{chrome:'back',title:'reportProblem',view:vDispute,sk:skDetail},
+ disputeSent:{chrome:'back',title:'sent',view:vDisputeSent,plain:1},
+ rewardDetail:{chrome:'back',title:'reward',view:vRewardDetail,sk:skDetail},
+ eventDetail:{chrome:'back',title:'events',view:vEventDetail,sk:skDetail},
+ ledger:{chrome:'back',title:'pointsHistory',view:vLedger,sk:()=>`<div class="pad">${skList(3)}</div>`},
+ brands:{chrome:'back',title:'pointsByBrand',view:vBrands,sk:()=>`<div class="pad">${skList(3)}</div>`},
+ notifications:{chrome:'back',title:'notifications',view:vNotifs,sk:()=>`<div class="pad">${skList(3)}</div>`},
+ langSettings:{chrome:'back',title:'language',view:vLangSettings},
+ card:{chrome:'back',title:'myCard',view:vCard,sk:skDetail},
+ referral:{chrome:'back',title:'referFriend',view:vReferral,sk:skDetail},
+ support:{chrome:'back',title:'helpSupport',view:vSupport,sk:()=>`<div class="pad">${skList(3)}</div>`},
+ learn:{chrome:'back',title:'learn',view:vLearn,sk:()=>`<div class="pad">${skList(3)}</div>`},
+ leaderboard:{chrome:'back',title:'leaderboard',view:vBoard,sk:()=>`<div class="pad">${skList(3)}</div>`},
+ partners:{chrome:'back',title:'linkedPartners',view:vPartners,sk:()=>`<div class="pad">${skList(3)}</div>`}
+};
+const TABS=[['home','i-home','home'],['allocations','i-list','allocations'],['rewards','i-gift','rewards'],['points','i-coin','points'],['profile','i-user','profile']];
+
+/* ============================================================
+   CHROME + RENDER
+   ============================================================ */
+const dev=document.getElementById('device');
+function statusBar(){return `<div class="statusbar"><span>9:41</span><span>${ONLINE?'▮▮▮':'✕'} ▮▮</span></div>`}
+function bar(def){
+  if(!def.chrome)return '';
+  const title=def.title?t(def.title,{n:D.user.partners}):'';
+  if(def.chrome==='brand'){
+    const sub=isNew()?t('onePartner'):t('industriesPartners',{i:D.user.industries,p:D.user.partners});
+    return `<div class="appbar brand"><div class="av" style="background:rgba(255,255,255,.28)"></div>
+      <div class="col" style="flex:1"><span style="font-size:16px;font-weight:700;color:#fff">${L(D.user.name)}</span>
+      <span style="font-size:12px;color:rgba(255,255,255,.85)">${sub}</span></div>
+      <button class="ib" data-act="go:notifications" aria-label="Notifications">${ic('i-bell')}</button></div>`;
+  }
+  const back=def.chrome==='back'?`<button class="ib" data-act="back" aria-label="Back">${ic('i-back')}</button>`:'';
+  const act=def.act==='filter'?`<button class="ib" data-act="sheet" aria-label="Filters">${ic('i-filter')}</button>`:
+    `<button class="ib" data-act="reload" aria-label="${t('refresh')}">${ic('i-refresh')}</button>`;
+  return `<div class="appbar">${back}<span class="t">${title}</span>${act}</div>`;
+}
+function tabsBar(){
+  return `<div class="tabbar">${TABS.map(([k,i,l])=>
+    `<button class="${tab===k?'on':''}" data-act="tab:${k}">${ic(i,'ico','width:22px;height:22px')}${t(l)}</button>`).join('')}</div>`;
+}
+function filterSheet(){
+  const g=(items,cur)=>items.map(([k,l])=>`<button class="${cur===k?'on':''}" data-act="filt:${k}">${t(l)}</button>`).join('');
+  const n=D.allocations.filter(a=>filtInd==='all'||a.ind===filtInd).length;
+  return `<div class="sheetwrap"><button class="scrim" data-act="closesheet" aria-label="Close"></button>
+    <div class="sheet"><div class="grab"></div>
+      <div class="row sb" style="margin-bottom:16px"><span class="h" style="margin:0">${t('filters')}</span>
+        <button data-act="filt:all" style="border:0;background:none;font:inherit;color:var(--s-brand);font-weight:600;font-size:13px;cursor:pointer">${t('clearAll')}</button></div>
+      <div class="lbl" style="margin-bottom:8px">${t('industry')}</div>
+      <div class="seg" style="flex-wrap:wrap;margin-bottom:18px">${g([['all','all'],['steel','steel'],['cement','cement'],['paints','paints']],filtInd)}</div>
+      <div class="lbl" style="margin-bottom:8px">${t('period')}</div>
+      <div class="seg" style="margin-bottom:22px"><button>${t('thisMonthShort')}</button><button class="on">${t('last6')}</button><button>${t('allTime')}</button></div>
+      <button class="btn" data-act="closesheet">${t('showN',{n})}</button>
+    </div></div>`;
+}
+function paint(def,inner,anim){
+  const plain=def.plain?' plain':'';
+  dev.innerHTML=statusBar()
+    +(ONLINE?'':`<div class="strip warn">${ic('i-off','ico','width:16px;height:16px')}${t('offlineStrip')}</div>`)
+    +bar(def)
+    +`<div class="dbody${plain}${anim?' slide':''}">${inner}</div>`
+    +(def.tabs?tabsBar():'')
+    +(sheet?filterSheet():'')
+    +(toast?`<div class="toast">${ic('i-check','ico','width:18px;height:18px;color:#6cd96c')}${toast}</div>`:'');
+}
+function render(anim){
+  const top=stack[stack.length-1],def=SC[top.s];
+  const key=top.s+':'+(top.p?top.p.id:'')+':'+LANG+':'+ACCT+':'+NBRANDS;
+  document.getElementById('crumb').textContent=stack.map(x=>x.s).join(' › ');
+  if(def.sk && !loaded.has(key)){
+    paint(def,def.sk(),anim);
+    setTimeout(()=>{
+      if(stack[stack.length-1]!==top)return;
+      loaded.add(key);paint(def,def.view(top.p||{}),false);
+    },620);
+  } else paint(def,def.view(top.p||{}),anim);
+}
+function go(s,p){stack.push({s,p});render(true)}
+function back(){if(stack.length>1){stack.pop();render(false)}}
+function setTab(k){tab=k;stack=[{s:k}];sheet=null;render(true)}
+function flash(msg){toast=msg;render(false);setTimeout(()=>{toast=null;render(false)},1900)}
+
+/* ============================================================
+   EVENTS
+   ============================================================ */
+dev.addEventListener('click',e=>{
+  const el=e.target.closest('[data-act]');if(!el)return;
+  const [cmd,a,b]=el.dataset.act.split(':');
+  if(cmd==='go'){ if(a==='home'||a==='points')return setTab(a); go(a,b?{id:+b}:undefined) }
+  else if(cmd==='back')back();
+  else if(cmd==='tab')setTab(a);
+  else if(cmd==='login'){loaded.clear();stack=[{s:'home'}];tab='home';render(true)}
+  else if(cmd==='logout'){loaded.clear();otpLen=3;stack=[{s:'login'}];render(true)}
+  else if(cmd==='typeotp'){otpLen=6;render(false)}
+  else if(cmd==='setlang'){LANG=a;syncPanel();loaded.clear();loaded.add('lang::'+LANG+':'+ACCT);render(false)}
+  else if(cmd==='setlang2'){LANG=a;syncPanel();loaded.clear();render(false);flash(t('saved'))}
+  else if(cmd==='filt'){filtInd=a;sheet=null;if(stack[stack.length-1].s!=='allocations')setTab('allocations');else render(false)}
+  else if(cmd==='sub'){subRewards=a;render(false)}
+  else if(cmd==='sheet'){sheet=1;render(false)}
+  else if(cmd==='closesheet'){sheet=null;render(false)}
+  else if(cmd==='reason'){disputeReason=+a;render(false)}
+  else if(cmd==='reload'){loaded.clear();render(false)}
+  else if(cmd==='receipt'){D.rewards[0].stage=3;D.rewards[0].st='received';loaded.clear();flash(t('receiptSaved'))}
+  else if(cmd==='copy'){flash(t('copied'))}
+});
+document.getElementById('c-lang').addEventListener('click',e=>{
+  const b=e.target.closest('[data-lang]');if(!b)return;LANG=b.dataset.lang;syncPanel();loaded.clear();render(false)});
+document.getElementById('c-net').addEventListener('click',e=>{
+  const b=e.target.closest('[data-net]');if(!b)return;ONLINE=b.dataset.net==='on';syncPanel();render(false)});
+document.getElementById('c-acct').addEventListener('click',e=>{
+  const b=e.target.closest('[data-acct]');if(!b)return;ACCT=b.dataset.acct;syncPanel();loaded.clear();render(false)});
+document.getElementById('c-brands').addEventListener('click',e=>{
+  const b=e.target.closest('[data-brands]');if(!b)return;NBRANDS=+b.dataset.brands;syncPanel();loaded.clear();render(false)});
+document.getElementById('c-restart').addEventListener('click',()=>{
+  loaded.clear();otpLen=3;filtInd='all';subRewards='rewards';sheet=null;stack=[{s:'lang'}];tab='home';render(true)});
+function syncPanel(){
+  document.querySelectorAll('#c-lang [data-lang]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===LANG));
+  document.querySelectorAll('#c-net [data-net]').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.net==='on')===ONLINE));
+  document.querySelectorAll('#c-acct [data-acct]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.acct===ACCT));
+  document.querySelectorAll('#c-brands [data-brands]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.brands===NBRANDS));
+}
+syncPanel();render(false);
+</script>

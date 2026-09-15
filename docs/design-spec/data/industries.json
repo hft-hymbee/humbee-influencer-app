@@ -1,0 +1,226 @@
+[
+  {
+    "id": "bcm",
+    "code": "BCM",
+    "name": "Building Construction Materials",
+    "imageUrl": "assets/img/bcm.png",
+    "subIndustries": [
+      {
+        "id": "tmt",
+        "label": "TMT",
+        "imageUrl": "assets/img/tmt.png",
+        "uoms": [
+          "Ton",
+          "Kg"
+        ],
+        "skuCategories": [],
+        "manufacturers": [
+          {
+            "id": "welspun",
+            "name": "Welspun TMT",
+            "mono": "WT",
+            "uoms": [
+              "Ton",
+              "Kg"
+            ],
+            "baseUnit": "Ton",
+            "skus": [
+              {
+                "id": "welspun_sku_1",
+                "label": "Fe 500D 8mm"
+              },
+              {
+                "id": "welspun_sku_2",
+                "label": "Fe 500D 10mm"
+              },
+              {
+                "id": "welspun_sku_3",
+                "label": "Fe 500D 12mm"
+              },
+              {
+                "id": "welspun_sku_4",
+                "label": "Fe 550D 16mm"
+              },
+              {
+                "id": "welspun_sku_5",
+                "label": "Fe 550D 20mm"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "erw",
+        "label": "ERW Pipes",
+        "imageUrl": "assets/img/erw.png",
+        "uoms": [
+          "Kg",
+          "Nos"
+        ],
+        "manufacturers": [],
+        "skuCategories": [
+          {
+            "id": "erw_sku_1",
+            "label": "ERW Pipe 25mm"
+          },
+          {
+            "id": "erw_sku_2",
+            "label": "ERW Pipe 40mm"
+          },
+          {
+            "id": "erw_sku_3",
+            "label": "ERW Square Tube 50mm"
+          },
+          {
+            "id": "erw_sku_4",
+            "label": "ERW Pipe 75mm"
+          }
+        ]
+      },
+      {
+        "id": "angles",
+        "label": "Steel Angles",
+        "imageUrl": "assets/img/angles.png",
+        "uoms": [
+          "Kg",
+          "Nos"
+        ],
+        "manufacturers": [],
+        "skuCategories": [
+          {
+            "id": "angles_sku_1",
+            "label": "MS Angle 25x25x3"
+          },
+          {
+            "id": "angles_sku_2",
+            "label": "MS Angle 40x40x5"
+          },
+          {
+            "id": "angles_sku_3",
+            "label": "MS Angle 50x50x6"
+          },
+          {
+            "id": "angles_sku_4",
+            "label": "MS Flat 50x6"
+          }
+        ]
+      },
+      {
+        "id": "painthw",
+        "label": "Paints",
+        "imageUrl": "assets/img/paints.png",
+        "uoms": [
+          "Buckets",
+          "Litre"
+        ],
+        "skuCategories": [],
+        "manufacturers": [
+          {
+            "id": "dp",
+            "name": "DP Paints",
+            "mono": "DP",
+            "uoms": [
+              "Buckets",
+              "Litre"
+            ],
+            "baseUnit": "Buckets",
+            "skus": [
+              {
+                "id": "dp_sku_1",
+                "label": "Interior Emulsion 20L"
+              },
+              {
+                "id": "dp_sku_2",
+                "label": "Exterior Emulsion 10L"
+              },
+              {
+                "id": "dp_sku_3",
+                "label": "Wall Primer 20L"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cement",
+        "label": "Cement",
+        "imageUrl": "assets/img/cement.svg",
+        "uoms": [
+          "Bags",
+          "Ton"
+        ],
+        "skuCategories": [],
+        "manufacturers": [
+          {
+            "id": "dalmia",
+            "name": "Dalmia Cement",
+            "mono": "DC",
+            "uoms": [
+              "Bags",
+              "Ton"
+            ],
+            "baseUnit": "Bags",
+            "skus": [
+              {
+                "id": "dalmia_sku_1",
+                "label": "OPC 53 Grade 50kg"
+              },
+              {
+                "id": "dalmia_sku_2",
+                "label": "PPC 50kg"
+              },
+              {
+                "id": "dalmia_sku_3",
+                "label": "PSC 50kg"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fmcg",
+    "code": "FMCG",
+    "name": "Fast Moving Consumer Goods",
+    "imageUrl": "assets/img/fmcg.png",
+    "subIndustries": [
+      {
+        "id": "food",
+        "label": "Food",
+        "imageUrl": "assets/img/food.png",
+        "uoms": [
+          "Cases",
+          "Units"
+        ],
+        "skuCategories": [],
+        "manufacturers": [
+          {
+            "id": "masterchow",
+            "name": "Masterchow",
+            "mono": "MC",
+            "uoms": [
+              "Cases",
+              "Units"
+            ],
+            "baseUnit": "Cases",
+            "skus": [
+              {
+                "id": "masterchow_sku_1",
+                "label": "Hakka Noodles 400g"
+              },
+              {
+                "id": "masterchow_sku_2",
+                "label": "Schezwan Sauce 220g"
+              },
+              {
+                "id": "masterchow_sku_3",
+                "label": "Pad Thai Meal Kit"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

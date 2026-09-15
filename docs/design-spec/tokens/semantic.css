@@ -1,0 +1,58 @@
+/* HUMBEE semantic aliases + shared primitives layered on the Figma variable export.
+   FLOAT tokens in fig-tokens.css are unitless — these px aliases wrap them in calc(). */
+:root {
+  /* Radius (Theme › Corner Radius: 4 small-s, 8 medium-m, 16, 32) */
+  --radius-s: calc(var(--number-radius-s) * 1px);
+  --radius-m: calc(var(--number-radius-m) * 1px);
+  --radius-l: calc(var(--number-radius-l) * 1px);
+  --radius-xl: calc(var(--number-radius-xl) * 1px);
+  --radius-none: 0px;
+  --radius-pill: 999px;
+
+  /* Spacing — 4pt baseline grid (mobile & web) */
+  --space-xxs: calc(var(--number-spacing-xxs) * 1px);
+  --space-xs: calc(var(--number-spacing-xs) * 1px);
+  --space-s: calc(var(--number-spacing-s) * 1px);
+  --space-m: calc(var(--number-spacing-m) * 1px);
+  --space-l: calc(var(--number-spacing-l) * 1px);
+  --space-xl: calc(var(--number-spacing-xl) * 1px);
+
+  /* Icon sizes */
+  --icon-s: calc(var(--number-icon-size-s) * 1px);
+  --icon-m: calc(var(--number-icon-size-m) * 1px);
+  --icon-l: calc(var(--number-icon-size-l) * 1px);
+  --icon-xl: calc(var(--number-icon-size-xl) * 1px);
+
+  /* Brand aliases */
+  --brand-primary: var(--colour-primary-100);
+  --brand-secondary: var(--colour-secondary-100);
+  --brand-tertiary: var(--colour-tertiary-100);
+
+  /* Surfaces */
+  --surface-page: var(--colour-background-light);
+  --surface-card: var(--colour-base-white);
+  --surface-sunken: var(--colour-neutral-10);
+  --border-subtle: var(--colour-neutral-25);
+  --border-strong: var(--colour-neutral-50);
+
+  /* Text */
+  --text-primary: var(--typography-states-enabled);
+  --text-secondary: var(--typography-states-default);
+  --text-disabled: var(--typography-states-disbaled);
+  --text-on-brand: var(--colour-base-white);
+  --text-link: var(--colour-primary-100);
+
+  /* Elevation — Paper Elevations page */
+  --elevation-0: none;
+  --elevation-1: 0 1px 2px rgba(0,0,0,0.15);
+  --elevation-2: 0 2px 6px rgba(0,0,0,0.15);
+  --elevation-3: 0 4px 12px rgba(0,0,0,0.15);
+  --elevation-4: 0 8px 24px rgba(0,0,0,0.15);
+
+  --focus-ring: 0 0 0 4px var(--colour-primary-10);
+  --motion-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --motion-base: 200ms cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+}
+
+a { color: var(--text-link); text-decoration: none; }
+a:hover { color: var(--colour-primary-200); text-decoration: underline; }

@@ -1,0 +1,346 @@
+<title>Direction 01 — Ledger · Humbee Influencer</title>
+<style>
+:root{
+  --page:#f7f4ef; --panel:#fffefb; --ink:#1d1815; --ink-2:#4d443b; --mute:#857a6d;
+  --rule:#e3dcd0; --brand:#995a00;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#141110; --panel:#1d1917; --ink:#f3eee6; --ink-2:#cbc1b4; --mute:#948a7c; --rule:#2f2823; --brand:#d9a04a;}}
+:root[data-theme="dark"]{--page:#141110;--panel:#1d1917;--ink:#f3eee6;--ink-2:#cbc1b4;--mute:#948a7c;--rule:#2f2823;--brand:#d9a04a;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.stage{display:flex;gap:44px;align-items:flex-start;justify-content:center;padding:44px 24px 72px;flex-wrap:wrap}
+.brief{width:300px}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--brand);margin-bottom:12px}
+.brief h1{font-size:34px;line-height:1.02;letter-spacing:-.03em;margin:0 0 14px;font-weight:700}
+.brief p{font-size:14px;line-height:1.62;color:var(--ink-2);margin:0 0 14px}
+.spec{border-top:1px solid var(--rule);margin-top:22px;padding-top:16px}
+.spec dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.spec dd{margin:0 0 14px;font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+
+/* ---------- device ---------- */
+.dev{
+  width:360px;height:760px;flex:0 0 auto;position:relative;overflow:hidden;display:flex;flex-direction:column;
+  background:#fdfcfa;border:1px solid var(--rule);border-radius:20px;
+  box-shadow:0 2px 4px rgba(29,24,21,.05),0 30px 70px -30px rgba(29,24,21,.35);
+  --k-paper:#fdfcfa; --k-ink:#1a1512; --k-body:#5d5348; --k-mute:#93887a;
+  --k-rule:#e8e1d5; --k-rule2:#cfc5b5; --k-brand:#995a00; --k-amber:#ffa525;
+  --k-ok:#0f6b2f; --k-err:#b00000; --k-warn:#8a5a00;
+  color:var(--k-ink);
+}
+.sb{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-family:var(--mono);font-size:9.5px;color:var(--k-mute);letter-spacing:.06em;flex:0 0 auto}
+.hd{padding:14px 18px 12px;border-bottom:2px solid var(--k-ink);flex:0 0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.hd .eyebrow{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--k-mute)}
+.hd h2{margin:2px 0 0;font-size:21px;line-height:1.1;letter-spacing:-.02em;font-weight:700}
+.hd button{background:none;border:0;padding:4px;cursor:pointer;color:var(--k-body)}
+.body{flex:1;overflow-y:auto;background:var(--k-paper);scrollbar-width:none}
+.body::-webkit-scrollbar{display:none}
+.nav{display:flex;border-top:2px solid var(--k-ink);flex:0 0 auto;background:var(--k-paper)}
+.nav button{
+  flex:1;padding:10px 2px 12px;background:none;border:0;cursor:pointer;position:relative;
+  font:inherit;font-size:9px;font-family:var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--k-mute);
+}
+.nav button.on{color:var(--k-ink)}
+.nav button.on::before{content:"";position:absolute;top:-2px;left:14%;right:14%;height:2px;background:var(--k-brand);animation:draw .3s cubic-bezier(.2,.8,.2,1)}
+@keyframes draw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ---------- ledger atoms ---------- */
+.sect{padding:18px}
+.rule{height:1px;background:var(--k-rule)}
+.rule.hv{height:2px;background:var(--k-ink)}
+.lab{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--k-mute)}
+.fig{font-variant-numeric:tabular-nums;font-weight:700;letter-spacing:-.03em;line-height:1}
+.fig.xl{font-size:52px}.fig.l{font-size:30px}.fig.m{font-size:21px}.fig.s{font-size:16px}
+.unit{font-size:13px;font-weight:600;color:var(--k-body);letter-spacing:0}
+.meta{font-family:var(--mono);font-size:10px;color:var(--k-mute);letter-spacing:.03em}
+.tx{font-size:13.5px;color:var(--k-body);line-height:1.5}
+.tx b{color:var(--k-ink);font-weight:650}
+.role{
+  display:inline-block;font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--k-brand);border:1px solid currentColor;padding:2px 6px;border-radius:2px;
+}
+.entry{
+  display:block;width:100%;text-align:left;background:none;border:0;font:inherit;cursor:pointer;
+  padding:14px 18px;border-bottom:1px solid var(--k-rule);
+  opacity:0;transform:translateY(10px);animation:up .42s cubic-bezier(.16,.84,.36,1) forwards;
+}
+.entry:active{background:#f6f1e8}
+@keyframes up{to{opacity:1;transform:none}}
+.grid2{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--k-rule)}
+.grid2>div{padding:13px 18px;border-bottom:1px solid var(--k-rule)}
+.grid2>div:nth-child(odd){border-right:1px solid var(--k-rule)}
+.bars{display:flex;align-items:flex-end;gap:2px;height:88px;padding:0 18px}
+.bars>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%}
+.bars i{display:block;width:100%;background:var(--k-ink);transform-origin:bottom;animation:grow .7s cubic-bezier(.16,.84,.36,1) forwards;transform:scaleY(0)}
+.bars i.b2{background:var(--k-brand)}.bars i.b3{background:var(--k-rule2)}
+@keyframes grow{to{transform:scaleY(1)}}
+.bars b{font-family:var(--mono);font-size:8.5px;letter-spacing:.06em;color:var(--k-mute);text-transform:uppercase}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl td{padding:10px 0;border-bottom:1px solid var(--k-rule);color:var(--k-body)}
+.tbl td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:650;color:var(--k-ink)}
+.tbl tr:last-child td{border-bottom:0}
+.stamp{
+  display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.12em;text-transform:uppercase;padding:3px 7px;border-radius:2px;
+}
+.stamp.ok{color:var(--k-ok);background:rgba(15,107,47,.09)}
+.stamp.warn{color:var(--k-warn);background:rgba(255,191,64,.16)}
+.stamp.neu{color:var(--k-mute);background:#f0ebe1}
+.btn{
+  width:100%;min-height:50px;background:var(--k-ink);color:#fdfcfa;border:0;cursor:pointer;
+  font:inherit;font-size:14px;font-weight:650;letter-spacing:.01em;border-radius:2px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn.gh{background:none;color:var(--k-ink);border:1.5px solid var(--k-ink)}
+.btn:active{transform:translateY(1px)}
+.sheetback{position:absolute;inset:0;background:rgba(26,21,18,.5);z-index:8;animation:fade .2s;border:0;padding:0;cursor:pointer}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.detail{
+  position:absolute;inset:0;z-index:9;background:var(--k-paper);display:flex;flex-direction:column;
+  animation:slidein .34s cubic-bezier(.16,.84,.36,1);
+}
+@keyframes slidein{from{transform:translateX(100%)}to{transform:none}}
+.tick{overflow:hidden;display:inline-block;vertical-align:bottom}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}
+ .entry{opacity:1;transform:none}.bars i{transform:scaleY(1)}}
+@media (max-width:760px){.stage{flex-direction:column;align-items:center;padding:24px 16px 48px}.brief{width:360px;max-width:100%}.dev{width:100%;max-width:360px}}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="a-back"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="a-bell"><path d="M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6zM10 19a2 2 0 004 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+<g id="a-arrow"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+</defs></svg>
+
+<div class="stage">
+  <div class="brief">
+    <div class="kicker">Direction 01 of 04</div>
+    <h1>Ledger</h1>
+    <p>A passbook, not an app. The product's job is to convince a barbender that a number is true — so this direction borrows from the thing he already trusts: a ruled account book.</p>
+    <p>No cards, no shadows, no rounded corners. Hairline rules divide, heavy rules anchor. Every figure is tabular and oversized. Colour is spent almost entirely on the role tag, because that is the one piece of information most easily lost.</p>
+    <div class="spec">
+      <dt>Motion signature</dt>
+      <dd>Figures count up on arrival. Entries stagger in from below, 40&nbsp;ms apart. Bars grow from the baseline. The tab rule draws across rather than fading.</dd>
+      <dt>Best for</dt>
+      <dd>Trust, verification, dispute. Reads well in sunlight and survives a cheap panel.</dd>
+      <dt>Risk</dt>
+      <dd>Austere. Umang Utsav and lucky draws have to carry their own warmth, and this direction gives them little help.</dd>
+    </div>
+  </div>
+
+  <div class="dev" id="dev"></div>
+</div>
+
+<script>
+const A={
+  user:{name:'Ramesh Kumar',pts:12480,partners:5,inds:3,rewards:7},
+  alloc:[
+    {id:1,brand:'Dalmia TMT',role:'Barbender',qty:500,unit:'kg',prod:'TMT Bars 12 mm',by:'Sharma Steel Traders',type:'Distributor',date:'12 FEB 2026',ind:'Steel (TMT)',pts:500,tot:'8,240 kg',totn:'14 entries since Apr 2025'},
+    {id:2,brand:'Vastav Cement',role:'Contractor',qty:120,unit:'bags',prod:'OPC 53 Grade',by:'Gupta Traders',type:'Dealer',date:'10 FEB 2026',ind:'Cement',pts:120,tot:'2,960 bags',totn:'9 entries since Jun 2025'},
+    {id:3,brand:'MasterChow',role:'Painter',qty:45,unit:'litres',prod:'Interior Emulsion',by:'Verma Paints',type:'Dealer',date:'06 FEB 2026',ind:'Paints',pts:45,tot:'610 litres',totn:'11 entries since Aug 2025'},
+    {id:4,brand:'Dalmia TMT',role:'Barbender',qty:750,unit:'kg',prod:'TMT Bars 16 mm',by:'Sharma Steel Traders',type:'Distributor',date:'28 JAN 2026',ind:'Steel (TMT)',pts:750,tot:'8,240 kg',totn:'14 entries since Apr 2025'},
+    {id:5,brand:'Vastav Cement',role:'Contractor',qty:200,unit:'bags',prod:'PPC Grade',by:'Rathore Cement Co.',type:'Distributor',date:'19 JAN 2026',ind:'Cement',pts:200,tot:'2,960 bags',totn:'9 entries since Jun 2025'}
+  ],
+  rewards:[
+    {n:'Refrigerator — 190 L',s:'Dalmia TMT · Top 20 Barbenders',st:'warn',stt:'Processing'},
+    {n:'₹5,000 cash',s:'Vastav Cement · Monsoon Drive',st:'ok',stt:'Credited'},
+    {n:'Steel water bottle set',s:'Dalmia TMT · Q3 Volume Drive',st:'ok',stt:'Received'},
+    {n:'Safety helmet + gloves',s:'MasterChow · Onboarding gift',st:'ok',stt:'Received'}
+  ],
+  ledger:[
+    {t:'Dalmia TMT · 500 kg',m:'12 FEB · STEEL · ALLOCATION',v:500},
+    {t:'Vastav Cement · 120 bags',m:'10 FEB · CEMENT · ALLOCATION',v:120},
+    {t:'Referral — Suresh Yadav',m:'08 FEB · VERIFIED',v:250},
+    {t:'Weekly check-in',m:'05 FEB · ENGAGEMENT',v:10},
+    {t:'Voucher — ₹500 Amazon',m:'28 JAN · REDEEMED',v:-2500}
+  ]
+};
+const ic=(id,s='width:20px;height:20px')=>`<svg style="${s}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const NAV=[['home','Home'],['alloc','Entries'],['rew','Rewards'],['pts','Points'],['prof','Profile']];
+let tab='home',open=null,dev=document.getElementById('dev');
+
+function head(){
+  const T={home:['Summary',A.user.name],alloc:['Ledger','Entries'],rew:['Register','Rewards'],
+    pts:['Balance','Points'],prof:['Account','Profile']}[tab];
+  return `<div class="hd"><div><div class="eyebrow">${T[0]}</div><h2>${T[1]}</h2></div>
+    <button aria-label="Notifications">${ic('a-bell','width:21px;height:21px')}</button></div>`;
+}
+function nav(){return `<div class="nav">${NAV.map(([k,l])=>`<button class="${tab===k?'on':''}" data-t="${k}">${l}</button>`).join('')}</div>`}
+function entry(a,i){
+  return `<button class="entry" style="animation-delay:${i*45}ms" data-a="${a.id}">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:9px">
+      <span class="role">${a.brand} · ${a.role}</span><span class="meta">${a.date}</span></div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end">
+      <div><span class="fig l" data-n="${a.qty}">0</span> <span class="unit">${a.unit}</span>
+        <div class="meta" style="margin-top:6px">${a.by.toUpperCase()}</div></div>
+      ${ic('a-arrow','width:18px;height:18px;color:var(--k-mute)')}</div></button>`;
+}
+const V={
+ home(){
+  return `<div class="sect" style="padding-bottom:14px">
+      <div class="lab">Points balance</div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:6px">
+        <span class="fig xl" data-n="${A.user.pts}">0</span>
+        <span class="stamp ok">▲ 840 this month</span></div></div>
+    <div class="grid2">
+      <div><div class="lab">Partners</div><div class="fig m" data-n="${A.user.partners}" style="margin-top:5px">0</div></div>
+      <div><div class="lab">Industries</div><div class="fig m" data-n="${A.user.inds}" style="margin-top:5px">0</div></div>
+      <div><div class="lab">Rewards</div><div class="fig m" data-n="${A.user.rewards}" style="margin-top:5px">0</div></div>
+      <div><div class="lab">Draws open</div><div class="fig m" data-n="1" style="margin-top:5px">0</div></div>
+    </div>
+    <div class="sect" style="padding-bottom:10px"><div class="lab">Points by brand · February</div></div>
+    <div class="bars">
+      <div><i style="height:76%;animation-delay:.1s"></i><b>Dalmia</b></div>
+      <div><i class="b2" style="height:52%;animation-delay:.18s"></i><b>Vastav</b></div>
+      <div><i class="b3" style="height:30%;animation-delay:.26s"></i><b>M'Chow</b></div>
+    </div>
+    <div class="sect" style="padding-top:20px;padding-bottom:10px"><div class="rule hv"></div></div>
+    <div class="sect" style="padding-top:0;padding-bottom:8px"><div class="lab">Umang Utsav 2026 · 14 March · Jaipur</div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:8px">
+        <div><span class="fig l" data-n="32">0</span> <span class="unit">days to go</span></div>
+        <span class="stamp ok">Invited</span></div></div>
+    <div class="sect" style="padding-top:14px"><div class="lab" style="margin-bottom:12px">Latest entries</div></div>
+    ${A.alloc.slice(0,2).map(entry).join('')}`;
+ },
+ alloc(){
+  return `<div class="sect" style="padding-bottom:12px;display:flex;justify-content:space-between;align-items:baseline">
+      <div class="lab">${A.alloc.length} entries · all industries</div><div class="meta">NEWEST FIRST</div></div>
+    <div class="rule hv"></div>${A.alloc.map(entry).join('')}`;
+ },
+ rew(){
+  return `<div class="sect" style="padding-bottom:12px"><div class="lab">4 rewards on record</div></div><div class="rule hv"></div>
+    ${A.rewards.map((r,i)=>`<div class="entry" style="animation-delay:${i*45}ms;cursor:default">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div style="flex:1"><div class="tx"><b>${r.n}</b></div><div class="meta" style="margin-top:5px">${r.s.toUpperCase()}</div></div>
+        <span class="stamp ${r.st}">${r.stt}</span></div></div>`).join('')}`;
+ },
+ pts(){
+  return `<div class="sect" style="padding-bottom:16px">
+      <div class="lab">Balance carried forward</div>
+      <div style="margin-top:6px"><span class="fig xl" data-n="${A.user.pts}">0</span></div>
+      <div class="meta" style="margin-top:8px">SINCE APRIL 2022 · 1,200 EXPIRE 31 MAR 2026</div></div>
+    <div class="rule hv"></div>
+    <div class="sect"><div class="lab" style="margin-bottom:10px">Conversion · set by Humbee Ops</div>
+      <table class="tbl">
+        <tr><td>Steel — 1 kg</td><td>1 pt</td></tr>
+        <tr><td>Cement — 1 bag</td><td>1 pt</td></tr>
+        <tr><td>Paints — 1 litre</td><td>1 pt</td></tr></table>
+      <div class="meta" style="margin-top:12px;line-height:1.6">YOUR 500 KG OF DALMIA TMT<br>GAVE YOU 500 POINTS.</div></div>
+    <div class="rule hv"></div>
+    <div class="sect" style="padding-bottom:8px"><div class="lab">Statement</div></div>
+    ${A.ledger.map((l,i)=>`<div class="entry" style="animation-delay:${i*40}ms;cursor:default;padding-top:11px;padding-bottom:11px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
+        <div style="flex:1"><div class="tx"><b>${l.t}</b></div><div class="meta" style="margin-top:4px">${l.m}</div></div>
+        <span class="fig s" style="color:${l.v>0?'var(--k-ok)':'var(--k-err)'}">${l.v>0?'+':'−'}${Math.abs(l.v).toLocaleString('en-IN')}</span></div></div>`).join('')}
+    <div style="height:20px"></div>`;
+ },
+ prof(){
+  const F=(k,v,ed)=>`<tr><td>${k}</td><td>${v}${ed===false?' <span style="font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;color:var(--k-mute)">LOCKED</span>':''}</td></tr>`;
+  return `<div class="sect" style="padding-bottom:16px">
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div style="width:70px;height:70px;background:#efe8dc;border:1px solid var(--k-rule2);flex:0 0 auto;position:relative">
+          <span style="position:absolute;right:-1px;bottom:-1px;background:var(--k-ink);color:#fff;font-family:var(--mono);font-size:8px;letter-spacing:.08em;padding:3px 5px">EDIT</span></div>
+        <div style="flex:1;padding-top:2px">
+          <div class="lab">Influencer</div>
+          <div class="fig m" style="margin:5px 0 6px">Ramesh Kumar</div>
+          <span class="stamp ok">KYC verified</span></div></div></div>
+    <div class="rule hv"></div>
+    <div class="sect"><div class="lab" style="margin-bottom:10px">Contact</div>
+      <table class="tbl">
+        ${F('Mobile','+91 98765 43210',false)}
+        ${F('Email','ramesh.k@gmail.com')}
+        ${F('Address','Plot 14, Sector 8, Jaipur')}
+        ${F('Language','हिन्दी')}
+        ${F('Member since','April 2022',false)}
+      </table>
+      <div class="meta" style="margin-top:12px;line-height:1.6">MOBILE AND NAME ARE LOCKED.<br>CONTACT SUPPORT TO CHANGE THEM.</div></div>
+    <div class="rule hv"></div>
+    <div class="sect" style="padding-bottom:6px"><div class="lab">Your roles · by industry</div></div>
+    ${[['Steel (TMT)','Barbender',['Dalmia TMT'],'Sharma Steel Traders'],
+       ['Cement','Contractor',['Vastav Cement'],'Rathore Cement Co.'],
+       ['Paints','Painter',['MasterChow'],'Verma Paints']].map(([ind,role,brands,setter],i)=>
+      `<div class="entry" style="animation-delay:${i*50}ms;cursor:default">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+          <span class="fig s">${ind}</span><span class="role">${role}</span></div>
+        <div class="meta" style="margin-bottom:6px">${brands.join(' · ').toUpperCase()}</div>
+        <div class="meta" style="color:var(--k-rule2);font-size:9px">SET BY ${setter.toUpperCase()}</div></div>`).join('')}
+    <div class="sect" style="padding-top:16px;padding-bottom:6px"><div class="rule hv"></div></div>
+    <div class="sect" style="padding-top:6px;padding-bottom:6px"><div class="lab">Linked partners · 5</div></div>
+    ${[['Sharma Steel Traders','DISTRIBUTOR','Dalmia TMT'],['Rathore Cement Co.','DISTRIBUTOR','Vastav Cement'],
+       ['Gupta Traders','DEALER','Vastav Cement'],['Verma Paints','DEALER','MasterChow'],
+       ['Jain Hardware','DEALER','Dalmia TMT']].map((p,i)=>
+      `<div class="entry" style="animation-delay:${i*40}ms;cursor:default;padding-top:12px;padding-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <div><div class="tx"><b>${p[0]}</b></div><div class="meta" style="margin-top:3px">${p[1]} · ${p[2].toUpperCase()}</div></div>
+          <span class="stamp neu">Active</span></div></div>`).join('')}
+    <div class="sect"><button class="btn gh">Request a new partner link</button>
+      <div class="meta" style="text-align:center;margin-top:10px;line-height:1.6">THE PARTNER MUST CONFIRM<br>ON THEIR SIDE.</div></div>
+    <div class="rule hv"></div>
+    <div class="sect" style="padding-bottom:6px"><div class="lab">Account</div></div>
+    ${[['My Humbee card','QR identity'],['Nominee details','Not added yet'],['Notification preferences','4 categories on'],
+       ['Leaderboard visibility','Off'],['Help & support','1800 2100 123'],['Privacy Policy'],['Terms of Use'],['Delete my account']]
+      .map((r,i)=>`<div class="entry" style="animation-delay:${i*30}ms;padding-top:13px;padding-bottom:13px">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <span class="tx"><b>${r[0]}</b></span>
+          <span class="meta">${r[1]?r[1].toUpperCase()+'&nbsp;&nbsp;':''}${ic('a-arrow','width:15px;height:15px;color:var(--k-mute)')}</span></div></div>`).join('')}
+    <div class="sect" style="padding-top:22px"><button class="btn">Log out</button>
+      <div class="meta" style="text-align:center;margin-top:14px;line-height:1.7">HUMBEE INFLUENCER v1.0.0<br>DEVICE 8F2A·41C9 · ANDROID 11</div></div>
+    <div style="height:20px"></div>`;
+ }
+};
+function detail(id){
+  const a=A.alloc.find(x=>x.id===id);
+  return `<div class="detail">
+    <div class="sb"><span>9:41</span><span>▮▮▮</span></div>
+    <div class="hd"><div><div class="eyebrow">Entry ${String(a.id).padStart(4,'0')}</div><h2>${a.brand}</h2></div>
+      <button data-close aria-label="Back">${ic('a-back','width:21px;height:21px')}</button></div>
+    <div class="body">
+      <div class="sect" style="padding-bottom:16px">
+        <span class="role">${a.brand} · ${a.role}</span>
+        <div style="margin-top:14px"><span class="fig xl" data-n="${a.qty}">0</span> <span class="unit" style="font-size:15px">${a.unit}</span></div>
+        <div class="meta" style="margin-top:8px">${a.prod.toUpperCase()}</div>
+        <div style="margin-top:14px"><span class="stamp ok">Confirmed</span></div></div>
+      <div class="rule hv"></div>
+      <div class="sect"><table class="tbl">
+        <tr><td>Allocated by</td><td>${a.by}</td></tr>
+        <tr><td>Partner type</td><td>${a.type}</td></tr>
+        <tr><td>Date</td><td>${a.date}</td></tr>
+        <tr><td>Industry</td><td>${a.ind}</td></tr>
+        <tr><td>Your role</td><td>${a.role}</td></tr>
+        <tr><td>Points earned</td><td>${a.pts}</td></tr></table></div>
+      <div class="rule hv"></div>
+      <div class="sect"><div class="lab">Running total · ${a.brand}</div>
+        <div class="fig l" style="margin-top:8px">${a.tot}</div>
+        <div class="meta" style="margin-top:6px">${a.totn.toUpperCase()}</div></div>
+      <div class="rule hv"></div>
+      <div class="sect"><button class="btn gh">Report a problem</button>
+        <div class="meta" style="text-align:center;margin-top:12px;line-height:1.6">GOES TO HUMBEE SUPPORT<br>AND ${a.by.toUpperCase()}</div></div>
+      <div style="height:24px"></div>
+    </div></div>`;
+}
+function countUp(){
+  dev.querySelectorAll('[data-n]').forEach(el=>{
+    const to=+el.dataset.n;if(!to){el.textContent='0';return}
+    const dur=to>9999?900:600,t0=performance.now();
+    const step=now=>{
+      const p=Math.min(1,(now-t0)/dur),e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(to*e).toLocaleString('en-IN');
+      if(p<1)requestAnimationFrame(step);
+    };requestAnimationFrame(step);
+  });
+}
+function render(){
+  dev.innerHTML=`<div class="sb"><span>9:41</span><span>▮▮▮ 4G</span></div>${head()}<div class="body">${V[tab]()}</div>${nav()}`
+    +(open?detail(open):'');
+  countUp();
+}
+dev.addEventListener('click',e=>{
+  const tb=e.target.closest('[data-t]');if(tb){tab=tb.dataset.t;open=null;render();return}
+  if(e.target.closest('[data-close]')){open=null;render();return}
+  const en=e.target.closest('[data-a]');if(en){open=+en.dataset.a;render()}
+});
+render();
+</script>

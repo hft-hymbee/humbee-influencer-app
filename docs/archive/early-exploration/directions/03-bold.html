@@ -1,0 +1,319 @@
+<title>Direction 03 — Bold · Humbee Influencer</title>
+<style>
+:root{
+  --page:#f5f1ea; --ink:#1c1712; --ink-2:#4f463b; --mute:#877c6e; --rule:#e2d9ca; --brand:#995a00;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#131110;--ink:#f4efe6;--ink-2:#cdc3b5;--mute:#958a7c;--rule:#2e2822;--brand:#dda751;}}
+:root[data-theme="dark"]{--page:#131110;--ink:#f4efe6;--ink-2:#cdc3b5;--mute:#958a7c;--rule:#2e2822;--brand:#dda751;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.stage{display:flex;gap:44px;align-items:flex-start;justify-content:center;padding:44px 24px 72px;flex-wrap:wrap}
+.brief{width:300px}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--brand);margin-bottom:12px}
+.brief h1{font-size:34px;line-height:1.02;letter-spacing:-.03em;margin:0 0 14px;font-weight:700}
+.brief p{font-size:14px;line-height:1.62;color:var(--ink-2);margin:0 0 14px}
+.spec{border-top:1px solid var(--rule);margin-top:22px;padding-top:16px}
+.spec dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.spec dd{margin:0 0 14px;font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+
+.dev{
+  width:360px;height:760px;flex:0 0 auto;position:relative;overflow:hidden;display:flex;flex-direction:column;
+  background:#fff;border:1px solid var(--rule);border-radius:8px;
+  box-shadow:0 2px 4px rgba(28,23,18,.06),0 30px 70px -30px rgba(28,23,18,.4);
+  --c-ink:#1a1410; --c-body:#5f5548; --c-mute:#948a7b; --c-line:#eae3d6;
+  --c-brand:#995a00; --c-brand-d:#6b3f00; --c-amber:#ffa525;
+  --c-ok:#0a6b2c; --c-err:#b30000; --c-paper:#fffdf9;
+  color:var(--c-ink);
+}
+.sb{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-family:var(--mono);font-size:9.5px;color:var(--c-mute);flex:0 0 auto;background:var(--c-paper)}
+.body{flex:1;overflow-y:auto;scrollbar-width:none;background:var(--c-paper)}
+.body::-webkit-scrollbar{display:none}
+.nav{display:flex;flex:0 0 auto;background:var(--c-ink)}
+.nav button{
+  flex:1;padding:12px 2px 14px;background:none;border:0;cursor:pointer;position:relative;overflow:hidden;
+  font:inherit;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.48);
+  display:flex;flex-direction:column;align-items:center;gap:5px;transition:color .2s;
+}
+.nav button svg{width:22px;height:22px}
+.nav button.on{color:var(--c-ink);background:var(--c-amber)}
+.nav button.on::before{content:"";position:absolute;inset:0;background:var(--c-amber);animation:wipe .34s cubic-bezier(.7,0,.2,1);z-index:-1}
+@keyframes wipe{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+
+/* ---- blocks ---- */
+.blk{padding:22px 20px;position:relative;overflow:hidden;animation:reveal .5s cubic-bezier(.7,0,.2,1) both}
+@keyframes reveal{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+.blk.dark{background:var(--c-ink);color:#fff}
+.blk.brand{background:var(--c-brand);color:#fff}
+.blk.amber{background:var(--c-amber);color:var(--c-ink)}
+.blk.line{border-bottom:3px solid var(--c-ink)}
+.blk.thin{border-bottom:1px solid var(--c-line)}
+.lab{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.62}
+.blk.dark .lab,.blk.brand .lab{opacity:.7}
+.fig{font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:-.045em;line-height:.92;display:block}
+.fig.mega{font-size:74px}.fig.xl{font-size:52px}.fig.l{font-size:34px}.fig.m{font-size:24px}
+.pop{animation:pop .55s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.72)}to{opacity:1;transform:none}}
+.unit{font-size:17px;font-weight:700;letter-spacing:0;opacity:.72}
+.tx{font-size:14.5px;line-height:1.5;color:var(--c-body)}
+.tx b{color:var(--c-ink);font-weight:750}
+.blk.dark .tx,.blk.brand .tx{color:rgba(255,255,255,.82)}
+.blk.dark .tx b,.blk.brand .tx b{color:#fff}
+.tag{
+  display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+  padding:5px 10px;background:var(--c-ink);color:#fff;
+}
+.tag.amber{background:var(--c-amber);color:var(--c-ink)}
+.tag.out{background:none;color:var(--c-ink);box-shadow:inset 0 0 0 2px var(--c-ink)}
+.tag.ok{background:var(--c-ok);color:#fff}
+.tag.warn{background:var(--c-amber);color:var(--c-ink)}
+.tag.mute{background:var(--c-line);color:var(--c-body)}
+.row{display:flex;align-items:center;gap:12px}
+.row.sb{justify-content:space-between}
+.col{display:flex;flex-direction:column;min-width:0}
+.entry{
+  display:block;width:100%;text-align:left;background:var(--c-paper);border:0;border-bottom:1px solid var(--c-line);
+  font:inherit;cursor:pointer;padding:18px 20px;animation:reveal .46s cubic-bezier(.7,0,.2,1) both;
+}
+.entry:active{background:var(--c-amber)}
+.split{display:grid;grid-template-columns:1fr 1fr}
+.split>div{padding:18px 20px;border-bottom:3px solid var(--c-ink)}
+.split>div:first-child{border-right:3px solid var(--c-ink)}
+.bars{display:flex;align-items:flex-end;gap:0;height:120px}
+.bars>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.bars i{display:block;width:100%;transform-origin:bottom;animation:grow .7s cubic-bezier(.2,1.1,.4,1) both}
+.bars b{font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:7px 4px;text-align:center;color:var(--c-mute);line-height:1.2}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.btn{
+  width:100%;min-height:60px;background:var(--c-ink);color:#fff;border:0;cursor:pointer;
+  font:inherit;font-size:16px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.btn.amber{background:var(--c-amber);color:var(--c-ink)}
+.btn.out{background:none;color:var(--c-ink);box-shadow:inset 0 0 0 3px var(--c-ink)}
+.btn:active{transform:translateY(2px)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl td{padding:13px 0;border-bottom:1px solid var(--c-line);color:var(--c-body);font-weight:600}
+.tbl td:last-child{text-align:right;font-weight:800;color:var(--c-ink);font-variant-numeric:tabular-nums}
+.tbl tr:last-child td{border-bottom:0}
+.over{position:absolute;inset:0;z-index:9;background:var(--c-paper);display:flex;flex-direction:column;animation:sweep .38s cubic-bezier(.7,0,.2,1)}
+@keyframes sweep{from{clip-path:inset(0 0 0 100%)}to{clip-path:inset(0 0 0 0)}}
+.ib{background:none;border:0;padding:8px;margin:-8px;cursor:pointer;color:inherit;display:flex}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:760px){.stage{flex-direction:column;align-items:center;padding:24px 16px 48px}.brief{width:360px;max-width:100%}.dev{width:100%;max-width:360px}}
+:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="c-home"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></g>
+<g id="c-list"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></g>
+<g id="c-gift"><path d="M3 11h18v9a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 7h18v4H3zM12 7v14" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/></g>
+<g id="c-coin"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 8v8M9.5 10h5M9.5 14h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></g>
+<g id="c-back"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="c-bell"><path d="M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6zM10 19a2 2 0 004 0" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/></g>
+<g id="c-arrow"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="c-user"><circle cx="12" cy="8.5" r="3.8" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M4.5 20a7.5 7.5 0 0115 0" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></g>
+<g id="c-cam"><path d="M3 8h4l2-3h6l2 3h4v12H3z" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.5" fill="none" stroke="currentColor" stroke-width="2.1"/></g>
+</defs></svg>
+
+<div class="stage">
+  <div class="brief">
+    <div class="kicker">Direction 03 of 04</div>
+    <h1>Bold</h1>
+    <p>Built for the worst conditions the product will actually meet: bright sun, a scratched screen, a user who reads slowly, and hands that are not clean.</p>
+    <p>No cards, no shadows, no soft greys. Full-bleed colour blocks divided by 3&nbsp;px black rules. Figures at 74&nbsp;px. Buttons 60&nbsp;dp tall and uppercase. Every element is either black, brand brown, amber, or paper — nothing in between.</p>
+    <div class="spec">
+      <dt>Motion signature</dt>
+      <dd>Blocks wipe in horizontally rather than fading. Figures pop with a slight overshoot. Tab selection sweeps amber up from the bottom edge. Detail screens sweep in from the right.</dd>
+      <dt>Best for</dt>
+      <dd>Legibility and confidence. This is the most accessible of the four by a wide margin, and the cheapest to render.</dd>
+      <dt>Risk</dt>
+      <dd>Shouty at length. Dense screens — the points ledger, a long allocation list — get tiring, and there is little room for nuance in status.</dd>
+    </div>
+  </div>
+
+  <div class="dev" id="dev"></div>
+</div>
+
+<script>
+const C={
+  alloc:[
+    {id:1,brand:'DALMIA TMT',role:'BARBENDER',qty:'500',unit:'kg',prod:'TMT Bars 12 mm',by:'Sharma Steel Traders',type:'DISTRIBUTOR',date:'12 FEB',ind:'STEEL (TMT)',pts:'500',tot:'8,240 kg'},
+    {id:2,brand:'VASTAV CEMENT',role:'CONTRACTOR',qty:'120',unit:'bags',prod:'OPC 53 Grade',by:'Gupta Traders',type:'DEALER',date:'10 FEB',ind:'CEMENT',pts:'120',tot:'2,960 bags'},
+    {id:3,brand:'MASTERCHOW',role:'PAINTER',qty:'45',unit:'litres',prod:'Interior Emulsion',by:'Verma Paints',type:'DEALER',date:'06 FEB',ind:'PAINTS',pts:'45',tot:'610 litres'},
+    {id:4,brand:'DALMIA TMT',role:'BARBENDER',qty:'750',unit:'kg',prod:'TMT Bars 16 mm',by:'Sharma Steel Traders',type:'DISTRIBUTOR',date:'28 JAN',ind:'STEEL (TMT)',pts:'750',tot:'8,240 kg'}
+  ],
+  rewards:[
+    {n:'REFRIGERATOR 190 L',s:'Dalmia TMT · Top 20 Barbenders',t:'PROCESSING',c:'warn'},
+    {n:'₹5,000 CASH',s:'Vastav Cement · Monsoon Drive',t:'CREDITED',c:'ok'},
+    {n:'WATER BOTTLE SET',s:'Dalmia TMT · Q3 Volume Drive',t:'RECEIVED',c:'ok'}
+  ],
+  ledger:[['DALMIA TMT · 500 KG','12 FEB · STEEL','+500'],['VASTAV · 120 BAGS','10 FEB · CEMENT','+120'],
+    ['REFERRAL · SURESH','08 FEB · VERIFIED','+250'],['VOUCHER ₹500','28 JAN · REDEEMED','−2,500']]
+};
+const ic=(id,s='width:22px;height:22px')=>`<svg style="${s}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const NAV=[['home','c-home','Home'],['alloc','c-list','Entries'],['rew','c-gift','Rewards'],['pts','c-coin','Points'],['prof','c-user','You']];
+let tab='home',open=null,dev=document.getElementById('dev');
+
+function entry(a,i){
+  return `<button class="entry" style="animation-delay:${i*60}ms" data-a="${a.id}">
+    <div class="row sb" style="margin-bottom:12px"><span class="tag out">${a.brand} · ${a.role}</span><span style="font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--c-mute)">${a.date}</span></div>
+    <div class="row sb"><span class="fig l pop" style="animation-delay:${i*60+120}ms">${a.qty}<span class="unit"> ${a.unit}</span></span>
+      ${ic('c-arrow','width:20px;height:20px;color:var(--c-ink)')}</div>
+    <div style="font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-mute);margin-top:10px">${a.by}</div></button>`;
+}
+const V={
+ home(){return `
+  <div class="blk dark" style="padding-bottom:26px">
+    <div class="lab">Points balance</div>
+    <span class="fig mega pop" style="animation-delay:.12s;margin:10px 0 14px">12,480</span>
+    <span class="tag amber">▲ 840 THIS MONTH</span></div>
+  <div class="split">
+    <div><div class="lab" style="color:var(--c-mute)">Partners</div><span class="fig l pop" style="animation-delay:.2s;margin-top:8px">5</span></div>
+    <div><div class="lab" style="color:var(--c-mute)">Industries</div><span class="fig l pop" style="animation-delay:.26s;margin-top:8px">3</span></div>
+  </div>
+  <div class="blk amber line" style="animation-delay:.1s">
+    <div class="lab">Umang Utsav 2026</div>
+    <span class="fig l" style="margin:8px 0 4px">14 MARCH</span>
+    <div class="tx" style="font-weight:750;color:var(--c-ink)">Jaipur · You are invited</div>
+    <div class="row sb" style="margin-top:16px"><span class="fig m">32 DAYS</span>${ic('c-arrow','width:24px;height:24px')}</div></div>
+  <div class="blk thin" style="animation-delay:.16s;padding-bottom:0">
+    <div class="lab" style="color:var(--c-mute);margin-bottom:14px">Points by brand · February</div>
+    <div class="bars">
+      <div><i style="height:76%;background:var(--c-ink);animation-delay:.3s"></i><b>Dalmia</b></div>
+      <div><i style="height:52%;background:var(--c-brand);animation-delay:.4s"></i><b>Vastav</b></div>
+      <div><i style="height:30%;background:var(--c-amber);animation-delay:.5s"></i><b>M'Chow</b></div>
+    </div></div>
+  <div class="blk thin" style="animation-delay:.2s;padding-bottom:14px"><div class="lab" style="color:var(--c-mute)">Recent entries</div></div>
+  ${C.alloc.slice(0,2).map(entry).join('')}`},
+ alloc(){return `
+  <div class="blk dark" style="padding:18px 20px"><div class="row sb">
+    <div><div class="lab">All industries</div><span class="fig m" style="margin-top:6px">${C.alloc.length} ENTRIES</span></div>
+    <span class="tag amber">FILTER</span></div></div>
+  ${C.alloc.map(entry).join('')}`},
+ rew(){return `
+  <div class="blk brand" style="padding:20px"><div class="lab">On record</div><span class="fig l" style="margin-top:8px">3 REWARDS</span></div>
+  ${C.rewards.map((r,i)=>`<div class="entry" style="animation-delay:${i*60}ms;cursor:default">
+    <div class="row sb" style="margin-bottom:10px"><span class="tag ${r.c}">${r.t}</span></div>
+    <div class="fig m" style="margin-bottom:8px">${r.n}</div>
+    <div style="font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--c-mute)">${r.s}</div></div>`).join('')}
+  <div class="blk amber line" style="animation-delay:.2s">
+    <div class="lab">Monsoon Mega Draw · Dalmia TMT</div>
+    <div class="row sb" style="align-items:flex-end;margin-top:10px">
+      <div><span class="fig mega pop" style="animation-delay:.3s;font-size:60px">8</span><div class="lab" style="margin-top:6px">Your entries</div></div>
+      <div style="text-align:right"><div class="fig m">28 FEB</div><div class="lab" style="margin-top:4px">Draw date</div></div></div>
+    <div class="tx" style="margin-top:14px;font-weight:700;color:var(--c-ink)">1 entry per tonne. You bought 8 t.</div></div>`},
+ pts(){return `
+  <div class="blk dark" style="padding-bottom:26px">
+    <div class="lab">Balance</div>
+    <span class="fig mega pop" style="animation-delay:.12s;margin:10px 0 14px">12,480</span>
+    <span class="tag amber">1,200 EXPIRE 31 MAR</span></div>
+  <div class="blk thin" style="animation-delay:.1s">
+    <div class="lab" style="color:var(--c-mute);margin-bottom:12px">1 unit = 1 point</div>
+    <table class="tbl">
+      <tr><td>STEEL · 1 KG</td><td>1</td></tr><tr><td>CEMENT · 1 BAG</td><td>1</td></tr><tr><td>PAINTS · 1 LITRE</td><td>1</td></tr></table></div>
+  <div class="blk brand line" style="animation-delay:.16s">
+    <div class="tx" style="font-weight:750;color:#fff;font-size:16px;line-height:1.45">Your 500 kg of Dalmia TMT gave you exactly 500 points.</div></div>
+  <div class="blk thin" style="animation-delay:.2s;padding-bottom:12px"><div class="lab" style="color:var(--c-mute)">Statement</div></div>
+  ${C.ledger.map(([t,m,v],i)=>`<div class="entry" style="animation-delay:${i*55}ms;cursor:default;padding:15px 20px">
+    <div class="row sb"><div class="col"><span class="tx"><b>${t}</b></span>
+      <span style="font-size:10.5px;font-weight:800;letter-spacing:.08em;color:var(--c-mute);margin-top:4px">${m}</span></div>
+    <span class="fig m" style="color:${v[0]==='+'?'var(--c-ok)':'var(--c-err)'}">${v}</span></div></div>`).join('')}
+  <div style="height:16px"></div>`},
+ prof(){
+  const row=(t,v,i)=>`<div class="entry" style="animation-delay:${i*35}ms;padding:16px 20px">
+    <div class="row sb"><span class="fig m" style="font-size:16px">${t}</span>
+      <span class="row" style="gap:10px">${v?`<span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c-mute)">${v}</span>`:''}
+      ${ic('c-arrow','width:18px;height:18px;color:var(--c-ink)')}</span></div></div>`;
+  return `
+  <div class="blk dark" style="padding:20px">
+    <div class="row" style="gap:16px;align-items:flex-start">
+      <div style="width:74px;height:74px;background:var(--c-amber);flex:0 0 auto;display:flex;align-items:flex-end;justify-content:flex-end;padding:5px">
+        ${ic('c-cam','width:20px;height:20px;color:var(--c-ink)')}</div>
+      <div class="col" style="flex:1"><div class="lab">Influencer</div>
+        <span class="fig l" style="margin:6px 0 8px">RAMESH KUMAR</span>
+        <span class="tag amber" style="align-self:flex-start">KYC VERIFIED</span></div></div></div>
+
+  <div class="blk thin" style="animation-delay:.06s">
+    <div class="lab" style="color:var(--c-mute);margin-bottom:12px">Contact</div>
+    <table class="tbl">
+      <tr><td>MOBILE</td><td>+91 98765 43210</td></tr>
+      <tr><td>EMAIL</td><td>ramesh.k@gmail.com</td></tr>
+      <tr><td>ADDRESS</td><td style="max-width:150px">Plot 14, Sector 8, Jaipur</td></tr>
+      <tr><td>LANGUAGE</td><td>हिन्दी</td></tr>
+      <tr><td>MEMBER SINCE</td><td>APR 2022</td></tr></table>
+    <div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c-mute);margin-top:14px;line-height:1.6">Name and mobile are locked.<br>Call support to change.</div></div>
+
+  <div class="blk brand" style="animation-delay:.1s;padding:16px 20px"><div class="lab">Your roles</div>
+    <span class="fig m" style="margin-top:6px">3 INDUSTRIES</span></div>
+  ${[['STEEL (TMT)','BARBENDER','DALMIA TMT','Sharma Steel Traders'],
+     ['CEMENT','CONTRACTOR','VASTAV CEMENT','Rathore Cement Co.'],
+     ['PAINTS','PAINTER','MASTERCHOW','Verma Paints']].map(([ind,role,brand,by],i)=>
+    `<div class="entry" style="animation-delay:${i*55}ms;cursor:default">
+      <div class="row sb" style="margin-bottom:10px"><span class="fig m" style="font-size:18px">${ind}</span>
+        <span class="tag">${role}</span></div>
+      <span class="tag mute">${brand}</span>
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--c-mute);margin-top:12px">Set by ${by}</div></div>`).join('')}
+
+  <div class="blk amber line" style="animation-delay:.14s;padding:16px 20px">
+    <div class="row sb"><div><div class="lab">Linked partners</div><span class="fig l" style="margin-top:6px">5</span></div>
+      ${ic('c-arrow','width:24px;height:24px')}</div></div>
+  ${[['SHARMA STEEL TRADERS','DISTRIBUTOR · DALMIA TMT'],['RATHORE CEMENT CO.','DISTRIBUTOR · VASTAV'],
+     ['GUPTA TRADERS','DEALER · VASTAV']].map(([n,m],i)=>
+    `<div class="entry" style="animation-delay:${i*40}ms;cursor:default;padding:15px 20px">
+      <div class="row sb"><div class="col"><span class="fig m" style="font-size:15px">${n}</span>
+        <span style="font-size:10.5px;font-weight:800;letter-spacing:.07em;color:var(--c-mute);margin-top:5px">${m}</span></div>
+        <span class="tag ok">ACTIVE</span></div></div>`).join('')}
+  <div class="blk thin" style="animation-delay:.2s"><button class="btn out">Add a partner</button>
+    <div style="font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--c-mute);text-align:center;margin-top:12px;line-height:1.6">They must confirm on their side</div></div>
+
+  <div class="blk dark" style="animation-delay:.24s;padding:16px 20px"><div class="lab">Account</div></div>
+  ${row('MY HUMBEE CARD','QR',0)}
+  ${row('NOMINEE DETAILS','NOT ADDED',1)}
+  ${row('NOTIFICATIONS','4 ON',2)}
+  ${row('LEADERBOARD','OFF',3)}
+  ${row('HELP &amp; SUPPORT','1800 2100 123',4)}
+  ${row('PRIVACY POLICY','',5)}
+  ${row('TERMS OF USE','',6)}
+  ${row('DELETE ACCOUNT','',7)}
+  <div class="blk" style="animation-delay:.3s"><button class="btn">Log out</button>
+    <div style="font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--c-mute);text-align:center;margin-top:16px;line-height:1.7">Humbee Influencer v1.0.0<br>Device 8F2A·41C9 · Android 11</div></div>
+  <div style="height:12px"></div>`}
+};
+function detail(id){
+  const a=C.alloc.find(x=>x.id===id);
+  return `<div class="over">
+    <div class="sb"><span>9:41</span><span>▮▮▮</span></div>
+    <div class="blk dark" style="padding:16px 20px 22px;animation:none">
+      <div class="row sb" style="margin-bottom:18px">
+        <button class="ib" data-close aria-label="Back">${ic('c-back','width:24px;height:24px;color:#fff')}</button>
+        <span class="tag amber">${a.ind}</span></div>
+      <div class="lab">${a.brand} · ${a.role}</div>
+      <span class="fig mega pop" style="animation-delay:.1s;margin:10px 0 6px">${a.qty}</span>
+      <div class="fig m" style="opacity:.75">${a.unit.toUpperCase()}</div></div>
+    <div class="body">
+      <div class="blk thin" style="animation-delay:.06s"><table class="tbl">
+        <tr><td>ALLOCATED BY</td><td>${a.by}</td></tr><tr><td>PARTNER</td><td>${a.type}</td></tr>
+        <tr><td>DATE</td><td>${a.date} 2026</td></tr><tr><td>YOUR ROLE</td><td>${a.role}</td></tr>
+        <tr><td>POINTS</td><td>${a.pts}</td></tr></table></div>
+      <div class="blk amber line" style="animation-delay:.12s">
+        <div class="lab">Total from ${a.brand}</div><span class="fig l" style="margin-top:8px">${a.tot}</span></div>
+      <div class="blk" style="animation-delay:.18s"><button class="btn out">Report a problem</button>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--c-mute);text-align:center;margin-top:14px;line-height:1.6">Goes to Humbee support<br>and ${a.by}</div></div>
+      <div style="height:20px"></div></div></div>`;
+}
+function render(){
+  dev.innerHTML=`<div class="sb"><span>9:41</span><span>▮▮▮ 4G</span></div>
+    <div class="body">${V[tab]()}</div>
+    <div class="nav">${NAV.map(([k,i,l])=>`<button class="${tab===k?'on':''}" data-t="${k}">${ic(i)}${l}</button>`).join('')}</div>`
+    +(open?detail(open):'');
+}
+dev.addEventListener('click',e=>{
+  const tb=e.target.closest('[data-t]');if(tb){tab=tb.dataset.t;open=null;render();return}
+  if(e.target.closest('[data-close]')){open=null;render();return}
+  const a=e.target.closest('[data-a]');if(a){open=+a.dataset.a;render()}
+});
+render();
+</script>

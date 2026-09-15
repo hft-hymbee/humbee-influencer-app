@@ -1,0 +1,1821 @@
+<title>Humbee Influencer App — Wireframes</title>
+<style>
+/* ============ DOCUMENT TOKENS ============ */
+:root{
+  --ground:#faf8f5; --surface:#ffffff; --surface-2:#f4f0ea;
+  --ink:#2a2521; --ink-2:#544c44; --mute:#7d7469;
+  --rule:#e6e0d7; --rule-2:#d6cec2;
+  --brand:#995a00; --brand-soft:#f0e4d2; --amber:#ffa525;
+  --ok:#1f6b3a; --warn:#8a5a00; --crit:#a32020;
+  --shadow:0 1px 2px rgba(42,37,33,.05),0 8px 24px -12px rgba(42,37,33,.14);
+  --measure:68ch;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#17140f; --surface:#211d17; --surface-2:#2b2620;
+    --ink:#f2ede5; --ink-2:#cdc4b8; --mute:#9a9084;
+    --rule:#332d25; --rule-2:#433b31;
+    --brand:#d9a04a; --brand-soft:#332920; --amber:#ffc066;
+    --ok:#6cc98a; --warn:#e0a84a; --crit:#f07a7a;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#17140f; --surface:#211d17; --surface-2:#2b2620;
+  --ink:#f2ede5; --ink-2:#cdc4b8; --mute:#9a9084;
+  --rule:#332d25; --rule-2:#433b31;
+  --brand:#d9a04a; --brand-soft:#332920; --amber:#ffc066;
+  --ok:#6cc98a; --warn:#e0a84a; --crit:#f07a7a;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+}
+
+/* ============ APP SCREEN TOKENS (fixed light — the app is light-themed) ============ */
+.scr{
+  --s-bg:#ffffff; --s-ground:#f2f2f2; --s-line:#e5e5e5; --s-line2:#d9d9d9;
+  --s-ink:#333333; --s-body:#666666; --s-mute:#8c8c8c;
+  --s-brand:#995a00; --s-brand-5:rgba(153,90,0,.05); --s-brand-10:rgba(153,90,0,.12);
+  --s-amber:#ffa525; --s-amber-10:rgba(255,165,37,.12);
+  --s-err:#cc0000; --s-err-bg:rgba(204,0,0,.08);
+  --s-ok:#008000; --s-ok-bg:rgba(0,128,0,.08);
+  --s-info:#0081f2; --s-info-bg:rgba(0,129,242,.08);
+  --s-warn:#f2a200; --s-warn-bg:rgba(255,191,64,.10);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px 96px}
+
+/* ---- masthead ---- */
+.mast{padding:72px 0 40px; border-bottom:2px solid var(--ink)}
+.eyebrow{
+  font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--mute); margin:0 0 18px;
+}
+h1{
+  font-size:clamp(34px,5.4vw,54px); line-height:1.04; letter-spacing:-.024em;
+  margin:0 0 20px; text-wrap:balance; font-weight:680;
+}
+.standfirst{font-size:19px; line-height:1.55; color:var(--ink-2); max-width:60ch; margin:0}
+.meta{
+  display:flex; flex-wrap:wrap; gap:8px 28px; margin-top:28px;
+  font-family:var(--mono); font-size:11.5px; letter-spacing:.05em; color:var(--mute);
+}
+.meta b{color:var(--ink-2); font-weight:500}
+
+/* ---- structure ---- */
+section{padding-top:64px}
+h2{
+  font-size:clamp(24px,3vw,31px); line-height:1.15; letter-spacing:-.018em;
+  margin:0 0 10px; font-weight:660; text-wrap:balance;
+}
+h3{font-size:19px; line-height:1.3; letter-spacing:-.008em; margin:38px 0 8px; font-weight:640}
+h4{font-size:15px; margin:26px 0 8px; font-weight:640}
+p{max-width:var(--measure); margin:0 0 16px; color:var(--ink-2)}
+p.lede{font-size:17.5px; color:var(--ink-2)}
+a{color:var(--brand)}
+.sec-head{border-top:1px solid var(--rule); padding-top:26px; margin-bottom:26px}
+.ref{
+  font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--brand); display:block; margin-bottom:9px;
+}
+ul,ol{max-width:var(--measure); color:var(--ink-2); padding-left:20px; margin:0 0 16px}
+li{margin-bottom:7px}
+strong{color:var(--ink); font-weight:620}
+code{
+  font-family:var(--mono); font-size:.87em; background:var(--surface-2);
+  padding:1px 5px; border-radius:3px; color:var(--ink)
+}
+
+/* ---- callout ---- */
+.note{
+  border-left:3px solid var(--brand); background:var(--surface);
+  padding:16px 20px; margin:22px 0; max-width:var(--measure); border-radius:0 6px 6px 0;
+  box-shadow:var(--shadow);
+}
+.note p:last-child{margin-bottom:0}
+.note.flag{border-left-color:var(--crit)}
+.note-label{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--brand); display:block; margin-bottom:7px; font-weight:600;
+}
+.note.flag .note-label{color:var(--crit)}
+
+/* ---- principle grid ---- */
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(268px,1fr)); gap:2px; background:var(--rule); border:1px solid var(--rule); margin:26px 0}
+.cell{background:var(--surface); padding:20px 22px}
+.cell h4{margin:0 0 7px; font-size:15.5px}
+.cell p{font-size:14.5px; margin:0; line-height:1.55; color:var(--ink-2)}
+.cell .num{
+  font-family:var(--mono); font-size:11px; color:var(--brand);
+  letter-spacing:.1em; display:block; margin-bottom:9px;
+}
+
+/* ---- screen layout ---- */
+.screens{display:flex; flex-wrap:wrap; gap:36px; margin:30px 0 8px; align-items:flex-start}
+.unit{width:360px; flex:0 0 auto}
+.unit-wide{width:756px}
+.frame{
+  width:360px; background:var(--s-bg); border:1px solid var(--rule-2); border-radius:14px;
+  overflow:hidden; box-shadow:var(--shadow); font-size:13px; line-height:1.45; color:#333;
+}
+.cap{
+  font-family:var(--mono); font-size:11px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--mute); margin:0 0 9px; display:flex; gap:8px; align-items:baseline;
+}
+.cap b{color:var(--ink); font-weight:600; letter-spacing:.04em}
+.ann{margin:12px 0 0; padding:0; list-style:none; max-width:360px}
+.ann li{
+  font-size:13.5px; line-height:1.5; color:var(--ink-2); margin-bottom:7px;
+  padding-left:15px; position:relative;
+}
+.ann li::before{
+  content:""; position:absolute; left:0; top:8px; width:5px; height:5px;
+  border-radius:50%; background:var(--amber);
+}
+.ann li b{color:var(--ink); font-weight:600}
+
+/* ============ IN-SCREEN APP CHROME ============ */
+.scr{font-family:var(--sans)}
+.statusbar{
+  height:26px; background:var(--s-ground); display:flex; align-items:center;
+  justify-content:space-between; padding:0 12px; font-size:10px; color:var(--s-mute);
+  font-family:var(--mono); letter-spacing:.04em;
+}
+.appbar{
+  display:flex; align-items:center; gap:12px; padding:14px 16px;
+  border-bottom:1px solid var(--s-line); background:var(--s-bg);
+}
+.appbar .t{font-size:16px; font-weight:700; color:var(--s-ink); flex:1; line-height:1.4}
+.appbar.brand{background:var(--s-brand); border-bottom:none}
+.appbar.brand .t{color:#fff}
+.body{padding:16px; background:var(--s-ground); min-height:150px}
+.body.plain{background:var(--s-bg)}
+.card{background:var(--s-bg); border:1px solid var(--s-line); border-radius:8px; padding:14px; margin-bottom:12px}
+.card:last-child{margin-bottom:0}
+.card.flat{border-radius:0; border-left:0; border-right:0; margin:0; border-top:0}
+.lbl{font-size:11px; color:var(--s-mute); text-transform:uppercase; letter-spacing:.07em; font-weight:600}
+.big{font-size:28px; font-weight:700; color:var(--s-ink); line-height:1.15; font-variant-numeric:tabular-nums}
+.med{font-size:20px; font-weight:700; color:var(--s-ink); line-height:1.25; font-variant-numeric:tabular-nums}
+.h{font-size:16px; font-weight:700; color:var(--s-ink); margin-bottom:8px}
+.sub{font-size:13px; color:var(--s-body)}
+.tiny{font-size:11px; color:var(--s-mute)}
+.row{display:flex; align-items:center; gap:10px}
+.row.sb{justify-content:space-between}
+.col{display:flex; flex-direction:column; gap:2px}
+.gap8{display:flex; flex-direction:column; gap:8px}
+.gap12{display:flex; flex-direction:column; gap:12px}
+.av{width:44px; height:44px; border-radius:50%; background:var(--s-line2); flex:0 0 auto}
+.av.sm{width:32px; height:32px}
+.thumb{width:48px; height:48px; border-radius:6px; background:var(--s-line2); flex:0 0 auto}
+.ico{width:24px; height:24px; color:var(--s-body); flex:0 0 auto}
+.ico.brand{color:var(--s-brand)}
+.ico.w{color:#fff}
+.chip{
+  display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600;
+  padding:3px 9px; border-radius:32px; white-space:nowrap;
+}
+.chip.ok{background:var(--s-ok-bg); color:var(--s-ok)}
+.chip.warn{background:var(--s-warn-bg); color:var(--s-warn)}
+.chip.err{background:var(--s-err-bg); color:var(--s-err)}
+.chip.info{background:var(--s-info-bg); color:var(--s-info)}
+.chip.neu{background:var(--s-ground); color:var(--s-body)}
+.chip.brand{background:var(--s-brand-10); color:var(--s-brand)}
+.dot{width:6px; height:6px; border-radius:50%; background:currentColor; flex:0 0 auto}
+.btn{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  height:48px; border-radius:8px; background:var(--s-brand); color:#fff;
+  font-size:16px; font-weight:600;
+}
+.btn.out{background:transparent; border:1px solid var(--s-brand); color:var(--s-brand)}
+.btn.ghost{background:var(--s-ground); color:var(--s-ink); border:1px solid var(--s-line2)}
+.btn.dis{background:#e5e5e5; color:#8c8c8c}
+.field{
+  height:52px; border:1px solid var(--s-line2); border-radius:8px; padding:0 14px;
+  display:flex; align-items:center; gap:10px; font-size:16px; color:var(--s-ink); background:var(--s-bg);
+}
+.field .ph{color:var(--s-mute)}
+.otp{display:flex; gap:10px}
+.otp span{
+  flex:1; height:56px; border:1px solid var(--s-line2); border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700;
+  color:var(--s-ink); font-variant-numeric:tabular-nums;
+}
+.otp span.f{border-color:var(--s-brand); border-width:2px}
+.tabbar{
+  display:flex; border-top:1px solid var(--s-line); background:var(--s-bg);
+}
+.tabbar div{
+  flex:1; padding:9px 2px 11px; display:flex; flex-direction:column; align-items:center; gap:3px;
+  font-size:10px; color:var(--s-mute); font-weight:600; text-align:center; line-height:1.2;
+}
+.tabbar div.on{color:var(--s-brand)}
+.seg{display:flex; gap:8px; overflow:hidden}
+.seg span{
+  font-size:12px; font-weight:600; padding:6px 12px; border-radius:32px;
+  border:1px solid var(--s-line2); color:var(--s-body); white-space:nowrap;
+}
+.seg span.on{background:var(--s-brand-10); border-color:var(--s-brand); color:var(--s-brand)}
+.bar{height:8px; border-radius:4px; background:var(--s-line); overflow:hidden}
+.bar i{display:block; height:100%; background:var(--s-brand)}
+.divide{height:1px; background:var(--s-line); margin:12px 0}
+.banner{
+  border-radius:8px; padding:14px; background:var(--s-brand); color:#fff;
+}
+.banner .lbl{color:rgba(255,255,255,.82)}
+.banner .med{color:#fff}
+.illus{
+  width:100%; height:88px; border-radius:6px; background:var(--s-line2);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:10px; color:#7a7a7a; letter-spacing:.08em;
+}
+.illus.sq{width:64px; height:64px; flex:0 0 auto}
+.step{display:flex; align-items:flex-start; gap:10px}
+.step .pin{
+  width:20px; height:20px; border-radius:50%; border:2px solid var(--s-line2);
+  flex:0 0 auto; margin-top:2px; background:var(--s-bg);
+}
+.step.done .pin{background:var(--s-ok); border-color:var(--s-ok)}
+.step.now .pin{border-color:var(--s-brand); border-width:3px}
+.step .ln{width:2px; flex:1; background:var(--s-line); margin:2px 0 0 9px; min-height:16px}
+.chart{display:flex; align-items:flex-end; gap:12px; height:96px; padding-top:8px}
+.chart div{flex:1; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:5px; height:100%}
+.chart i{display:block; width:100%; background:var(--s-brand); border-radius:3px 3px 0 0}
+.chart b{font-size:10px; color:var(--s-mute); font-weight:600; text-align:center; line-height:1.2}
+.sheet{border-top:1px solid var(--s-line2); border-radius:14px 14px 0 0; background:var(--s-bg); padding:14px 16px 18px; margin-top:-14px; position:relative}
+.grab{width:36px; height:4px; border-radius:2px; background:var(--s-line2); margin:0 auto 12px}
+.scrim{background:rgba(0,0,0,.35); height:64px}
+.ledger{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:11px 0; border-bottom:1px solid var(--s-line)}
+.ledger:last-child{border-bottom:0}
+.plus{color:var(--s-ok); font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap}
+.minus{color:var(--s-err); font-weight:700; font-variant-numeric:tabular-nums; white-space:nowrap}
+.tbl{width:100%; border-collapse:collapse; font-size:12px}
+.tbl td{padding:7px 0; border-bottom:1px solid var(--s-line); color:var(--s-body)}
+.tbl td:last-child{text-align:right; color:var(--s-ink); font-weight:600; font-variant-numeric:tabular-nums}
+.tbl tr:last-child td{border-bottom:0}
+.qr{width:120px; height:120px; border-radius:8px; background:var(--s-ink); margin:0 auto}
+.strip{background:var(--s-warn-bg); color:var(--s-warn); font-size:12px; font-weight:600; padding:8px 16px; display:flex; align-items:center; gap:8px}
+.strip.err{background:var(--s-err-bg); color:var(--s-err)}
+.strip.info{background:var(--s-info-bg); color:var(--s-info)}
+.sk{background:var(--s-line); border-radius:4px; height:12px}
+
+/* ---- nav map ---- */
+.map{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:2px;
+  background:var(--rule); border:1px solid var(--rule); margin:26px 0;
+}
+.map .t{background:var(--surface); padding:16px 18px}
+.map .t h4{margin:0 0 4px; font-size:15px; color:var(--brand)}
+.map .t ul{margin:0; padding-left:17px; font-size:13.5px}
+.map .t li{margin-bottom:4px; color:var(--ink-2)}
+
+/* ---- table ---- */
+.tw{overflow-x:auto; margin:22px 0; border:1px solid var(--rule); background:var(--surface)}
+table.doc{border-collapse:collapse; width:100%; font-size:14.5px; min-width:520px}
+table.doc th{
+  text-align:left; padding:11px 16px; border-bottom:1px solid var(--rule-2);
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--mute); font-weight:600; white-space:nowrap;
+}
+table.doc td{padding:11px 16px; border-bottom:1px solid var(--rule); color:var(--ink-2); vertical-align:top}
+table.doc tr:last-child td{border-bottom:0}
+table.doc td:first-child{color:var(--ink); font-weight:600; white-space:nowrap}
+
+footer{margin-top:76px; padding-top:26px; border-top:2px solid var(--ink); font-size:13.5px; color:var(--mute)}
+footer p{color:var(--mute); font-size:13.5px}
+:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+@media (max-width:820px){
+  .wrap{padding:0 18px 64px}
+  .unit,.unit-wide{width:100%; max-width:360px}
+  .frame{width:100%; max-width:360px}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="i-back"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-chev"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-home"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="i-list"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+<g id="i-gift"><path d="M3 11h18v9a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 7h18v4H3zM12 7v14M12 7S10 3 8 4s0 3 4 3zM12 7s2-4 4-3-0 3-4 3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+<g id="i-coin"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v8M9.5 10h5M9.5 14h5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+<g id="i-user"><circle cx="12" cy="8.5" r="3.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M4.5 20a7.5 7.5 0 0115 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+<g id="i-bell"><path d="M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6zM10 19a2 2 0 004 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="i-filter"><path d="M3 5h18l-7 8v6l-4 2v-8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="i-phone"><path d="M6 3h4l2 5-2.5 1.5a12 12 0 005 5L16 12l5 2v4a2 2 0 01-2 2A16 16 0 014 5a2 2 0 012-2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+<g id="i-warn"><path d="M12 3l9.5 17H2.5zM12 10v4.5M12 17.2v.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-off"><path d="M3 3l18 18M8 16.5a5.5 5.5 0 017.5-.6M4.5 12.5a11 11 0 015-2.7M2 9a16 16 0 015-3.2M12 20v.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+<g id="i-check"><path d="M4 12.5l5.5 5.5L20 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-cam"><path d="M3 8h4l2-3h6l2 3h4v12H3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.7"/></g>
+<g id="i-trophy"><path d="M7 4h10v5a5 5 0 01-10 0zM7 5H4v2a3 3 0 003 3M17 5h3v2a3 3 0 01-3 3M12 14v4M8.5 21h7" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-play"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 8.5l6 3.5-6 3.5z" fill="currentColor"/></g>
+<g id="i-globe"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3 12h18M12 3c2.6 2.7 2.6 15.3 0 18M12 3c-2.6 2.7-2.6 15.3 0 18" fill="none" stroke="currentColor" stroke-width="1.7"/></g>
+<g id="i-search"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></g>
+<g id="i-share"><circle cx="6" cy="12" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="6" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="18" r="2.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.3 10.8l6.4-3.4M8.3 13.2l6.4 3.4" stroke="currentColor" stroke-width="1.7"/></g>
+</defs></svg>
+
+<div class="wrap">
+
+<header class="mast">
+  <p class="eyebrow">Humbee Influencer App · Wireframe specification · v1</p>
+  <h1>Wireframes for masons, painters and barbenders</h1>
+  <p class="standfirst">Every Phase&nbsp;1 module from the PRD, laid out at true 360&nbsp;dp for entry-level Android, using the HUMBEE design system. Drawn for a user who may read slowly, works outdoors, and has never had an app built for them before.</p>
+  <div class="meta">
+    <span><b>Scope</b> PRD §4.0–§4.13 + Phase 1 items from §5</span>
+    <span><b>Frame</b> 360 × 800 dp</span>
+    <span><b>System</b> HUMBEE-DESIGN-RULES.md</span>
+    <span><b>Status</b> For review</span>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="ref">Read this first</span>
+    <h2>How to read this document</h2></div>
+  <p class="lede">These are structural wireframes, not final visuals. Layout, hierarchy, and content are decided here; illustration, photography, and motion are not.</p>
+  <p>They are drawn with real design-system values — the real type ramp, the real <code>#995a00</code>, real 8/16 spacing, real chip and badge components — because the visual layer is already settled in the rules document. Drawing grey boxes first would mean redrawing everything a week later. Grey blocks marked <span style="font-family:var(--mono);font-size:12px">ILLUSTRATION</span> or <span style="font-family:var(--mono);font-size:12px">PHOTO</span> are the only genuine placeholders.</p>
+  <p><strong>Content is real, not lorem.</strong> Manufacturer names, quantities, and roles are drawn from the PRD's own examples so that layout problems surface here rather than in UAT. The sample user is deliberately the hard case: <strong>Ramesh Kumar — Barbender in Steel, Contractor in Cement, Painter in Paints</strong>, linked to two Distributors and one Dealer.</p>
+  <div class="note">
+    <span class="note-label">On typography</span>
+    <p>The design system is Lato. Artifact pages cannot load external fonts, so these frames render in the system humanist sans as the closest honest stand-in. Final designs and the built app use Lato — the size, weight, and line-height values shown are already the real ones.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.13 · §9 Accessibility</span>
+    <h2>Ten rules the audience imposes</h2></div>
+  <p class="lede">These are requirements, not preferences. Every screen in this document was drawn against them, and any screen that violates one is wrong regardless of how it looks.</p>
+  <div class="grid">
+    <div class="cell"><span class="num">01</span><h4>Numbers before words</h4><p>A barbender recognises "500 kg" faster than any sentence containing it. Quantity and brand lead every row; prose is secondary and small.</p></div>
+    <div class="cell"><span class="num">02</span><h4>Icon and label, never icon alone</h4><p>Every tab, action, and status carries a text label. Icon-only is permitted only for back, close, and call.</p></div>
+    <div class="cell"><span class="num">03</span><h4>48 dp minimum tap target</h4><p>Primary buttons are 48–56 dp tall. These hands are calloused and often gloved; the design system's 40 dp button gets padded, not shrunk.</p></div>
+    <div class="cell"><span class="num">04</span><h4>One decision per screen</h4><p>No screen asks for two unrelated choices. Filters live in a sheet, not inline. Depth is preferable to density.</p></div>
+    <div class="cell"><span class="num">05</span><h4>No nested menus</h4><p>Maximum two taps from a tab to any Phase 1 destination. Nothing hides behind a hamburger or an overflow menu.</p></div>
+    <div class="cell"><span class="num">06</span><h4>Status is colour + icon + word</h4><p>Colour alone is never the signal. Every chip pairs a hue with a glyph and a label, so it survives colour-blindness, sunlight, and a cheap panel.</p></div>
+    <div class="cell"><span class="num">07</span><h4>A human is always one tap away</h4><p>Call and WhatsApp support appear on every error, every empty state, and every dispute. For a low-trust user, the phone number is the real safety net.</p></div>
+    <div class="cell"><span class="num">08</span><h4>Indic-script sizing</h4><p>Devanagari, Tamil and Telugu run 15–30% longer than Latin and sit taller in the line. No fixed-width buttons, no fixed-height text containers, no truncated status words.</p></div>
+    <div class="cell"><span class="num">09</span><h4>Offline is a normal state</h4><p>Work sites have no signal. Cached data shows with a timestamp; queued actions show as pending. Neither is styled as an error.</p></div>
+    <div class="cell"><span class="num">10</span><h4>Never blame the user</h4><p>An unregistered number is not a failure — it is an instruction to ask their Distributor. Copy assumes the user did nothing wrong, because usually they didn't.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="ref">Information architecture</span>
+    <h2>Navigation map</h2></div>
+  <p>Five bottom tabs. Everything in Phase 1 is reachable within two taps of a tab. Points earns its own tab rather than living under Profile because it is the engagement engine — burying it would defeat §4.6.</p>
+  <div class="map">
+    <div class="t"><h4>Home</h4><ul><li>Dashboard §4.2</li><li>Notification centre §4.7</li><li>Event banner §4.5</li><li>Scheme banner §4.4</li></ul></div>
+    <div class="t"><h4>Allocations</h4><ul><li>List + filters §4.3</li><li>Allocation detail</li><li>Raise dispute</li></ul></div>
+    <div class="t"><h4>Rewards</h4><ul><li>Rewards list §4.4</li><li>Reward detail</li><li>Lucky draws §4.4</li><li>Umang Utsav §4.5</li></ul></div>
+    <div class="t"><h4>Points</h4><ul><li>Wallet + balance §4.6</li><li>Ledger</li><li>Conversion table</li><li>Redemption (view-only)</li></ul></div>
+    <div class="t"><h4>Profile</h4><ul><li>User info §4.8</li><li>Your roles §3.1</li><li>Linked partners</li><li>Digital ID §5</li><li>Referral §4.11</li><li>Leaderboard §4.9</li><li>Learning §4.10</li><li>Support §4.12</li><li>Language §4.0</li><li>Settings, logout</li></ul></div>
+  </div>
+  <p><strong>Before any tab exists:</strong> first launch shows the language chooser (§4.0), then login (§4.1). Neither is part of the tab structure — they precede it.</p>
+  <div class="note flag">
+    <span class="note-label">Open question</span>
+    <p>Profile is carrying nine destinations — more than the other four tabs combined. That is a symptom worth watching in testing. If it proves unnavigable, the split is likely <strong>Learning and Leaderboard moving to Home</strong> as discovery surfaces, leaving Profile for identity and settings only.</p>
+  </div>
+</section>
+
+<!-- ===================== 4.0 LANGUAGE ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.0</span>
+    <h2>Language selection</h2></div>
+  <p class="lede">The first screen of the app, shown once, before login. It has to come first because the login screen itself must already be in a language the user reads — a Hindi-only speaker cannot be asked to navigate an English login in order to reach a language setting.</p>
+  <p>The list is <strong>served by the portal and configured by Ops</strong>, not hardcoded. Humbee operates across states with different scripts, so enabling Gujarati or Tamil must be a data change, never an app release. The layout is built to absorb ten or more entries.</p>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>0.0</b> First launch — choose language</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="body plain" style="padding:24px 20px 0">
+          <svg class="ico brand" style="width:34px;height:34px;display:block;margin:0 auto 14px"><use href="#i-globe"/></svg>
+          <div class="med" style="text-align:center;font-size:20px;margin-bottom:2px">भाषा चुनें</div>
+          <div class="sub" style="text-align:center;margin-bottom:18px">Choose your language</div>
+        </div>
+        <div style="padding:0 20px;max-height:296px;overflow:hidden;position:relative">
+          <div class="card" style="padding:0;margin:0">
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line);background:var(--s-brand-5)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">हिन्दी</span><span class="tiny">Hindi</span></div>
+              <svg class="ico brand" style="width:22px;height:22px"><use href="#i-check"/></svg>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">English</span><span class="tiny">अंग्रेज़ी</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">ગુજરાતી</span><span class="tiny">Gujarati</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">मराठी</span><span class="tiny">Marathi</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">தமிழ்</span><span class="tiny">Tamil</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">తెలుగు</span><span class="tiny">Telugu</span></div>
+            </div>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(to bottom,rgba(255,255,255,0),#fff)"></div>
+        </div>
+        <div style="padding:12px 20px 18px;background:var(--s-bg);border-top:1px solid var(--s-line)">
+          <div class="tiny" style="text-align:center;margin-bottom:10px">8 भाषाएँ · scroll for more</div>
+          <div class="btn">आगे बढ़ें</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Each language is named in its own script first.</b> Labelling the Gujarati option only as "Gujarati" in Latin defeats the purpose — the user who needs it most cannot read it.</li>
+        <li><b>Reciprocal Latin label below,</b> so a reader of any one script can still identify every row.</li>
+        <li><b>Continue is pinned below the list,</b> not at the end of it. With ten languages a bottom-of-page button would be unreachable without scrolling past scripts the user can't read.</li>
+        <li><b>Ordering is device-locale first, then region, then Hindi and English always above the fold,</b> then the Ops-configured order. Scrolling past unreadable scripts is the failure mode this prevents.</li>
+        <li><b>No search box.</b> Typing is the barrier for this audience — and searching requires already knowing the Latin name.</li>
+        <li><b>Shown once.</b> Reinstall returns here; logout does not.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>0.0b</b> Regional script selected — Tamil</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="body plain" style="padding:24px 20px 0">
+          <svg class="ico brand" style="width:34px;height:34px;display:block;margin:0 auto 14px"><use href="#i-globe"/></svg>
+          <div class="med" style="text-align:center;font-size:20px;margin-bottom:2px">भाषा चुनें</div>
+          <div class="sub" style="text-align:center;margin-bottom:18px">Choose your language</div>
+        </div>
+        <div style="padding:0 20px;max-height:296px;overflow:hidden;position:relative">
+          <div class="card" style="padding:0;margin:0">
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">தமிழ்</span><span class="tiny">Tamil</span></div>
+              <svg class="ico brand" style="width:22px;height:22px"><use href="#i-check"/></svg>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">हिन्दी</span><span class="tiny">Hindi</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">English</span><span class="tiny">ஆங்கிலம்</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">తెలుగు</span><span class="tiny">Telugu</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">ಕನ್ನಡ</span><span class="tiny">Kannada</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">ગુજરાતી</span><span class="tiny">Gujarati</span></div>
+            </div>
+          </div>
+          <div style="position:absolute;left:0;right:0;bottom:0;height:34px;background:linear-gradient(to bottom,rgba(255,255,255,0),#fff)"></div>
+        </div>
+        <div style="padding:12px 20px 18px;background:var(--s-bg);border-top:1px solid var(--s-line)">
+          <div class="tiny" style="text-align:center;margin-bottom:10px">8 மொழிகள் · scroll for more</div>
+          <div class="btn">தொடரவும்</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Order changed with the device locale.</b> A phone set to Tamil surfaces Tamil first — the user should not have to hunt for their own language.</li>
+        <li><b>The Latin secondary label localises too</b> — "English / ஆங்கிலம்" rather than the Devanagari version. Each row's secondary label is written in the <em>selected</em> language.</li>
+        <li><b>Heading stays Hindi + English</b> in every state. It is the one line that must be readable before any choice exists, and Hindi + English are the widest-reach pair in this geography.</li>
+        <li><b>Everything below the list localises</b> on selection — count, hint, and button. Immediate proof the choice registered, without needing to read a confirmation.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note flag">
+    <span class="note-label">Font dependency — raise before build</span>
+    <p>The HUMBEE design system is <strong>Lato, which covers Latin only.</strong> Devanagari, Gujarati, Tamil, Telugu, Kannada and Bengali are <strong>six separate font files</strong>, each adding roughly 150–400&nbsp;KB. Bundling all of them fights directly with the entry-level-device constraint in §9 and the 30&nbsp;MB APK budget.</p>
+    <p>Two further consequences: Indic scripts have <strong>taller ascenders and descenders</strong> than Latin at the same point size, so the type ramp's line heights need validating per script; and translated strings typically run <strong>15–30% longer</strong>. Neither is survivable by a fixed-height text container.</p>
+  </div>
+</section>
+
+<!-- ===================== 4.1 LOGIN ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.1</span>
+    <h2>Login &amp; authentication</h2></div>
+  <p class="lede">No signup path exists anywhere in this app. Influencers are onboarded outside it, so the only entry point is an OTP for a number already in the system. Every screen here renders in the language chosen at §4.0 — shown below in Hindi.</p>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>1.1</b> Mobile number <span style="color:var(--brand)">Hindi selected</span></p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="body plain" style="padding:28px 20px">
+          <div class="illus sq" style="margin-bottom:24px;border-radius:12px">LOGO</div>
+          <div class="med" style="margin-bottom:10px;font-size:22px">आपका स्वागत है</div>
+          <div class="sub" style="margin-bottom:24px">वह मोबाइल नंबर डालें जो आपके डिस्ट्रीब्यूटर या डीलर ने रजिस्टर किया है।</div>
+          <div class="lbl" style="margin-bottom:6px">मोबाइल नंबर</div>
+          <div class="field" style="margin-bottom:8px"><span style="color:var(--s-body);font-weight:600">+91</span><span class="ph">98765 43210</span></div>
+          <div class="tiny" style="margin-bottom:20px">हम आपको SMS पर 6 अंकों का कोड भेजेंगे।</div>
+          <div class="btn">कोड भेजें</div>
+          <div class="divide" style="margin:22px 0"></div>
+          <div class="row" style="gap:8px;justify-content:center"><svg class="ico brand" style="width:18px;height:18px"><use href="#i-phone"/></svg><span class="sub" style="color:var(--s-brand);font-weight:600">मदद चाहिए? कॉल करें 1800 2100 123</span></div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Single language, not bilingual.</b> The §4.0 chooser already resolved this — showing both scripts here would double the reading load for no gain.</li>
+        <li><b>Remaining frames in this document are drawn in English</b> for review convenience only. Every one of them ships in both languages.</li>
+        <li><b>No "Sign up" link.</b> Its absence is a requirement, not an omission.</li>
+        <li><b>+91 is fixed,</b> not a country picker. One less thing to get wrong.</li>
+        <li><b>Helpline before login.</b> A user stuck at the first screen has no other route.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>1.2</b> OTP entry</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Enter code</span></div>
+        <div class="body plain" style="padding:24px 20px">
+          <div class="sub" style="margin-bottom:4px">Code sent to</div>
+          <div class="row sb" style="margin-bottom:24px">
+            <span class="med" style="font-size:17px">+91 98765 43210</span>
+            <span class="chip brand">Change</span>
+          </div>
+          <div class="otp" style="margin-bottom:16px">
+            <span>4</span><span>7</span><span>2</span><span class="f">&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+          </div>
+          <div class="row sb" style="margin-bottom:24px">
+            <span class="tiny">Didn't get it?</span>
+            <span class="tiny" style="font-weight:600">Resend in 0:24</span>
+          </div>
+          <div class="btn dis">Verify</div>
+          <div class="divide" style="margin:22px 0"></div>
+          <div class="row" style="gap:8px;justify-content:center"><svg class="ico brand" style="width:18px;height:18px"><use href="#i-phone"/></svg><span class="sub" style="color:var(--s-brand);font-weight:600">Get code by call instead</span></div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>6 boxes, 56 dp tall.</b> Large enough to hit without looking.</li>
+        <li><b>Auto-read SMS</b> on Android where permitted; manual entry always works.</li>
+        <li><b>"Get code by call"</b> is the accessibility fallback flagged in PRD §5 — worth pulling into Phase 1 for users who struggle to read an SMS.</li>
+        <li><b>Verify stays disabled</b> until six digits are entered, rather than erroring after.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>1.3</b> Number not registered</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Not registered</span></div>
+        <div class="body plain" style="padding:28px 20px">
+          <div class="illus sq" style="margin:0 auto 22px;border-radius:50%">ILLUS</div>
+          <div class="h" style="text-align:center;font-size:18px;margin-bottom:10px">This number isn't on Humbee yet</div>
+          <div class="sub" style="text-align:center;margin-bottom:6px">+91 98765 43210</div>
+          <div class="sub" style="text-align:center;margin-bottom:24px">Ask your Distributor or Dealer to add you. It only takes them a minute.</div>
+          <div class="gap8">
+            <div class="btn"><svg class="ico w" style="width:20px;height:20px"><use href="#i-phone"/></svg>Call Humbee support</div>
+            <div class="btn out">Chat on WhatsApp</div>
+            <div class="btn ghost">Try a different number</div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Not an error state.</b> No red, no warning triangle. The user has done nothing wrong.</li>
+        <li><b>Tells them exactly who fixes it</b> — their Distributor or Dealer — per §4.1.</li>
+        <li><b>Three exits,</b> all human. Never a dead end.</li>
+        <li><b>Rate-limit this response</b> server-side so it can't be used to enumerate the Influencer base.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>1.4</b> Quick unlock — returning user</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="body plain" style="padding:36px 20px">
+          <div class="av" style="width:72px;height:72px;margin:0 auto 16px"></div>
+          <div class="med" style="text-align:center;font-size:19px;margin-bottom:4px">Ramesh Kumar</div>
+          <div class="sub" style="text-align:center;margin-bottom:28px">Enter your 4-digit PIN</div>
+          <div class="otp" style="margin-bottom:22px;padding:0 32px">
+            <span>•</span><span>•</span><span class="f">&nbsp;</span><span>&nbsp;</span>
+          </div>
+          <div class="btn out" style="margin-bottom:12px">Use fingerprint instead</div>
+          <div class="sub" style="text-align:center;color:var(--s-brand);font-weight:600">Forgot PIN? Log in with OTP</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Optional second factor</b> per §4.1 — a local gate over a still-valid session, not a server credential.</li>
+        <li><b>Name and photo shown</b> so a shared household phone makes the account obvious.</li>
+        <li><b>Biometric offered second,</b> not first — fingerprint sensors fail often on worn or dusty hands.</li>
+        <li><b>OTP fallback always available.</b> A forgotten PIN never locks anyone out.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4.2 DASHBOARD ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.2</span>
+    <h2>Home dashboard</h2></div>
+  <p class="lede">One screen that answers "where do I stand with Humbee". The hardest screen in the app, because it must summarise a multi-industry, multi-partner relationship without ever collapsing a role away from its industry.</p>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>2.1</b> Dashboard — top</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar brand">
+          <div class="av" style="background:rgba(255,255,255,.28)"></div>
+          <div class="col" style="flex:1">
+            <span style="font-size:16px;font-weight:700;color:#fff">Ramesh Kumar</span>
+            <span style="font-size:12px;color:rgba(255,255,255,.85)">3 industries · 5 partners</span>
+          </div>
+          <svg class="ico w"><use href="#i-bell"/></svg>
+        </div>
+        <div class="body">
+          <div class="card" style="padding:16px">
+            <div class="lbl" style="margin-bottom:4px">Points balance</div>
+            <div class="row sb" style="align-items:flex-end">
+              <span class="big">12,480</span>
+              <span class="chip ok"><span class="dot"></span>+840 this month</span>
+            </div>
+            <div class="divide"></div>
+            <div class="row sb">
+              <div class="col"><span class="med" style="font-size:17px">5</span><span class="tiny">Partners</span></div>
+              <div class="col"><span class="med" style="font-size:17px">3</span><span class="tiny">Industries</span></div>
+              <div class="col"><span class="med" style="font-size:17px">7</span><span class="tiny">Rewards</span></div>
+            </div>
+          </div>
+          <div class="banner" style="margin-bottom:12px">
+            <div class="row" style="gap:12px">
+              <div class="illus sq" style="width:52px;height:52px;background:rgba(255,255,255,.22);color:rgba(255,255,255,.75)">UTSAV</div>
+              <div class="col" style="flex:1">
+                <span class="lbl">Umang Utsav 2026</span>
+                <span class="med" style="font-size:16px">14 March · Jaipur</span>
+                <span style="font-size:12px;color:rgba(255,255,255,.85)">You're invited · 32 days to go</span>
+              </div>
+              <svg class="ico w"><use href="#i-chev"/></svg>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row sb" style="margin-bottom:2px"><span class="h" style="margin:0">Points by brand</span><span class="tiny">This month</span></div>
+            <div class="chart">
+              <div><i style="height:76%"></i><b>Dalmia<br>TMT</b></div>
+              <div><i style="height:52%"></i><b>Vastav<br>Cement</b></div>
+              <div><i style="height:30%"></i><b>Master<br>Chow</b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>"3 industries · 5 partners"</b> replaces a single trade label. §3.1 forbids assuming one role for the whole person.</li>
+        <li><b>Points balance is the hero number</b> — the one figure comparable across industries, per §4.6.</li>
+        <li><b>Chart uses points, not rupees.</b> Deliberate, per §4.2 — points are meaningful and comparable; currency is neither.</li>
+        <li><b>Event banner is high on the screen</b> because Umang Utsav invitation is the strongest emotional hook in the product.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>2.2</b> Dashboard — activity feed</p>
+      <div class="frame scr">
+        <div class="body" style="min-height:auto;padding-top:0">
+          <div class="row sb" style="margin:4px 0 10px"><span class="h" style="margin:0">Recent activity</span><span class="sub" style="color:var(--s-brand);font-weight:600">See all</span></div>
+          <div class="card" style="padding:0">
+            <div style="padding:13px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="row sb" style="margin-bottom:5px">
+                <span class="chip brand">Dalmia TMT · Barbender</span>
+                <span class="tiny">2 days ago</span>
+              </div>
+              <div class="med" style="font-size:18px;margin-bottom:2px">500 kg</div>
+              <div class="tiny">Allocated by Sharma Steel Traders · Distributor</div>
+            </div>
+            <div style="padding:13px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="row sb" style="margin-bottom:5px">
+                <span class="chip brand">Vastav Cement · Contractor</span>
+                <span class="tiny">4 days ago</span>
+              </div>
+              <div class="med" style="font-size:18px;margin-bottom:2px">120 bags</div>
+              <div class="tiny">Allocated by Gupta Traders · Dealer</div>
+            </div>
+            <div style="padding:13px 14px">
+              <div class="row sb" style="margin-bottom:5px">
+                <span class="chip ok"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>Reward received</span>
+                <span class="tiny">1 week ago</span>
+              </div>
+              <div class="med" style="font-size:16px;margin-bottom:2px">Steel water bottle set</div>
+              <div class="tiny">Q3 Dalmia TMT Volume Drive</div>
+            </div>
+          </div>
+        </div>
+        <div class="tabbar">
+          <div class="on"><svg class="ico" style="width:22px;height:22px"><use href="#i-home"/></svg>Home</div>
+          <div><svg class="ico" style="width:22px;height:22px"><use href="#i-list"/></svg>Allocations</div>
+          <div><svg class="ico" style="width:22px;height:22px"><use href="#i-gift"/></svg>Rewards</div>
+          <div><svg class="ico" style="width:22px;height:22px"><use href="#i-coin"/></svg>Points</div>
+          <div><svg class="ico" style="width:22px;height:22px"><use href="#i-user"/></svg>Profile</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>This is the <code>ActivityRow</code> component.</b> Brand + role-for-that-industry inline, quantity in native unit as the largest text, counterparty and timestamp small.</li>
+        <li><b>The role chip is never separated from its brand.</b> Getting this one component right makes §3.1 correct across the whole app.</li>
+        <li><b>Native units throughout</b> — kg for steel, bags for cement. Never normalised to a common unit in the feed.</li>
+        <li><b>Five tabs, all labelled.</b> Rule 02.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4.3 ALLOCATIONS ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.3</span>
+    <h2>Allocations</h2></div>
+  <p class="lede">The verification surface. A user opens this to check that what the app says matches what they were told in person — so every number must be traceable to a person and a date.</p>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>3.1</b> Allocations list</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><span class="t">Allocations</span><svg class="ico"><use href="#i-filter"/></svg></div>
+        <div style="padding:10px 16px;background:var(--s-bg);border-bottom:1px solid var(--s-line)">
+          <div class="seg"><span class="on">All</span><span>Steel</span><span>Cement</span><span>Paints</span></div>
+        </div>
+        <div class="body">
+          <div class="row sb" style="margin-bottom:10px">
+            <span class="tiny">42 allocations</span>
+            <span class="tiny" style="font-weight:600">Newest first</span>
+          </div>
+          <div class="card" style="padding:0">
+            <div style="padding:13px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="row sb" style="margin-bottom:5px">
+                <span class="chip brand">Dalmia TMT · Barbender</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg>
+              </div>
+              <div class="med" style="font-size:19px">500 kg</div>
+              <div class="tiny" style="margin:2px 0 6px">TMT Bars 12mm</div>
+              <div class="row sb"><span class="tiny">Sharma Steel Traders</span><span class="tiny">12 Feb 2026</span></div>
+            </div>
+            <div style="padding:13px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="row sb" style="margin-bottom:5px">
+                <span class="chip brand">Vastav Cement · Contractor</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg>
+              </div>
+              <div class="med" style="font-size:19px">120 bags</div>
+              <div class="tiny" style="margin:2px 0 6px">OPC 53 Grade</div>
+              <div class="row sb"><span class="tiny">Gupta Traders</span><span class="tiny">10 Feb 2026</span></div>
+            </div>
+            <div style="padding:13px 14px">
+              <div class="row sb" style="margin-bottom:5px">
+                <span class="chip brand">MasterChow · Painter</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg>
+              </div>
+              <div class="med" style="font-size:19px">45 litres</div>
+              <div class="tiny" style="margin:2px 0 6px">Interior Emulsion</div>
+              <div class="row sb"><span class="tiny">Verma Paints</span><span class="tiny">6 Feb 2026</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Cards, not a table.</b> The design system's table exists for Web/Ops. Six columns cannot be read on 360 dp.</li>
+        <li><b>Industry filter is a first-class chip row,</b> not buried in the filter sheet — §4.3 makes industry a primary axis.</li>
+        <li><b>Quantity is the largest element</b> in every row. Rule 01.</li>
+        <li><b>Aggregates across all partners by default,</b> filterable down. Never partner-scoped on open.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>3.2</b> Filter sheet</p>
+      <div class="frame scr">
+        <div class="scrim"></div>
+        <div class="sheet">
+          <div class="grab"></div>
+          <div class="row sb" style="margin-bottom:16px"><span class="h" style="margin:0">Filters</span><span class="sub" style="color:var(--s-brand);font-weight:600">Clear all</span></div>
+          <div class="lbl" style="margin-bottom:8px">Industry</div>
+          <div class="seg" style="flex-wrap:wrap;margin-bottom:18px"><span class="on">All</span><span>Steel</span><span>Cement</span><span>Paints</span></div>
+          <div class="lbl" style="margin-bottom:8px">Brand</div>
+          <div class="seg" style="flex-wrap:wrap;gap:8px;margin-bottom:18px"><span class="on">All</span><span>Dalmia TMT</span><span>Vastav</span><span>MasterChow</span></div>
+          <div class="lbl" style="margin-bottom:8px">Allocated by</div>
+          <div class="seg" style="flex-wrap:wrap;gap:8px;margin-bottom:18px"><span class="on">All</span><span>Sharma Steel</span><span>Gupta Traders</span></div>
+          <div class="lbl" style="margin-bottom:8px">Period</div>
+          <div class="seg" style="margin-bottom:22px"><span>This month</span><span class="on">Last 6 months</span><span>All time</span></div>
+          <div class="btn">Show 42 allocations</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Chips, not dropdowns.</b> Every option visible; nothing hidden behind a picker.</li>
+        <li><b>Button states the result count</b> before commit — no surprise empty list.</li>
+        <li><b>No date pickers.</b> Named periods only. Calendar widgets are a literacy barrier.</li>
+        <li>Filter sheet is one screen, one decision group. Rule 04.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>3.3</b> Allocation detail</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Allocation</span></div>
+        <div class="body">
+          <div class="card">
+            <span class="chip brand" style="margin-bottom:10px">Dalmia TMT · Barbender</span>
+            <div class="big" style="margin:8px 0 2px">500 kg</div>
+            <div class="sub" style="margin-bottom:12px">TMT Bars 12 mm</div>
+            <div class="chip ok"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>Confirmed</div>
+          </div>
+          <div class="card">
+            <table class="tbl">
+              <tr><td>Allocated by</td><td>Sharma Steel Traders</td></tr>
+              <tr><td>Partner type</td><td>Distributor</td></tr>
+              <tr><td>Date</td><td>12 Feb 2026</td></tr>
+              <tr><td>Industry</td><td>Steel (TMT)</td></tr>
+              <tr><td>Your role</td><td>Barbender</td></tr>
+              <tr><td>Points earned</td><td>500</td></tr>
+            </table>
+          </div>
+          <div class="card">
+            <div class="lbl" style="margin-bottom:6px">Total from Dalmia TMT</div>
+            <div class="med">8,240 kg</div>
+            <div class="tiny">Across 14 allocations since Apr 2025</div>
+          </div>
+          <div class="card" style="border-color:var(--s-line2)">
+            <div class="row" style="gap:10px;margin-bottom:10px"><svg class="ico" style="width:20px;height:20px;color:var(--s-body)"><use href="#i-warn"/></svg><span class="sub" style="font-weight:600;color:var(--s-ink)">Something wrong here?</span></div>
+            <div class="btn out" style="height:44px;font-size:14px">Report a problem</div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Points shown against the source allocation</b> — this is what makes the ledger hand-verifiable per §4.6.</li>
+        <li><b>Running cumulative total in native unit,</b> per §4.3. Never converted.</li>
+        <li><b>Role appears as a data row too,</b> not only as a chip — it is evidence in a dispute.</li>
+        <li><b>Dispute entry is calm and low-contrast.</b> Prominent enough to find, not so loud it invites frivolous use.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>3.4</b> Raise a dispute</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Report a problem</span></div>
+        <div class="body">
+          <div class="card">
+            <div class="tiny" style="margin-bottom:4px">About this allocation</div>
+            <div class="sub" style="font-weight:600;color:var(--s-ink)">Dalmia TMT · 500 kg · 12 Feb</div>
+          </div>
+          <div class="h">What's wrong?</div>
+          <div class="gap8" style="margin-bottom:16px">
+            <div class="card" style="margin:0;border-color:var(--s-brand);background:var(--s-brand-5)"><div class="row sb"><span class="sub" style="font-weight:600;color:var(--s-ink)">I never received this</span><svg class="ico brand" style="width:20px;height:20px"><use href="#i-check"/></svg></div></div>
+            <div class="card" style="margin:0"><span class="sub">The quantity is wrong</span></div>
+            <div class="card" style="margin:0"><span class="sub">The brand or product is wrong</span></div>
+            <div class="card" style="margin:0"><span class="sub">Something else</span></div>
+          </div>
+          <div class="card" style="border-style:dashed">
+            <div class="row" style="gap:10px;justify-content:center"><svg class="ico" style="color:var(--s-brand)"><use href="#i-cam"/></svg><span class="sub" style="color:var(--s-brand);font-weight:600">Add a photo (optional)</span></div>
+          </div>
+          <div class="btn">Send to Humbee</div>
+          <div class="tiny" style="text-align:center;margin-top:10px">Humbee support and Sharma Steel Traders will both see this.</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Four fixed reasons, tappable cards.</b> No free-text required — typing is the barrier.</li>
+        <li><b>Photo optional,</b> camera-first. Many users find it easier than words.</li>
+        <li><b>Says exactly who will see it</b> — trust depends on the user knowing Ops is involved, not just the Distributor they depend on (§11).</li>
+        <li><b>Needs an SLA commitment.</b> A dispute with no stated response time damages trust rather than building it — flagged as an open question.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4.4 REWARDS ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.4</span>
+    <h2>Rewards &amp; lucky draws</h2></div>
+  <p class="lede">Full transparency on every gift won — what it is, who gave it, and when it arrives. The fulfilment stepper introduced here is reused verbatim by Umang Utsav gifts.</p>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>4.1</b> Rewards list</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><span class="t">Rewards</span></div>
+        <div style="padding:10px 16px;background:var(--s-bg);border-bottom:1px solid var(--s-line)">
+          <div class="seg"><span class="on">Rewards</span><span>Lucky draws</span><span>Events</span></div>
+        </div>
+        <div class="body">
+          <div class="card">
+            <div class="row" style="gap:12px">
+              <div class="thumb"></div>
+              <div class="col" style="flex:1">
+                <span class="sub" style="font-weight:700;color:var(--s-ink);font-size:15px">Refrigerator — 190 L</span>
+                <span class="tiny">Dalmia TMT · Top 20 Barbenders</span>
+                <span class="chip warn" style="margin-top:6px;align-self:flex-start"><span class="dot"></span>Processing</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row" style="gap:12px">
+              <div class="thumb"></div>
+              <div class="col" style="flex:1">
+                <span class="sub" style="font-weight:700;color:var(--s-ink);font-size:15px">₹5,000 cash</span>
+                <span class="tiny">Vastav Cement · Monsoon Drive</span>
+                <span class="chip info" style="margin-top:6px;align-self:flex-start"><span class="dot"></span>Credited</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row" style="gap:12px">
+              <div class="thumb"></div>
+              <div class="col" style="flex:1">
+                <span class="sub" style="font-weight:700;color:var(--s-ink);font-size:15px">Steel water bottle set</span>
+                <span class="tiny">Dalmia TMT · Q3 Volume Drive</span>
+                <span class="chip ok" style="margin-top:6px;align-self:flex-start"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>Received</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Status chip on every row,</b> colour + dot + word. Rule 06.</li>
+        <li><b>Granting brand and scheme always shown</b> — attribution is what makes the programme feel real (§4.4).</li>
+        <li><b>Three tabs cover Rewards, Draws and Events</b> so Umang Utsav sits beside the rewards it produces.</li>
+        <li><b>Photo thumbnail per reward.</b> For a low-literacy user an image of the gift carries more than its name.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>4.2</b> Reward detail — fulfilment</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Reward</span></div>
+        <div class="body">
+          <div class="card">
+            <div class="illus" style="margin-bottom:12px">PHOTO — REFRIGERATOR</div>
+            <div class="med" style="font-size:18px;margin-bottom:2px">Refrigerator — 190 L</div>
+            <div class="tiny">Won under "Top 20 Barbenders — Dalmia TMT, Jan–Jun 2026"</div>
+          </div>
+          <div class="card">
+            <div class="h">Where it is now</div>
+            <div class="gap8">
+              <div class="step done"><div class="pin"></div><div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Announced</span><span class="tiny">18 Jan 2026</span></div></div>
+              <div class="step now"><div class="pin"></div><div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Processing</span><span class="tiny">Since 2 Feb 2026</span></div></div>
+              <div class="step"><div class="pin"></div><div class="col"><span class="sub" style="color:var(--s-mute)">Dispatched</span></div></div>
+              <div class="step"><div class="pin"></div><div class="col"><span class="sub" style="color:var(--s-mute)">Received by you</span></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <table class="tbl">
+              <tr><td>Granted by</td><td>Dalmia TMT</td></tr>
+              <tr><td>Through</td><td>Sharma Steel Traders</td></tr>
+              <tr><td>Announced</td><td>18 Jan 2026</td></tr>
+            </table>
+          </div>
+          <div class="btn ghost">Ask about this reward</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>This is <code>FulfilmentStatusStepper</code></b> — the same component serves Umang Utsav gifts (§4.5).</li>
+        <li><b>Vertical, not horizontal.</b> Four labelled stages don't fit horizontally at 360 dp in Hindi.</li>
+        <li><b>Eligibility rule stated in plain words,</b> per §4.4. "Why did I get this" is a trust question.</li>
+        <li><b>"Received by you" becomes a confirm button</b> when the stage is reached, with optional photo upload.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>4.3</b> Lucky draws</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><span class="t">Rewards</span></div>
+        <div style="padding:10px 16px;background:var(--s-bg);border-bottom:1px solid var(--s-line)">
+          <div class="seg"><span>Rewards</span><span class="on">Lucky draws</span><span>Events</span></div>
+        </div>
+        <div class="body">
+          <div class="card">
+            <div class="row sb" style="margin-bottom:8px">
+              <span class="chip brand">Dalmia TMT</span>
+              <span class="chip warn"><span class="dot"></span>Draw on 28 Feb</span>
+            </div>
+            <div class="sub" style="font-weight:700;color:var(--s-ink);font-size:15px;margin-bottom:8px">Monsoon Mega Draw</div>
+            <div class="row sb" style="align-items:flex-end">
+              <div class="col"><span class="big" style="font-size:26px">8</span><span class="tiny">Your entries</span></div>
+              <span class="tiny" style="text-align:right;max-width:150px">1 entry per 1 tonne · You bought 8 t</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row sb" style="margin-bottom:8px">
+              <span class="chip brand">Vastav Cement</span>
+              <span class="chip ok"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>You won</span>
+            </div>
+            <div class="sub" style="font-weight:700;color:var(--s-ink);font-size:15px;margin-bottom:4px">Diwali Dhamaka Draw</div>
+            <div class="sub">Prize: Smartphone</div>
+            <div class="divide"></div>
+            <div class="row sb"><span class="tiny">Drawn 4 Nov 2025 · 3 entries</span><span class="tiny" style="color:var(--s-brand);font-weight:600">See all winners</span></div>
+          </div>
+          <div class="card">
+            <div class="row sb" style="margin-bottom:8px">
+              <span class="chip brand">MasterChow</span>
+              <span class="chip neu"><span class="dot"></span>Not won</span>
+            </div>
+            <div class="sub" style="font-weight:700;color:var(--s-ink);font-size:15px;margin-bottom:4px">Festive Paint Draw</div>
+            <div class="row sb" style="margin-top:6px"><span class="tiny">Drawn 12 Oct 2025 · 2 entries</span><span class="tiny" style="color:var(--s-brand);font-weight:600">See winners</span></div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Entry basis spelled out</b> — "1 entry per 1 tonne · you bought 8 t". Verifiable by hand, like points.</li>
+        <li><b>"Not won" is neutral grey, not red.</b> Losing a fair draw is not a failure state, and colouring it as one undercuts the transparency the module exists to build.</li>
+        <li><b>"See all winners" on every draw,</b> won or lost. Opt-in public lists are the anti-rigging proof (§4.4, §11).</li>
+        <li><b>Running draw shows a date, not a countdown timer.</b> Timers create anxiety and re-render cost for no benefit here.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4.5 UMANG UTSAV ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.5</span>
+    <h2>Umang Utsav</h2></div>
+  <p class="lede">The event module makes recognition tangible: an invitation to look forward to, and a permanent record of what was won. The <code>Umang Utsav</code> illustration already exists in the design system at 48/64/100&nbsp;px — no new artwork needed.</p>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>5.1</b> Events</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><span class="t">Rewards</span></div>
+        <div style="padding:10px 16px;background:var(--s-bg);border-bottom:1px solid var(--s-line)">
+          <div class="seg"><span>Rewards</span><span>Lucky draws</span><span class="on">Events</span></div>
+        </div>
+        <div class="body">
+          <div class="lbl" style="margin-bottom:8px">Coming up</div>
+          <div class="card" style="border-color:var(--s-brand);border-width:2px">
+            <div class="illus" style="margin-bottom:12px">EVENT BANNER</div>
+            <div class="row sb" style="margin-bottom:6px">
+              <span class="med" style="font-size:17px">Umang Utsav 2026</span>
+              <span class="chip ok"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>Invited</span>
+            </div>
+            <div class="sub" style="margin-bottom:2px">14 March 2026 · Jaipur</div>
+            <div class="tiny" style="margin-bottom:12px">Open to Top 100 performers — Jul–Dec 2025 cycle</div>
+            <div class="row sb" style="background:var(--s-brand-5);padding:10px 12px;border-radius:6px">
+              <span class="sub" style="font-weight:600;color:var(--s-brand)">32 days to go</span>
+              <svg class="ico brand" style="width:18px;height:18px"><use href="#i-chev"/></svg>
+            </div>
+          </div>
+          <div class="lbl" style="margin:18px 0 8px">Past events</div>
+          <div class="card">
+            <div class="row" style="gap:12px">
+              <div class="illus sq">UTSAV</div>
+              <div class="col" style="flex:1">
+                <span class="sub" style="font-weight:700;color:var(--s-ink)">Umang Utsav 2025</span>
+                <span class="tiny">8 March 2025 · Udaipur</span>
+                <span class="chip ok" style="margin-top:6px;align-self:flex-start"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>You attended · 1 gift</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row" style="gap:12px">
+              <div class="illus sq">UTSAV</div>
+              <div class="col" style="flex:1">
+                <span class="sub" style="font-weight:700;color:var(--s-ink)">Umang Utsav 2024</span>
+                <span class="tiny">2 March 2024 · Jodhpur</span>
+                <span class="chip neu" style="margin-top:6px;align-self:flex-start">Did not attend</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>"Did not attend" is neutral,</b> never danger-red. The user may have had a good reason; the app doesn't judge.</li>
+        <li><b>Attendance is read-only,</b> set by Ops via check-in scan (§4.5).</li>
+        <li><b>Eligibility rule shown on the invitation</b> — "Top 100, Jul–Dec cycle" answers "why me" before it's asked.</li>
+        <li><b>Gift count on past events</b> turns the list into a personal trophy record, which is the emotional point of the module.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>5.2</b> Event detail — past</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Umang Utsav 2025</span></div>
+        <div class="body">
+          <div class="card" style="padding:0;overflow:hidden">
+            <div class="illus" style="height:120px;border-radius:0">EVENT PHOTO</div>
+            <div style="padding:14px">
+              <div class="row sb" style="margin-bottom:8px">
+                <div class="col"><span class="med" style="font-size:17px">8 March 2025</span><span class="tiny">Udaipur · Hotel Rajdarshan</span></div>
+                <span class="chip ok"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>Attended</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="h">What you won</div>
+            <div class="row" style="gap:12px;margin-bottom:12px">
+              <div class="thumb"></div>
+              <div class="col" style="flex:1">
+                <span class="sub" style="font-weight:700;color:var(--s-ink)">LG 7 kg washing machine</span>
+                <span class="tiny">Top 20 Barbenders · Dalmia TMT · Jan–Jun 2025</span>
+                <span class="chip ok" style="margin-top:6px;align-self:flex-start"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>Handed over at event</span>
+              </div>
+            </div>
+            <div class="divide"></div>
+            <div class="tiny">Granted by Dalmia TMT through Sharma Steel Traders</div>
+          </div>
+          <div class="card">
+            <div class="h">Photos from the day</div>
+            <div class="row" style="gap:8px">
+              <div class="illus sq" style="flex:1;width:auto">PHOTO</div>
+              <div class="illus sq" style="flex:1;width:auto">PHOTO</div>
+              <div class="illus sq" style="flex:1;width:auto">PHOTO</div>
+            </div>
+            <div class="tiny" style="margin-top:8px">Phase 1.1</div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Gift reuses the rewards fulfilment pattern</b> — "Handed over at event" is a terminal success state.</li>
+        <li><b>Performance basis is stated</b> — this is a recognition record, so why it was earned matters as much as what.</li>
+        <li><b>Photo gallery marked Phase 1.1</b> per the PRD, but the slot is designed now so it isn't retrofitted.</li>
+        <li><b>Shareable.</b> A user showing this screen to a Dealer is the digital-ID use case from §5 in miniature.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4.6 POINTS ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.6</span>
+    <h2>Points &amp; loyalty</h2></div>
+  <p class="lede">Points work only if the user can verify them by hand. Every screen here is built backwards from that: balance → ledger → source allocation → conversion rule.</p>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>6.1</b> Points wallet</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><span class="t">Points</span></div>
+        <div class="body">
+          <div class="card" style="background:var(--s-brand);border-color:var(--s-brand)">
+            <div class="lbl" style="color:rgba(255,255,255,.82)">Your balance</div>
+            <div class="big" style="color:#fff;font-size:38px;margin:4px 0 8px">12,480</div>
+            <div class="row sb">
+              <span style="font-size:12px;color:rgba(255,255,255,.85)">+840 earned this month</span>
+              <span class="chip" style="background:rgba(255,255,255,.2);color:#fff">Since Apr 2025</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row sb" style="margin-bottom:10px"><span class="h" style="margin:0">How points are earned</span></div>
+            <table class="tbl">
+              <tr><td>Steel — 1 kg</td><td>1 point</td></tr>
+              <tr><td>Cement — 1 bag</td><td>1 point</td></tr>
+              <tr><td>Paints — 1 litre</td><td>1 point</td></tr>
+            </table>
+            <div class="tiny" style="margin-top:10px">Your 500 kg of Dalmia TMT gave you 500 points.</div>
+          </div>
+          <div class="strip info" style="border-radius:8px;margin-bottom:12px"><svg class="ico" style="width:18px;height:18px"><use href="#i-warn"/></svg>1,200 points expire on 31 Mar 2026</div>
+          <div class="btn out">See what you can get</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Conversion table is on the main screen,</b> not behind a help link. §4.6 requires the balance be traceable to volume.</li>
+        <li><b>Worked example using the user's own data</b> — "your 500 kg gave you 500 points" is the sentence that creates trust.</li>
+        <li><b>Table is rendered from server config,</b> never hardcoded. New industries must not need an app release.</li>
+        <li><b>Expiry warned early and specifically,</b> with a date not a duration.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>6.2</b> Points ledger</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Points history</span></div>
+        <div style="padding:10px 16px;background:var(--s-bg);border-bottom:1px solid var(--s-line)">
+          <div class="seg"><span class="on">All</span><span>Earned</span><span>Used</span><span>Expired</span></div>
+        </div>
+        <div class="body">
+          <div class="card">
+            <div class="ledger">
+              <div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Dalmia TMT · 500 kg</span><span class="tiny">12 Feb 2026 · Steel · Allocation</span></div>
+              <span class="plus">+500</span>
+            </div>
+            <div class="ledger">
+              <div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Vastav Cement · 120 bags</span><span class="tiny">10 Feb 2026 · Cement · Allocation</span></div>
+              <span class="plus">+120</span>
+            </div>
+            <div class="ledger">
+              <div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Referral bonus — Suresh</span><span class="tiny">8 Feb 2026 · Referral verified</span></div>
+              <span class="plus">+250</span>
+            </div>
+            <div class="ledger">
+              <div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Weekly check-in</span><span class="tiny">5 Feb 2026 · Engagement</span></div>
+              <span class="plus">+10</span>
+            </div>
+            <div class="ledger">
+              <div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Voucher — ₹500 Amazon</span><span class="tiny">28 Jan 2026 · Redeemed</span></div>
+              <span class="minus">−2,500</span>
+            </div>
+          </div>
+          <div class="tiny" style="text-align:center">Every entry links back to what caused it.</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Every row names its source event and industry,</b> per §4.6 — auditability is a stated requirement, not a nicety.</li>
+        <li><b>Tapping an earn row opens the allocation</b> that produced it. That round trip is the whole trust mechanism.</li>
+        <li><b>Ledger is append-only.</b> Corrections appear as new compensating rows, never as edits.</li>
+        <li><b>Green for earn, red for spend,</b> plus a sign. Never colour alone.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4.7 + 4.8 ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.7 · §4.8</span>
+    <h2>Notifications &amp; profile</h2></div>
+  <p class="lede">Profile is the app's identity and self-service surface — the one place an Influencer can answer "who does Humbee think I am, who am I linked to, and how do they reach me" without asking their Distributor.</p>
+  <p>Two rules shape every screen here. <strong>Every field declares whether the user can change it, and if not, who can</strong> — a locked field with no explanation produces a support call. And <strong>no role ever appears without its industry</strong> (§3.1), including in the roles list, where the manufacturers are surfaced underneath because a barbender recognises "Dalmia TMT" long before "Steel (TMT)".</p>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>7.1</b> Notification centre</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Notifications</span></div>
+        <div class="body">
+          <div class="card" style="background:var(--s-brand-5);border-color:var(--s-brand-10)">
+            <div class="row" style="gap:10px;align-items:flex-start">
+              <div class="illus sq" style="width:36px;height:36px;border-radius:50%">•</div>
+              <div class="col" style="flex:1">
+                <span class="sub" style="font-weight:700;color:var(--s-ink)">Umang Utsav 2026 — you're invited</span>
+                <span class="tiny" style="margin:2px 0 4px">14 March in Jaipur. Tap to see details.</span>
+                <span class="tiny">2 hours ago</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row" style="gap:10px;align-items:flex-start">
+              <div class="illus sq" style="width:36px;height:36px;border-radius:50%">•</div>
+              <div class="col" style="flex:1">
+                <span class="sub" style="font-weight:600;color:var(--s-ink)">Sharma Steel Traders allocated 500 kg of Dalmia TMT to you</span>
+                <span class="tiny" style="margin-top:4px">2 days ago</span>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row" style="gap:10px;align-items:flex-start">
+              <div class="illus sq" style="width:36px;height:36px;border-radius:50%">•</div>
+              <div class="col" style="flex:1">
+                <span class="sub" style="font-weight:600;color:var(--s-ink)">1,200 points expire on 31 March</span>
+                <span class="tiny" style="margin-top:4px">3 days ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Unread carries a tinted background,</b> not just a dot — visible in sunlight on a cheap panel.</li>
+        <li><b>Message text matches the SMS wording</b> from §7 exactly, so a user cross-checking the two isn't confused.</li>
+        <li><b>90-day history</b> per §4.7.</li>
+        <li><b>Every notification is tappable</b> to its source screen. A notification that dead-ends is worse than none.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>8.1</b> Profile</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><span class="t">Profile</span></div>
+        <div class="body">
+          <div class="card" style="text-align:center">
+            <div style="position:relative;width:76px;margin:0 auto 10px">
+              <div class="av" style="width:76px;height:76px"></div>
+              <div style="position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;background:var(--s-brand);display:flex;align-items:center;justify-content:center"><svg class="ico w" style="width:15px;height:15px"><use href="#i-cam"/></svg></div>
+            </div>
+            <div class="med" style="font-size:18px">Ramesh Kumar</div>
+            <div class="tiny">+91 98765 43210</div>
+            <div class="chip ok" style="margin-top:8px"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>KYC verified</div>
+          </div>
+          <div class="card">
+            <div class="h">Your roles</div>
+            <div class="gap12">
+              <div>
+                <div class="row sb" style="margin-bottom:4px"><span class="sub" style="font-weight:600;color:var(--s-ink)">Steel (TMT)</span><span class="chip brand">Barbender</span></div>
+                <div class="tiny">Dalmia TMT · set by Sharma Steel Traders</div></div>
+              <div>
+                <div class="row sb" style="margin-bottom:4px"><span class="sub" style="font-weight:600;color:var(--s-ink)">Cement</span><span class="chip brand">Contractor</span></div>
+                <div class="tiny">Vastav Cement · set by Rathore Cement Co.</div></div>
+              <div>
+                <div class="row sb" style="margin-bottom:4px"><span class="sub" style="font-weight:600;color:var(--s-ink)">Paints</span><span class="chip brand">Painter</span></div>
+                <div class="tiny">MasterChow · set by Verma Paints</div></div>
+            </div>
+            <div class="divide"></div>
+            <div class="tiny">Roles are set by your Distributor or Dealer. Contact them to change one.</div>
+          </div>
+          <div class="card" style="padding:0">
+            <div class="row sb" style="padding:14px"><span class="sub" style="font-weight:600;color:var(--s-ink)">My Humbee card</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+            <div class="divide" style="margin:0"></div>
+            <div class="row sb" style="padding:14px"><span class="sub" style="font-weight:600;color:var(--s-ink)">Linked partners (5)</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+            <div class="divide" style="margin:0"></div>
+            <div class="row sb" style="padding:14px"><span class="sub" style="font-weight:600;color:var(--s-ink)">Refer a friend</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+            <div class="divide" style="margin:0"></div>
+            <div class="row sb" style="padding:14px"><span class="sub" style="font-weight:600;color:var(--s-ink)">Help &amp; support</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+            <div class="divide" style="margin:0"></div>
+            <div class="row sb" style="padding:14px">
+              <span class="sub" style="font-weight:600;color:var(--s-ink)">Language</span>
+              <div class="row" style="gap:8px"><span class="sub">हिन्दी</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>"Your roles" is read-only and explains who changes it</b> — the single clearest expression of the §3.1 model.</li>
+        <li><b>Mobile number is view-only here;</b> changing it uses the dedicated §4.1 flow since it is the login identifier.</li>
+        <li><b>Language shows its current value in its own script,</b> so it is findable by a user who took a wrong turn at first launch and cannot read the surrounding menu.</li>
+        <li><b>Camera badge on the avatar,</b> per the validated prototype described in §4.8.</li>
+        <li><b>Logout sits far below,</b> visually separated — required by §4.8 and easy to hit accidentally otherwise.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>8.3</b> Profile → Language <span style="color:var(--brand)">§4.0</span></p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Language · भाषा</span></div>
+        <div class="body" style="padding-bottom:8px">
+          <div class="lbl" style="margin-bottom:8px">Used in your area</div>
+          <div class="card" style="padding:0;margin-bottom:14px">
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line);background:var(--s-brand-5)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">हिन्दी</span><span class="tiny">Hindi</span></div>
+              <svg class="ico brand" style="width:22px;height:22px"><use href="#i-check"/></svg>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">मराठी</span><span class="tiny">Marathi</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">ગુજરાતી</span><span class="tiny">Gujarati</span></div>
+            </div>
+          </div>
+          <div class="lbl" style="margin-bottom:8px">All languages</div>
+          <div class="card" style="padding:0;margin-bottom:14px">
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">English</span><span class="tiny">अंग्रेज़ी</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">தமிழ்</span><span class="tiny">Tamil</span></div>
+            </div>
+            <div class="row sb" style="padding:12px 14px">
+              <div class="col"><span style="font-size:19px;font-weight:700;color:var(--s-ink);line-height:1.35">తెలుగు</span><span class="tiny">Telugu</span></div>
+            </div>
+          </div>
+          <div class="card" style="border-style:dashed;margin-bottom:0">
+            <div class="row" style="gap:10px;align-items:flex-start">
+              <svg class="ico" style="width:20px;height:20px;color:var(--s-body);margin-top:1px"><use href="#i-bell"/></svg>
+              <span class="tiny">आपके SMS और ऐप संदेश भी इसी भाषा में आएंगे।</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Same row component as the first-launch chooser.</b> One pattern learned once.</li>
+        <li><b>Grouped by region, which first-launch cannot do.</b> After login the user's registered state is known, so the languages actually spoken around them float to the top — this is the one place the Profile chooser should differ from §4.0.</li>
+        <li><b>No Continue button here.</b> Tapping a row applies immediately and returns; a settings change doesn't need the mis-tap guard that a pre-login screen does, because the user can always come back.</li>
+        <li><b>States that notifications follow,</b> in the current language. A user who chose Hindi should never receive an English SMS (§7).</li>
+        <li><b>Bilingual app bar title</b> — "Language · भाषा" — so the screen is identifiable even if the user arrived here having picked the wrong language.</li>
+        <li><b>Two taps from the Profile tab,</b> satisfying rule 05.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>8.2</b> Digital ID card <span style="color:var(--brand)">§5 · Phase 1</span></p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">My Humbee card</span></div>
+        <div class="body">
+          <div class="card" style="background:var(--s-brand);border-color:var(--s-brand);padding:18px">
+            <div class="row sb" style="margin-bottom:14px">
+              <span class="lbl" style="color:rgba(255,255,255,.82)">Humbee Influencer</span>
+              <div class="illus sq" style="width:28px;height:28px;background:rgba(255,255,255,.25);color:#fff;border-radius:5px">H</div>
+            </div>
+            <div class="row" style="gap:12px;margin-bottom:14px">
+              <div class="av" style="width:52px;height:52px;background:rgba(255,255,255,.28)"></div>
+              <div class="col" style="flex:1">
+                <span style="font-size:17px;font-weight:700;color:#fff">Ramesh Kumar</span>
+                <span style="font-size:12px;color:rgba(255,255,255,.85)">Member since Apr 2022</span>
+              </div>
+            </div>
+            <div style="background:#fff;border-radius:8px;padding:12px;text-align:center">
+              <div class="qr"></div>
+            </div>
+            <div class="row" style="gap:6px;flex-wrap:wrap;margin-top:14px">
+              <span class="chip" style="background:rgba(255,255,255,.2);color:#fff">Steel · Barbender</span>
+              <span class="chip" style="background:rgba(255,255,255,.2);color:#fff">Cement · Contractor</span>
+              <span class="chip" style="background:rgba(255,255,255,.2);color:#fff">Paints · Painter</span>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row sb"><div class="col"><span class="med" style="font-size:17px">8,240 kg</span><span class="tiny">Steel handled</span></div><div class="col"><span class="med" style="font-size:17px">4 yrs</span><span class="tiny">With Humbee</span></div></div>
+          </div>
+          <div class="btn out"><svg class="ico" style="width:20px;height:20px"><use href="#i-share"/></svg>Share my card</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>The reputation artefact.</b> §5 lists this as Phase 1 — it's how an Influencer establishes standing with a new Dealer on the spot.</li>
+        <li><b>QR encodes an identity URL,</b> scannable by the Distributor/Dealer app and by Ops at Umang Utsav check-in (§4.5).</li>
+        <li><b>All three roles on the card.</b> A single-role card would misrepresent the user.</li>
+        <li><b>Track record as numbers,</b> because those are what a Dealer actually weighs.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>8.4</b> About you — editable fields <span style="color:var(--brand)">§4.8.1</span></p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">About you</span></div>
+        <div class="body">
+          <div class="card" style="padding:0">
+            <div class="row sb" style="padding:14px">
+              <div class="col"><span class="tiny">Name</span><span class="sub" style="font-weight:600;color:var(--s-ink)">Ramesh Kumar</span></div>
+              <span class="chip neu">Locked</span></div>
+            <div class="divide" style="margin:0"></div>
+            <div class="row sb" style="padding:14px">
+              <div class="col"><span class="tiny">Mobile number</span><span class="sub" style="font-weight:600;color:var(--s-ink)">+91 98765 43210</span></div>
+              <span class="chip neu">Locked</span></div>
+            <div class="divide" style="margin:0"></div>
+            <div class="row sb" style="padding:14px">
+              <div class="col"><span class="tiny">Email</span><span class="sub" style="font-weight:600;color:var(--s-ink)">ramesh.k@gmail.com</span></div>
+              <span class="chip brand">Edit</span></div>
+            <div class="divide" style="margin:0"></div>
+            <div class="row sb" style="padding:14px">
+              <div class="col"><span class="tiny">Address</span><span class="sub" style="font-weight:600;color:var(--s-ink)">Plot 14, Sector 8, Jaipur</span></div>
+              <span class="chip brand">Edit</span></div>
+            <div class="divide" style="margin:0"></div>
+            <div class="row sb" style="padding:14px">
+              <div class="col"><span class="tiny">Language</span><span class="sub" style="font-weight:600;color:var(--s-ink)">हिन्दी</span></div>
+              <svg class="ico" style="width:18px;height:18px;color:var(--s-mute)"><use href="#i-chev"/></svg></div>
+          </div>
+          <div class="card" style="border-style:dashed">
+            <div class="row top" style="gap:10px">
+              <svg class="ico" style="width:20px;height:20px;color:var(--s-body);margin-top:1px"><use href="#i-phone"/></svg>
+              <span class="tiny">Your name and mobile number are set by Humbee. Call 1800 2100 123 to change them.</span></div></div>
+          <div class="card"><div class="lbl" style="margin-bottom:6px">KYC status</div>
+            <div class="row sb"><span class="chip ok"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>Verified</span>
+              <span class="tiny">Aadhaar ···· 4821</span></div></div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Every field declares whether it can be changed</b> — and a locked field says who can change it. Silence here produces a support call.</li>
+        <li><b>Email edit sends verification to the new address</b> before it takes effect (§4.8.1).</li>
+        <li><b>Address is a gift-delivery field,</b> not decoration — Umang Utsav white goods ship here.</li>
+        <li><b>ID shown as last four digits only.</b> Never in full, never stored in plaintext (NFR §9).</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>8.5</b> Linked partners <span style="color:var(--brand)">§4.8.3</span></p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Linked partners</span></div>
+        <div class="body">
+          <div class="tiny" style="margin-bottom:10px">5 partners across 3 industries</div>
+          <div class="card" style="padding:0">
+            <div style="padding:13px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="row sb" style="margin-bottom:4px">
+                <span class="sub" style="font-weight:700;color:var(--s-ink)">Sharma Steel Traders</span>
+                <span class="chip ok">Active</span></div>
+              <div class="tiny">Distributor · Dalmia TMT · Jaipur</div>
+              <div class="tiny">Linked since Apr 2022</div></div>
+            <div style="padding:13px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="row sb" style="margin-bottom:4px">
+                <span class="sub" style="font-weight:700;color:var(--s-ink)">Gupta Traders</span>
+                <span class="chip ok">Active</span></div>
+              <div class="tiny">Dealer · Vastav Cement · Jaipur</div>
+              <div class="tiny">Linked since Jun 2025</div></div>
+            <div style="padding:13px 14px">
+              <div class="row sb" style="margin-bottom:4px">
+                <span class="sub" style="font-weight:700;color:var(--s-ink)">Bansal Steel</span>
+                <span class="chip warn"><span class="dot"></span>Waiting for them</span></div>
+              <div class="tiny">Distributor · you requested 2 Feb</div></div>
+          </div>
+          <button class="btn out" style="height:44px;font-size:14px;margin-bottom:10px">Request a new partner</button>
+          <div class="tiny" style="text-align:center">They confirm on their side before it becomes active. Removing a partner stops new allocations but keeps all your history.</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>The pending state is visible and honest</b> — "Waiting for them" tells the user the ball is not in their court.</li>
+        <li><b>Two-sided confirmation is an anti-spam rule</b> (§4.8.3), so the UI must explain it rather than just enforcing it.</li>
+        <li><b>Unlinking never deletes history.</b> Stated up front, because a user who fears losing their record won't unlink a partner who is under-reporting.</li>
+        <li><b>Brands listed per partner</b> — this is how the user actually identifies them.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>8.6</b> Preferences, legal &amp; account <span style="color:var(--brand)">§4.8.7 · §4.8.9</span></p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Settings</span></div>
+        <div class="body">
+          <div class="lbl" style="margin-bottom:8px">Notifications</div>
+          <div class="card" style="padding:0">
+            <div class="row sb" style="padding:13px 14px;border-bottom:1px solid var(--s-line)"><span class="sub">Allocations</span><span class="chip ok">On</span></div>
+            <div class="row sb" style="padding:13px 14px;border-bottom:1px solid var(--s-line)"><span class="sub">Rewards &amp; draws</span><span class="chip ok">On</span></div>
+            <div class="row sb" style="padding:13px 14px;border-bottom:1px solid var(--s-line)"><span class="sub">Schemes</span><span class="chip ok">On</span></div>
+            <div class="row sb" style="padding:13px 14px;border-bottom:1px solid var(--s-line)"><span class="sub">Promotions</span><span class="chip neu">Off</span></div>
+            <div class="row sb" style="padding:13px 14px"><div class="col"><span class="sub">Account &amp; security</span><span class="tiny">Always on</span></div><span class="chip neu">Locked</span></div>
+          </div>
+          <div class="lbl" style="margin:16px 0 8px">Privacy</div>
+          <div class="card" style="padding:0">
+            <div class="row sb" style="padding:13px 14px"><div class="col"><span class="sub">Show me on the leaderboard</span><span class="tiny">Peers see your volume</span></div><span class="chip neu">Off</span></div>
+          </div>
+          <div class="lbl" style="margin:16px 0 8px">Legal</div>
+          <div class="card" style="padding:0">
+            <div class="row sb" style="padding:13px 14px;border-bottom:1px solid var(--s-line)"><span class="sub">Privacy Policy</span><svg class="ico" style="width:18px;height:18px;color:var(--s-mute)"><use href="#i-chev"/></svg></div>
+            <div class="row sb" style="padding:13px 14px"><span class="sub">Terms of Use</span><svg class="ico" style="width:18px;height:18px;color:var(--s-mute)"><use href="#i-chev"/></svg></div>
+          </div>
+          <div class="card" style="margin-top:16px;border-color:var(--s-err);border-style:dashed">
+            <div class="sub" style="font-weight:600;color:var(--s-ink);margin-bottom:4px">Delete my account</div>
+            <div class="tiny" style="margin-bottom:10px">Your 12,480 points and 1 pending reward will be forfeited. Allocation records are kept for 7 years as required by law.</div>
+            <button class="btn out" style="height:42px;font-size:13px;border-color:var(--s-err);color:var(--s-err)">Request deletion</button></div>
+          <button class="btn ghost" style="margin-top:14px">Log out</button>
+          <div class="tiny" style="text-align:center;margin-top:12px">Humbee Influencer v1.0.0 · Device 8F2A·41C9</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Critical notifications shown as Locked, not hidden.</b> Concealing the toggle looks like a bug; labelling it explains a policy (§4.7).</li>
+        <li><b>Leaderboard opt-in defaults to Off</b> and states the consequence in one line — peers seeing your volume is a disclosure, not a feature.</li>
+        <li><b>Delete states what is actually lost,</b> in the user's own numbers. A generic "this cannot be undone" is not informed consent under DPDP.</li>
+        <li><b>App version and device ID at the foot.</b> Support cannot diagnose a field issue on an entry-level Android without them.</li>
+        <li><b>Logout needs a confirm step</b> — re-login requires an OTP the user may not be able to receive at a work site.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4.9–4.12 ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">PRD §4.9 · §4.10 · §4.11 · §4.12</span>
+    <h2>Leaderboard, learning, referral, support</h2></div>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>9.1</b> Leaderboard — opt-in</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Leaderboard</span></div>
+        <div style="padding:10px 16px;background:var(--s-bg);border-bottom:1px solid var(--s-line)">
+          <div class="seg"><span class="on">Steel</span><span>Cement</span><span>Paints</span></div>
+        </div>
+        <div class="body">
+          <div class="card" style="background:var(--s-brand-5);border-color:var(--s-brand)">
+            <div class="row" style="gap:12px">
+              <span class="big" style="font-size:24px;color:var(--s-brand)">#7</span>
+              <div class="col" style="flex:1"><span class="sub" style="font-weight:700;color:var(--s-ink)">You — Ramesh Kumar</span><span class="tiny">8,240 kg this quarter</span></div>
+            </div>
+          </div>
+          <div class="card" style="padding:0">
+            <div class="row" style="gap:12px;padding:11px 14px;border-bottom:1px solid var(--s-line)"><span class="med" style="font-size:15px;width:26px">1</span><div class="av sm"></div><div class="col" style="flex:1"><span class="sub" style="font-weight:600;color:var(--s-ink)">Mohan L.</span><span class="tiny">14,100 kg</span></div><svg class="ico" style="width:18px;height:18px;color:var(--s-brand)"><use href="#i-trophy"/></svg></div>
+            <div class="row" style="gap:12px;padding:11px 14px;border-bottom:1px solid var(--s-line)"><span class="med" style="font-size:15px;width:26px">2</span><div class="av sm"></div><div class="col" style="flex:1"><span class="sub" style="font-weight:600;color:var(--s-ink)">Anil K.</span><span class="tiny">12,850 kg</span></div></div>
+            <div class="row" style="gap:12px;padding:11px 14px"><span class="med" style="font-size:15px;width:26px">3</span><div class="av sm"></div><div class="col" style="flex:1"><span class="sub" style="font-weight:600;color:var(--s-ink)">Prakash S.</span><span class="tiny">11,400 kg</span></div></div>
+          </div>
+          <div class="tiny" style="text-align:center">Top Barbenders · Sharma Steel network · Jan–Mar</div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Per-industry, per-network scope.</b> A national leaderboard would be meaningless and demotivating.</li>
+        <li><b>Names abbreviated</b> — "Mohan L." Full names of peers are a privacy exposure this audience didn't sign up for.</li>
+        <li><b>Your own row pinned at top,</b> so rank is legible without scrolling.</li>
+        <li><b>Opt-in per §4.9.</b> Needs a clear consent screen before first appearance — not yet drawn.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>11.1</b> Referral</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Refer a friend</span></div>
+        <div class="body">
+          <div class="card" style="text-align:center">
+            <div class="illus sq" style="margin:0 auto 12px;border-radius:50%">ILLUS</div>
+            <div class="sub" style="margin-bottom:14px">Give this code to a fellow tradesman. When their Distributor adds them, you both earn points.</div>
+            <div style="border:2px dashed var(--s-brand);border-radius:8px;padding:14px;margin-bottom:12px">
+              <div class="big" style="letter-spacing:.12em;font-size:26px">RK4821</div>
+            </div>
+            <div class="btn out"><svg class="ico" style="width:20px;height:20px"><use href="#i-share"/></svg>Share on WhatsApp</div>
+          </div>
+          <div class="card">
+            <div class="h">Your referrals</div>
+            <div class="gap12">
+              <div class="row sb"><div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Suresh Yadav</span><span class="tiny">Joined 8 Feb</span></div><span class="chip ok"><svg class="ico" style="width:12px;height:12px"><use href="#i-check"/></svg>+250 earned</span></div>
+              <div class="row sb"><div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Dinesh Patel</span><span class="tiny">Verifying</span></div><span class="chip warn"><span class="dot"></span>Pending</span></div>
+              <div class="row sb"><div class="col"><span class="sub" style="font-weight:600;color:var(--s-ink)">Manoj Singh</span><span class="tiny">Code shared 2 Feb</span></div><span class="chip neu"><span class="dot"></span>Invited</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Code, not a link.</b> There's no in-app signup, so the peer quotes this to their Distributor (§4.11).</li>
+        <li><b>Explains the mechanism in one sentence</b> — "when their Distributor adds them" sets the right expectation.</li>
+        <li><b>Four-stage tracker</b> Invited → Onboarded → Verified → Rewarded, shown as chips.</li>
+        <li><b>WhatsApp is the share target,</b> not a generic share sheet. It's where this audience actually is.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>12.1</b> Help &amp; support</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Help &amp; support</span></div>
+        <div class="body">
+          <div class="card" style="background:var(--s-brand);border-color:var(--s-brand);padding:16px">
+            <div class="row" style="gap:12px">
+              <svg class="ico w" style="width:28px;height:28px"><use href="#i-phone"/></svg>
+              <div class="col" style="flex:1">
+                <span style="font-size:12px;color:rgba(255,255,255,.85)">Toll free · 9am–7pm</span>
+                <span style="font-size:19px;font-weight:700;color:#fff">1800 2100 123</span>
+              </div>
+            </div>
+          </div>
+          <div class="btn out" style="margin-bottom:16px">Chat on WhatsApp</div>
+          <div class="h">Common questions</div>
+          <div class="card" style="padding:0">
+            <div class="row sb" style="padding:13px 14px;border-bottom:1px solid var(--s-line)"><span class="sub">Why is an allocation missing?</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+            <div class="row sb" style="padding:13px 14px;border-bottom:1px solid var(--s-line)"><span class="sub">When will I get my gift?</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+            <div class="row sb" style="padding:13px 14px;border-bottom:1px solid var(--s-line)"><span class="sub">How are points calculated?</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+            <div class="row sb" style="padding:13px 14px"><span class="sub">How do I add a new Distributor?</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+          </div>
+          <div class="divide"></div>
+          <div class="row sb"><span class="sub" style="font-weight:600;color:var(--s-ink)">My past requests (2)</span><svg class="ico" style="width:18px;height:18px"><use href="#i-chev"/></svg></div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Phone number is the biggest element on the screen.</b> For this audience it is the real support channel; the ticket form is secondary.</li>
+        <li><b>FAQ phrased as the user's question,</b> not as a topic noun. "Why is an allocation missing?" not "Allocations".</li>
+        <li><b>Ticket history is reachable</b> so a raised dispute doesn't vanish.</li>
+        <li><b>Audio FAQ answers</b> in Hindi are worth considering for Phase 1.1 — reading is the barrier, not comprehension.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>10.1</b> Learning centre</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><svg class="ico"><use href="#i-back"/></svg><span class="t">Learn</span></div>
+        <div style="padding:10px 16px;background:var(--s-bg);border-bottom:1px solid var(--s-line)">
+          <div class="seg"><span class="on">हिन्दी</span><span>English</span></div>
+        </div>
+        <div class="body">
+          <div class="card" style="padding:0;overflow:hidden">
+            <div class="illus" style="height:104px;border-radius:0">VIDEO THUMBNAIL</div>
+            <div style="padding:14px">
+              <div class="row" style="gap:8px;margin-bottom:6px"><span class="chip brand">Safety</span><span class="chip neu">4 min</span></div>
+              <div class="sub" style="font-weight:700;color:var(--s-ink)">Correct bar bending — avoiding weak joints</div>
+              <div class="tiny" style="margin-top:4px">Dalmia TMT</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row" style="gap:12px">
+              <div class="thumb" style="position:relative;display:flex;align-items:center;justify-content:center"><svg class="ico" style="width:20px;height:20px;color:#fff"><use href="#i-play"/></svg></div>
+              <div class="col" style="flex:1"><span class="sub" style="font-weight:600;color:var(--s-ink)">Mixing cement in monsoon</span><span class="tiny">Vastav Cement · 6 min</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="row" style="gap:12px">
+              <div class="thumb" style="display:flex;align-items:center;justify-content:center"><svg class="ico" style="width:20px;height:20px;color:#fff"><use href="#i-play"/></svg></div>
+              <div class="col" style="flex:1"><span class="sub" style="font-weight:600;color:var(--s-ink)">Primer coats that last</span><span class="tiny">MasterChow · 3 min</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Language toggle at the top,</b> defaulting to Hindi. Content language matters more here than UI language.</li>
+        <li><b>Duration on every item.</b> Data is expensive; users decide by length.</li>
+        <li><b>Video and audio only,</b> no articles. §4.10 is explicit that this serves users who don't read comfortably.</li>
+        <li><b>Download for offline</b> should be added — work sites have no signal and this is the most bandwidth-hungry module.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CROSS-CUTTING ===================== -->
+<section>
+  <div class="sec-head"><span class="ref">Cross-cutting · PRD §5 · §9</span>
+    <h2>The states that decide whether this app is trusted</h2></div>
+  <p class="lede">Empty, offline, and error states carry more weight here than in most products. A new Influencer's first session is an empty app, and a work site's normal condition is no signal.</p>
+
+  <div class="screens">
+    <div class="unit">
+      <p class="cap"><b>0.1</b> First-run empty state</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar brand">
+          <div class="av" style="background:rgba(255,255,255,.28)"></div>
+          <div class="col" style="flex:1"><span style="font-size:16px;font-weight:700;color:#fff">Ramesh Kumar</span><span style="font-size:12px;color:rgba(255,255,255,.85)">1 partner</span></div>
+          <svg class="ico w"><use href="#i-bell"/></svg>
+        </div>
+        <div class="body" style="padding:28px 20px">
+          <div class="illus sq" style="margin:0 auto 18px;border-radius:50%">ILLUS</div>
+          <div class="h" style="text-align:center;font-size:17px;margin-bottom:8px">Welcome to Humbee, Ramesh</div>
+          <div class="sub" style="text-align:center;margin-bottom:20px">Sharma Steel Traders has added you. As soon as they record your first allocation, you'll see it here.</div>
+          <div class="card">
+            <div class="h" style="font-size:14px">While you wait</div>
+            <div class="gap8">
+              <div class="row sb"><span class="sub">Complete your profile</span><span class="chip brand">+50 points</span></div>
+              <div class="row sb"><span class="sub">Watch a safety video</span><span class="chip brand">+20 points</span></div>
+              <div class="row sb"><span class="sub">Refer a friend</span><span class="chip brand">+250 points</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>The most important screen in the app</b> and the one the PRD doesn't specify. A low-trust user's first impression is an empty product.</li>
+        <li><b>Names the partner who added them.</b> Proof the app knows who they are — the fastest route to credibility.</li>
+        <li><b>Explains what happens next and who does it,</b> so the emptiness reads as "not yet" rather than "broken".</li>
+        <li><b>Three earnable actions</b> give the session a purpose that doesn't depend on the Distributor.</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>0.2</b> Offline — cached data</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><span class="t">Allocations</span><svg class="ico"><use href="#i-filter"/></svg></div>
+        <div class="strip"><svg class="ico" style="width:16px;height:16px"><use href="#i-off"/></svg>No internet · showing data from 12 Feb, 9:20 am</div>
+        <div class="body">
+          <div class="card" style="padding:0">
+            <div style="padding:13px 14px;border-bottom:1px solid var(--s-line)">
+              <div class="row sb" style="margin-bottom:5px"><span class="chip brand">Dalmia TMT · Barbender</span><span class="tiny">2 days ago</span></div>
+              <div class="med" style="font-size:19px">500 kg</div>
+              <div class="tiny" style="margin-top:2px">Sharma Steel Traders</div>
+            </div>
+            <div style="padding:13px 14px">
+              <div class="row sb" style="margin-bottom:5px"><span class="chip brand">Vastav Cement · Contractor</span><span class="tiny">4 days ago</span></div>
+              <div class="med" style="font-size:19px">120 bags</div>
+              <div class="tiny" style="margin-top:2px">Gupta Traders</div>
+            </div>
+          </div>
+          <div class="card" style="border-style:dashed;text-align:center">
+            <div class="sub" style="margin-bottom:8px">Your report about the 12 Feb allocation will be sent when you're back online.</div>
+            <span class="chip warn"><span class="dot"></span>Waiting to send</span>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Amber, not red.</b> Offline is normal at a work site, not a failure. Rule 09.</li>
+        <li><b>Timestamped cache,</b> so the user knows exactly how stale the numbers are before acting on them.</li>
+        <li><b>Queued writes are visible and honest.</b> A queued dispute must never look like it was delivered.</li>
+        <li><b>Data still fully readable offline</b> — the read path is the app's core value (§5, NFR §9).</li>
+      </ul>
+    </div>
+
+    <div class="unit">
+      <p class="cap"><b>0.3</b> Loading &amp; error</p>
+      <div class="frame scr">
+        <div class="statusbar"><span>9:41</span><span>▮▮▮</span></div>
+        <div class="appbar"><span class="t">Allocations</span></div>
+        <div class="body">
+          <div class="card">
+            <div class="sk" style="width:56%;margin-bottom:10px"></div>
+            <div class="sk" style="width:34%;height:22px;margin-bottom:8px"></div>
+            <div class="sk" style="width:70%"></div>
+          </div>
+          <div class="card">
+            <div class="sk" style="width:48%;margin-bottom:10px"></div>
+            <div class="sk" style="width:40%;height:22px;margin-bottom:8px"></div>
+            <div class="sk" style="width:64%"></div>
+          </div>
+          <div class="divide" style="margin:20px 0"></div>
+          <div class="card" style="text-align:center;border-color:var(--s-err);border-style:dashed">
+            <svg class="ico" style="width:28px;height:28px;color:var(--s-err);margin-bottom:8px"><use href="#i-warn"/></svg>
+            <div class="sub" style="font-weight:600;color:var(--s-ink);margin-bottom:4px">We couldn't load your allocations</div>
+            <div class="tiny" style="margin-bottom:12px">Check your connection and try again.</div>
+            <div class="btn out" style="height:44px;font-size:14px;margin-bottom:8px">Try again</div>
+            <span class="sub" style="color:var(--s-brand);font-weight:600">Call 1800 2100 123</span>
+          </div>
+        </div>
+      </div>
+      <ul class="ann">
+        <li><b>Skeletons match the real row shape,</b> so the layout doesn't jump when data lands.</li>
+        <li><b>Error says what failed and what to do.</b> No codes, no apologies, no blame.</li>
+        <li><b>Helpline on every error.</b> Rule 07 — a human is always one tap away.</li>
+        <li><b>Never show a spinner alone</b> on a 3G connection. It reads as frozen.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="ref">Before build</span>
+    <h2>What these wireframes assume, and what they don't answer</h2></div>
+  <p class="lede">Every item below changes a screen in this document. They are worth resolving before high-fidelity design begins, not after.</p>
+  <div class="tw"><table class="doc">
+    <thead><tr><th>Question</th><th>Which screens it changes</th><th>Why it matters now</th></tr></thead>
+    <tbody>
+      <tr><td>Dispute SLA</td><td>3.4, support</td><td>§4.3 creates a ticket but promises no response time. Without one, the dispute flow damages trust rather than building it.</td></tr>
+      <tr><td>Corrected allocations</td><td>3.3, 6.2, notifications</td><td>When Ops corrects an allocation that already produced points and possibly a reward, the user sees their balance fall. That needs designed copy, not a silent ledger entry.</td></tr>
+      <tr><td>Leaderboard consent</td><td>9.1</td><td>Opt-in is required by §4.9 but the consent screen isn't drawn. Showing one Influencer's volume to peers is sensitive.</td></tr>
+      <tr><td>Numerals in Hindi</td><td>Every screen</td><td>Devanagari or Latin digits? Trade users generally read Latin for quantities — worth confirming with real users rather than assuming.</td></tr>
+      <tr><td>Which languages ship in Phase 1</td><td>0.0, 0.0b, 8.3</td><td>§13 Q4 is open. Each added language is a translation budget, a font asset, and twelve notification templates — not a config flag. The chooser scales to any number; the programme does not.</td></tr>
+      <tr><td>Notification template coverage</td><td>0.0, 8.3, all §7 triggers</td><td>§4.0 commits to sending push/SMS/WhatsApp in the user's chosen language. Every §7 trigger needs a template <em>per language</em>, and the SMS gateway must handle Unicode — which costs more per message and cuts the segment from 160 characters to 70. At twelve triggers across seven languages that is 84 templates to author and maintain.</td></tr>
+      <tr><td>Script font strategy</td><td>Every screen</td><td>Lato is Latin-only. Six Indic scripts mean six font files at 150–400 KB each, against a 30 MB APK budget on 2 GB devices. Bundle, download on demand, or rely on system fonts? This decision belongs in the design system, not in a screen.</td></tr>
+      <tr><td>Cash reward KYC</td><td>4.1, 4.2</td><td>§13 Q1 is open. If cash payouts need KYC above a threshold, Rewards gains a blocking state that doesn't exist in these frames.</td></tr>
+      <tr><td>Unlinked partner history</td><td>3.1, 3.2</td><td>Does an Influencer still see allocations from a partner they've since unlinked? Not covered by the PRD; changes the filter model.</td></tr>
+      <tr><td>Points expiry rule</td><td>6.1, 6.2</td><td>§4.6 says "e.g. 12 months". An example is not a shippable rule, and the expiry warning copy depends on it.</td></tr>
+      <tr><td>Icons not yet in the system</td><td>4.3, 6.1, 9.1, 11.1</td><td>Lucky draw, points/coin, leaderboard, referral, trophy and industry marks don't exist in the HUMBEE library yet. They need drawing before high-fidelity.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note flag">
+    <span class="note-label">The dependency outside this document</span>
+    <p>These screens are only as good as the data behind them. PRD §12 assumes the Distributor/Dealer app will be extended so partners can record allocations against an Influencer. <strong>If that work isn't scheduled, every screen here renders empty on launch</strong> — and the trust story the product is built on inverts. It is the single largest delivery risk in the programme and it sits on a different team's roadmap.</p>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Humbee Influencer App — Wireframe specification v1.</strong> Drawn against <code>docs/00-PRD.md</code> and <code>docs/design-system/HUMBEE-DESIGN-RULES.md</code>. Frames are 360&nbsp;dp, the realistic entry-level Android width, not the 393&nbsp;dp iPhone default.</p>
+  <p>Structural review only — layout, hierarchy, content and states. Illustration, photography, motion and final type treatment follow once these are agreed.</p>
+</footer>
+
+</div>

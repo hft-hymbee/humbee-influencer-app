@@ -1,0 +1,489 @@
+{
+  "welspun": {
+    "manufacturer": {
+      "id": "welspun",
+      "name": "Welspun TMT",
+      "baseUnit": "Ton"
+    },
+    "scope": "district",
+    "district": "Nashik",
+    "pointsRule": {
+      "base": "1 Kg = 1 point",
+      "tiers": [
+        {
+          "label": "Fe 500D — all diameters",
+          "value": "1 pt / Kg",
+          "premium": false
+        },
+        {
+          "label": "Fe 550D CRS (premium)",
+          "value": "2 pts / Kg",
+          "premium": true
+        },
+        {
+          "label": "Corrosion Resistant Plus",
+          "value": "3 pts / Kg",
+          "premium": true
+        }
+      ]
+    },
+    "top": [
+      {
+        "rank": 1,
+        "influencerId": "inf_80",
+        "name": "Ramesh Pawar",
+        "points": 54200,
+        "volume": 135.5,
+        "unit": "Ton"
+      },
+      {
+        "rank": 2,
+        "influencerId": "inf_81",
+        "name": "Imran Shaikh",
+        "points": 51630,
+        "volume": 129.1,
+        "unit": "Ton"
+      },
+      {
+        "rank": 3,
+        "influencerId": "inf_82",
+        "name": "Vishal Sonawane",
+        "points": 49060,
+        "volume": 122.7,
+        "unit": "Ton"
+      },
+      {
+        "rank": 4,
+        "influencerId": "inf_83",
+        "name": "Ganesh Bhoir",
+        "points": 45790,
+        "volume": 114.5,
+        "unit": "Ton"
+      },
+      {
+        "rank": 5,
+        "influencerId": "inf_84",
+        "name": "Sadhu Wagh",
+        "points": 43220,
+        "volume": 108,
+        "unit": "Ton"
+      },
+      {
+        "rank": 6,
+        "influencerId": "inf_85",
+        "name": "Kailas Ahire",
+        "points": 39950,
+        "volume": 99.9,
+        "unit": "Ton"
+      },
+      {
+        "rank": 7,
+        "influencerId": "inf_86",
+        "name": "Pravin Gaikwad",
+        "points": 37380,
+        "volume": 93.5,
+        "unit": "Ton"
+      },
+      {
+        "rank": 8,
+        "influencerId": "inf_87",
+        "name": "Mahesh Thakare",
+        "points": 34810,
+        "volume": 87,
+        "unit": "Ton"
+      },
+      {
+        "rank": 9,
+        "influencerId": "inf_88",
+        "name": "Deepak Borse",
+        "points": 31540,
+        "volume": 78.8,
+        "unit": "Ton"
+      },
+      {
+        "rank": 10,
+        "influencerId": "inf_89",
+        "name": "Nitin Chavan",
+        "points": 28970,
+        "volume": 72.4,
+        "unit": "Ton"
+      }
+    ],
+    "me": {
+      "rank": 14,
+      "name": "Sunil Jadhav",
+      "points": 21400,
+      "volume": 53.5,
+      "unit": "Ton",
+      "inTop10": false,
+      "gapToTop10": {
+        "points": 7570,
+        "volume": 18.9
+      }
+    }
+  },
+  "dalmia": {
+    "manufacturer": {
+      "id": "dalmia",
+      "name": "Dalmia Cement",
+      "baseUnit": "Bags"
+    },
+    "scope": "district",
+    "district": "Nashik",
+    "pointsRule": {
+      "base": "1 Bag = 1 point",
+      "tiers": [
+        {
+          "label": "OPC 53 / PPC 50kg",
+          "value": "1 pt / bag",
+          "premium": false
+        },
+        {
+          "label": "DSP Cement (premium)",
+          "value": "2 pts / bag",
+          "premium": true
+        },
+        {
+          "label": "Rain Protector Cement",
+          "value": "3 pts / bag",
+          "premium": true
+        }
+      ]
+    },
+    "top": [
+      {
+        "rank": 1,
+        "influencerId": "inf_80",
+        "name": "Ramesh Pawar",
+        "points": 53810,
+        "volume": 4484,
+        "unit": "Bags"
+      },
+      {
+        "rank": 2,
+        "influencerId": "inf_81",
+        "name": "Imran Shaikh",
+        "points": 50540,
+        "volume": 4212,
+        "unit": "Bags"
+      },
+      {
+        "rank": 3,
+        "influencerId": "inf_82",
+        "name": "Vishal Sonawane",
+        "points": 47970,
+        "volume": 3998,
+        "unit": "Bags"
+      },
+      {
+        "rank": 4,
+        "influencerId": "inf_83",
+        "name": "Ganesh Bhoir",
+        "points": 45400,
+        "volume": 3783,
+        "unit": "Bags"
+      },
+      {
+        "rank": 5,
+        "influencerId": "inf_84",
+        "name": "Sadhu Wagh",
+        "points": 42130,
+        "volume": 3511,
+        "unit": "Bags"
+      },
+      {
+        "rank": 6,
+        "influencerId": "inf_85",
+        "name": "Kailas Ahire",
+        "points": 39560,
+        "volume": 3297,
+        "unit": "Bags"
+      },
+      {
+        "rank": 7,
+        "influencerId": "inf_86",
+        "name": "Pravin Gaikwad",
+        "points": 36290,
+        "volume": 3024,
+        "unit": "Bags"
+      },
+      {
+        "rank": 8,
+        "influencerId": "inf_87",
+        "name": "Mahesh Thakare",
+        "points": 33720,
+        "volume": 2810,
+        "unit": "Bags"
+      },
+      {
+        "rank": 9,
+        "influencerId": "inf_88",
+        "name": "Deepak Borse",
+        "points": 31150,
+        "volume": 2596,
+        "unit": "Bags"
+      },
+      {
+        "rank": 10,
+        "influencerId": "inf_89",
+        "name": "Nitin Chavan",
+        "points": 27880,
+        "volume": 2323,
+        "unit": "Bags"
+      }
+    ],
+    "me": {
+      "rank": 14,
+      "name": "Sunil Jadhav",
+      "points": 21400,
+      "volume": 1783,
+      "unit": "Bags",
+      "inTop10": false,
+      "gapToTop10": {
+        "points": 6480,
+        "volume": 540
+      }
+    }
+  },
+  "dp": {
+    "manufacturer": {
+      "id": "dp",
+      "name": "DP Paints",
+      "baseUnit": "Buckets"
+    },
+    "scope": "district",
+    "district": "Nashik",
+    "pointsRule": {
+      "base": "1 Litre = 1 point",
+      "tiers": [
+        {
+          "label": "Interior Emulsion",
+          "value": "1 pt / L",
+          "premium": false
+        },
+        {
+          "label": "Wall Protection (premium)",
+          "value": "3 pts / L",
+          "premium": true
+        },
+        {
+          "label": "Premium Paint",
+          "value": "3 pts / L",
+          "premium": true
+        }
+      ]
+    },
+    "top": [
+      {
+        "rank": 1,
+        "influencerId": "inf_80",
+        "name": "Ramesh Pawar",
+        "points": 52720,
+        "volume": 240,
+        "unit": "Buckets"
+      },
+      {
+        "rank": 2,
+        "influencerId": "inf_81",
+        "name": "Imran Shaikh",
+        "points": 50150,
+        "volume": 228,
+        "unit": "Buckets"
+      },
+      {
+        "rank": 3,
+        "influencerId": "inf_82",
+        "name": "Vishal Sonawane",
+        "points": 46880,
+        "volume": 213,
+        "unit": "Buckets"
+      },
+      {
+        "rank": 4,
+        "influencerId": "inf_83",
+        "name": "Ganesh Bhoir",
+        "points": 44310,
+        "volume": 201,
+        "unit": "Buckets"
+      },
+      {
+        "rank": 5,
+        "influencerId": "inf_84",
+        "name": "Sadhu Wagh",
+        "points": 41740,
+        "volume": 190,
+        "unit": "Buckets"
+      },
+      {
+        "rank": 6,
+        "influencerId": "inf_85",
+        "name": "Kailas Ahire",
+        "points": 38470,
+        "volume": 175,
+        "unit": "Buckets"
+      },
+      {
+        "rank": 7,
+        "influencerId": "inf_86",
+        "name": "Pravin Gaikwad",
+        "points": 35900,
+        "volume": 163,
+        "unit": "Buckets"
+      },
+      {
+        "rank": 8,
+        "influencerId": "inf_87",
+        "name": "Mahesh Thakare",
+        "points": 32630,
+        "volume": 148,
+        "unit": "Buckets"
+      },
+      {
+        "rank": 9,
+        "influencerId": "inf_88",
+        "name": "Deepak Borse",
+        "points": 30060,
+        "volume": 137,
+        "unit": "Buckets"
+      },
+      {
+        "rank": 10,
+        "influencerId": "inf_89",
+        "name": "Nitin Chavan",
+        "points": 27490,
+        "volume": 125,
+        "unit": "Buckets"
+      }
+    ],
+    "me": {
+      "rank": 14,
+      "name": "Sunil Jadhav",
+      "points": 21400,
+      "volume": 97,
+      "unit": "Buckets",
+      "inTop10": false,
+      "gapToTop10": {
+        "points": 6090,
+        "volume": 28
+      }
+    }
+  },
+  "masterchow": {
+    "manufacturer": {
+      "id": "masterchow",
+      "name": "Masterchow",
+      "baseUnit": "Cases"
+    },
+    "scope": "district",
+    "district": "Nashik",
+    "pointsRule": {
+      "base": "1 Case = 1 point",
+      "tiers": [
+        {
+          "label": "Sauces & noodles",
+          "value": "1 pt / case",
+          "premium": false
+        },
+        {
+          "label": "Meal kits (premium)",
+          "value": "2 pts / case",
+          "premium": true
+        }
+      ]
+    },
+    "top": [
+      {
+        "rank": 1,
+        "influencerId": "inf_80",
+        "name": "Ramesh Pawar",
+        "points": 52330,
+        "volume": 201,
+        "unit": "Cases"
+      },
+      {
+        "rank": 2,
+        "influencerId": "inf_81",
+        "name": "Imran Shaikh",
+        "points": 49060,
+        "volume": 189,
+        "unit": "Cases"
+      },
+      {
+        "rank": 3,
+        "influencerId": "inf_82",
+        "name": "Vishal Sonawane",
+        "points": 46490,
+        "volume": 179,
+        "unit": "Cases"
+      },
+      {
+        "rank": 4,
+        "influencerId": "inf_83",
+        "name": "Ganesh Bhoir",
+        "points": 43220,
+        "volume": 166,
+        "unit": "Cases"
+      },
+      {
+        "rank": 5,
+        "influencerId": "inf_84",
+        "name": "Sadhu Wagh",
+        "points": 40650,
+        "volume": 156,
+        "unit": "Cases"
+      },
+      {
+        "rank": 6,
+        "influencerId": "inf_85",
+        "name": "Kailas Ahire",
+        "points": 38080,
+        "volume": 146,
+        "unit": "Cases"
+      },
+      {
+        "rank": 7,
+        "influencerId": "inf_86",
+        "name": "Pravin Gaikwad",
+        "points": 34810,
+        "volume": 134,
+        "unit": "Cases"
+      },
+      {
+        "rank": 8,
+        "influencerId": "inf_87",
+        "name": "Mahesh Thakare",
+        "points": 32240,
+        "volume": 124,
+        "unit": "Cases"
+      },
+      {
+        "rank": 9,
+        "influencerId": "inf_88",
+        "name": "Deepak Borse",
+        "points": 28970,
+        "volume": 111,
+        "unit": "Cases"
+      },
+      {
+        "rank": 10,
+        "influencerId": "inf_89",
+        "name": "Nitin Chavan",
+        "points": 26400,
+        "volume": 102,
+        "unit": "Cases"
+      }
+    ],
+    "me": {
+      "rank": 14,
+      "name": "Sunil Jadhav",
+      "points": 21400,
+      "volume": 82,
+      "unit": "Cases",
+      "inTop10": false,
+      "gapToTop10": {
+        "points": 5000,
+        "volume": 19
+      }
+    }
+  }
+}

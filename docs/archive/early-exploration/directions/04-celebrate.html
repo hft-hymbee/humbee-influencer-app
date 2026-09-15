@@ -1,0 +1,404 @@
+<title>Direction 04 — Celebrate · Humbee Influencer</title>
+<style>
+:root{
+  --page:#f7f3ec; --ink:#211b15; --ink-2:#534a3e; --mute:#8a7f71; --rule:#e5dccd; --brand:#995a00;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#141110;--ink:#f4efe7;--ink-2:#cec4b6;--mute:#968b7d;--rule:#302921;--brand:#dda751;}}
+:root[data-theme="dark"]{--page:#141110;--ink:#f4efe7;--ink-2:#cec4b6;--mute:#968b7d;--rule:#302921;--brand:#dda751;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.stage{display:flex;gap:44px;align-items:flex-start;justify-content:center;padding:44px 24px 72px;flex-wrap:wrap}
+.brief{width:300px}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--brand);margin-bottom:12px}
+.brief h1{font-size:34px;line-height:1.02;letter-spacing:-.03em;margin:0 0 14px;font-weight:700}
+.brief p{font-size:14px;line-height:1.62;color:var(--ink-2);margin:0 0 14px}
+.spec{border-top:1px solid var(--rule);margin-top:22px;padding-top:16px}
+.spec dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.spec dd{margin:0 0 14px;font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+.try{margin-top:6px;padding:12px 14px;border:1px dashed var(--brand);border-radius:8px;font-size:13px;line-height:1.55;color:var(--ink-2)}
+.try b{color:var(--ink)}
+
+.dev{
+  width:360px;height:760px;flex:0 0 auto;position:relative;overflow:hidden;display:flex;flex-direction:column;
+  background:#fffdf8;border:1px solid var(--rule);border-radius:26px;
+  box-shadow:0 2px 4px rgba(33,27,21,.05),0 34px 80px -34px rgba(33,27,21,.42);
+  --g-ink:#241d15; --g-body:#645a4d; --g-mute:#9a9080; --g-line:#efe7d8; --g-paper:#fffdf8;
+  --g-brand:#995a00; --g-brand-l:#bf7000; --g-amber:#ffa525; --g-amber-l:#ffc066;
+  --g-ok:#0f7a37; --g-okbg:#e8f5ec; --g-warn:#8a5a00; --g-warnbg:#fdf2dd;
+  --sp:cubic-bezier(.24,1.3,.38,1);
+  color:var(--g-ink);
+}
+.sb{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-family:var(--mono);font-size:9.5px;color:var(--g-mute);flex:0 0 auto}
+.body{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 16px 18px}
+.body::-webkit-scrollbar{display:none}
+.nav{display:flex;flex:0 0 auto;background:var(--g-paper);border-top:1px solid var(--g-line);padding:6px 8px 8px}
+.nav button{
+  flex:1;padding:7px 2px;background:none;border:0;cursor:pointer;border-radius:16px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;font-size:9.5px;font-weight:700;
+  color:var(--g-mute);position:relative;
+}
+.nav button.on{color:var(--g-brand)}
+.nav button.on::after{content:"";position:absolute;bottom:-2px;width:5px;height:5px;border-radius:50%;background:var(--g-amber);animation:bob .5s var(--sp)}
+@keyframes bob{from{transform:translateY(6px) scale(0)}to{transform:none}}
+.nav svg{width:21px;height:21px;transition:transform .45s var(--sp)}
+.nav button.on svg{transform:translateY(-2px) scale(1.12)}
+
+/* ---- surfaces ---- */
+.card{background:#fff;border-radius:22px;padding:18px;margin-bottom:12px;border:1px solid var(--g-line);
+  animation:rise .52s var(--sp) both}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.card.tap{cursor:pointer;width:100%;text-align:left;font:inherit;transition:transform .2s var(--sp)}
+.card.tap:active{transform:scale(.975)}
+.glow{
+  border-radius:24px;padding:20px;margin:4px 0 14px;position:relative;overflow:hidden;color:#fff;
+  background:radial-gradient(120% 140% at 15% 0%,#c07800 0%,#995a00 46%,#6d4000 100%);
+  animation:rise .58s var(--sp) both;
+}
+.glow::before{
+  content:"";position:absolute;width:260px;height:260px;border-radius:50%;left:-90px;bottom:-150px;
+  background:radial-gradient(circle,rgba(255,192,102,.42),transparent 66%);animation:drift 9s ease-in-out infinite alternate;
+}
+@keyframes drift{to{transform:translate(46px,-26px)}}
+.lab{font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;color:var(--g-mute)}
+.glow .lab{color:rgba(255,255,255,.74)}
+.fig{font-variant-numeric:tabular-nums;font-weight:780;letter-spacing:-.035em;line-height:1.02}
+.fig.xl{font-size:44px}.fig.l{font-size:27px}.fig.m{font-size:19px}
+.tx{font-size:13.5px;line-height:1.5;color:var(--g-body)}
+.tx b{color:var(--g-ink);font-weight:700}
+.tiny{font-size:11px;color:var(--g-mute);line-height:1.5}
+.h2{font-size:17px;font-weight:750;letter-spacing:-.015em;margin:20px 4px 12px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:750;padding:4px 10px;border-radius:20px}
+.pill.brand{background:#f7ecdc;color:var(--g-brand)}
+.pill.ok{background:var(--g-okbg);color:var(--g-ok)}
+.pill.warn{background:var(--g-warnbg);color:var(--g-warn)}
+.pill.glass{background:rgba(255,255,255,.24);color:#fff}
+.row{display:flex;align-items:center;gap:10px}
+.row.sb{justify-content:space-between}
+.col{display:flex;flex-direction:column;min-width:0}
+.ring{transform:rotate(-90deg);display:block}
+.ring circle{fill:none;stroke-linecap:round}
+.ringwrap{position:relative;width:172px;height:172px;margin:0 auto}
+.ringmid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.badge{
+  border-radius:18px;padding:14px 8px;text-align:center;border:1px solid var(--g-line);background:#fff;
+  animation:popin .55s var(--sp) both;
+}
+.badge.earned{background:linear-gradient(160deg,#fff5e4,#ffe9c6);border-color:#f0d9ac}
+.badge .ph{width:38px;height:38px;border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;
+  background:var(--g-line);color:var(--g-mute)}
+.badge.earned .ph{background:var(--g-amber);color:#4a2c00}
+.badge b{display:block;font-size:10.5px;font-weight:750;line-height:1.3;color:var(--g-ink)}
+.badge span{display:block;font-size:9.5px;color:var(--g-mute);margin-top:3px}
+@keyframes popin{from{opacity:0;transform:scale(.6) translateY(10px)}to{opacity:1;transform:none}}
+.streak{display:flex;gap:6px;justify-content:space-between}
+.streak div{flex:1;text-align:center}
+.streak i{display:block;height:34px;border-radius:9px;margin-bottom:5px;background:var(--g-line);
+  animation:fill .5s var(--sp) both;transform-origin:bottom}
+.streak i.on{background:linear-gradient(180deg,var(--g-amber-l),var(--g-amber))}
+.streak b{font-size:9.5px;font-weight:700;color:var(--g-mute)}
+@keyframes fill{from{transform:scaleY(.15);opacity:.4}to{transform:none;opacity:1}}
+.btn{
+  width:100%;min-height:52px;border-radius:18px;border:0;cursor:pointer;font:inherit;font-size:15px;font-weight:720;
+  background:var(--g-brand);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .2s var(--sp);
+}
+.btn:active{transform:scale(.97)}
+.btn.amber{background:linear-gradient(140deg,var(--g-amber-l),var(--g-amber));color:#4a2c00}
+.btn.gh{background:#fff;color:var(--g-brand);border:1.5px solid #eadfcb}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl td{padding:10px 0;border-bottom:1px solid var(--g-line);color:var(--g-body)}
+.tbl td:last-child{text-align:right;font-weight:700;color:var(--g-ink);font-variant-numeric:tabular-nums}
+.tbl tr:last-child td{border-bottom:0}
+.bars{display:flex;align-items:flex-end;gap:14px;height:88px}
+.bars>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%}
+.bars i{display:block;width:100%;border-radius:12px 12px 5px 5px;background:linear-gradient(180deg,var(--g-amber),var(--g-brand-l));
+  transform-origin:bottom;animation:grow .8s var(--sp) both}
+.bars b{font-size:9.5px;font-weight:700;color:var(--g-mute);text-align:center;line-height:1.25}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+canvas#fx{position:absolute;inset:0;pointer-events:none;z-index:30}
+.win{
+  position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px;text-align:center;background:radial-gradient(120% 100% at 50% 0%,#c07800,#7d4900 62%,#5c3600);
+  color:#fff;animation:fade .3s;
+}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.trophy{
+  width:118px;height:118px;border-radius:50%;background:linear-gradient(150deg,#ffd591,#ffa525);
+  display:flex;align-items:center;justify-content:center;margin-bottom:22px;color:#5c3600;
+  animation:land .8s var(--sp) both;
+}
+@keyframes land{0%{transform:scale(0) rotate(-30deg);opacity:0}60%{opacity:1}100%{transform:none;opacity:1}}
+.win h3{font-size:26px;font-weight:780;letter-spacing:-.025em;margin:0 0 8px;animation:rise .5s var(--sp) .3s both}
+.win p{font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.84);margin:0 0 26px;animation:rise .5s var(--sp) .42s both}
+.win .btn{animation:rise .5s var(--sp) .54s both;max-width:240px}
+.over{position:absolute;inset:0;z-index:9;background:var(--g-paper);display:flex;flex-direction:column;animation:slide .34s var(--sp)}
+@keyframes slide{from{transform:translateX(100%)}to{transform:none}}
+.ib{background:#fff;border:1px solid var(--g-line);width:40px;height:40px;border-radius:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:760px){.stage{flex-direction:column;align-items:center;padding:24px 16px 48px}.brief{width:360px;max-width:100%}.dev{width:100%;max-width:360px}}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="d-home"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></g>
+<g id="d-list"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g>
+<g id="d-gift"><path d="M3 11h18v9a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 7h18v4H3zM12 7v14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="d-coin"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 8v8M9.5 10h5M9.5 14h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></g>
+<g id="d-trophy"><path d="M7 4h10v5a5 5 0 01-10 0zM7 5H4v2a3 3 0 003 3M17 5h3v2a3 3 0 01-3 3M12 14v4M8.5 21h7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="d-back"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="d-chev"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="d-bell"><path d="M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6zM10 19a2 2 0 004 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="d-flame"><path d="M12 3s5 4.5 5 9a5 5 0 01-10 0c0-1.6.7-3 1.5-4 .3 1.3 1 2 1.8 2C11 8 10 5.6 12 3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="d-star"><path d="M12 3.5l2.7 5.6 6.1.85-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1L3.2 9.95l6.1-.85z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></g>
+<g id="d-user"><circle cx="12" cy="8.5" r="3.8" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M4.5 20a7.5 7.5 0 0115 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g>
+<g id="d-cam"><path d="M3 8h4l2-3h6l2 3h4v12H3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></g>
+<g id="d-check"><path d="M4 12.5l5.5 5.5L20 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+</defs></svg>
+
+<div class="stage">
+  <div class="brief">
+    <div class="kicker">Direction 04 of 04</div>
+    <h1>Celebrate</h1>
+    <p>The one direction that treats recognition as the product rather than a feature of it. Progress rings, milestone badges, streaks, and a full-screen moment when a reward lands.</p>
+    <p>The argument for it: Humbee's whole pitch to an influencer is being <em>seen</em> — for volume, for loyalty, for turning up at Umang Utsav. A ledger records that. This celebrates it.</p>
+    <div class="try"><b>Try it:</b> open <b>Rewards</b> and tap <b>"I've received this"</b> on the refrigerator to see the win moment.</div>
+    <div class="spec">
+      <dt>Motion signature</dt>
+      <dd>SVG rings draw on arrival. Badges pop in sequence. Streak bars fill from the base. The reward moment lands a trophy with a spring and fires a confetti burst on canvas.</dd>
+      <dt>Best for</dt>
+      <dd>Retention and the emotional half of the brief — anniversaries, milestones, Umang Utsav, the leaderboard.</dd>
+      <dt>Risk</dt>
+      <dd>The heaviest of the four to render, and celebration sits awkwardly next to a disputed allocation. Needs a restrained mode for anything involving money going wrong.</dd>
+    </div>
+  </div>
+
+  <div class="dev" id="dev"><canvas id="fx"></canvas></div>
+</div>
+
+<script>
+const G={
+  alloc:[
+    {id:1,brand:'Dalmia TMT',role:'Barbender',qty:'500',unit:'kg',by:'Sharma Steel Traders',date:'12 Feb',pts:'500'},
+    {id:2,brand:'Vastav Cement',role:'Contractor',qty:'120',unit:'bags',by:'Gupta Traders',date:'10 Feb',pts:'120'},
+    {id:3,brand:'MasterChow',role:'Painter',qty:'45',unit:'litres',by:'Verma Paints',date:'6 Feb',pts:'45'}
+  ],
+  badges:[
+    {n:'100 Tonnes',s:'Earned Jan 26',e:1,i:'d-trophy'},
+    {n:'3 Industries',s:'Earned Nov 25',e:1,i:'d-star'},
+    {n:'4-Year Loyal',s:'Earned Apr 25',e:1,i:'d-flame'},
+    {n:'Top 10 Rank',s:'2 places away',e:0,i:'d-trophy'},
+    {n:'10 Referrals',s:'7 to go',e:0,i:'d-star'},
+    {n:'Utsav 3×',s:'1 more event',e:0,i:'d-flame'}
+  ]
+};
+const ic=(id,s='width:21px;height:21px')=>`<svg style="${s}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const NAV=[['home','d-home','Home'],['alloc','d-list','Entries'],['rew','d-gift','Rewards'],['pts','d-coin','Points'],['prof','d-user','Profile']];
+let tab='home',win=false,got=false,dev=document.getElementById('dev'),fx=document.getElementById('fx');
+
+/* ---- confetti ---- */
+let parts=[],raf=null;
+function burst(){
+  const w=fx.width=dev.clientWidth,h=fx.height=dev.clientHeight,ctx=fx.getContext('2d');
+  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const cols=['#ffa525','#ffc066','#995a00','#ffffff','#bf7000'];
+  parts=Array.from({length:110},(_,i)=>({
+    x:w/2+(Math.random()-.5)*60,y:h*0.36,
+    vx:(Math.random()-.5)*9,vy:-6-Math.random()*8,
+    s:4+Math.random()*6,r:Math.random()*Math.PI,vr:(Math.random()-.5)*.28,
+    c:cols[i%cols.length],life:0
+  }));
+  cancelAnimationFrame(raf);
+  const tick=()=>{
+    ctx.clearRect(0,0,w,h);let alive=0;
+    parts.forEach(p=>{
+      p.life++;p.vy+=.34;p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      if(p.y<h+40){alive++;
+        ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.globalAlpha=Math.max(0,1-p.life/130);
+        ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.62);ctx.restore();}
+    });
+    if(alive)raf=requestAnimationFrame(tick);else ctx.clearRect(0,0,w,h);
+  };raf=requestAnimationFrame(tick);
+}
+function clearFx(){cancelAnimationFrame(raf);const c=fx.getContext('2d');c&&c.clearRect(0,0,fx.width,fx.height)}
+
+const V={
+ home(){return `
+  <div class="glow">
+    <div class="row sb" style="margin-bottom:14px"><div class="lab">Points balance</div><span class="pill glass">Level 4 · Gold</span></div>
+    <div class="fig xl" style="color:#fff">12,480</div>
+    <div style="margin-top:14px">
+      <div style="height:8px;border-radius:5px;background:rgba(255,255,255,.24);overflow:hidden">
+        <i style="display:block;height:100%;width:0;background:linear-gradient(90deg,#ffc066,#ffa525);border-radius:5px;animation:bar 1.2s cubic-bezier(.2,.8,.2,1) .25s forwards"></i></div>
+      <style>@keyframes bar{to{width:68%}}</style>
+      <div class="row sb" style="margin-top:8px"><span style="font-size:11.5px;color:rgba(255,255,255,.8)">2,520 to Level 5</span>
+        <span style="font-size:11.5px;font-weight:700;color:#ffc066">68%</span></div></div>
+  </div>
+  <button class="card tap" style="animation-delay:70ms;background:linear-gradient(140deg,#ffd08a,#ffa525);border-color:#f0bd6e">
+    <div class="row" style="gap:14px">
+      <div style="width:54px;height:54px;border-radius:18px;background:rgba(255,255,255,.42);display:flex;align-items:center;justify-content:center;color:#5c3600">${ic('d-trophy','width:28px;height:28px')}</div>
+      <div class="col" style="flex:1;color:#4a2c00">
+        <span style="font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;opacity:.72">Umang Utsav 2026</span>
+        <span class="fig m">You're invited</span>
+        <span style="font-size:11.5px;font-weight:650;opacity:.82;margin-top:2px">14 March · Jaipur · 32 days</span></div>
+      ${ic('d-chev','width:18px;height:18px;color:#5c3600')}</div></button>
+  <div class="card" style="animation-delay:130ms">
+    <div class="row sb" style="margin-bottom:12px"><span class="tx"><b>Weekly check-in</b></span><span class="pill warn">${ic('d-flame','width:13px;height:13px')} 5-week streak</span></div>
+    <div class="streak">
+      ${['M','T','W','T','F','S','S'].map((d,i)=>`<div><i class="${i<5?'on':''}" style="animation-delay:${.2+i*.06}s"></i><b>${d}</b></div>`).join('')}
+    </div></div>
+  <div class="card" style="animation-delay:180ms">
+    <div class="row sb" style="margin-bottom:6px"><span class="tx"><b>Points by brand</b></span><span class="tiny">February</span></div>
+    <div class="bars">
+      <div><i style="height:76%;animation-delay:.3s"></i><b>Dalmia<br>TMT</b></div>
+      <div><i style="height:52%;animation-delay:.4s"></i><b>Vastav<br>Cement</b></div>
+      <div><i style="height:30%;animation-delay:.5s"></i><b>Master<br>Chow</b></div></div></div>
+  <div class="h2">Recent entries</div>
+  ${G.alloc.slice(0,2).map((a,i)=>`<div class="card" style="animation-delay:${220+i*55}ms">
+    <div class="row sb" style="margin-bottom:9px"><span class="pill brand">${a.brand} · ${a.role}</span><span class="tiny">${a.date}</span></div>
+    <div class="row sb" style="align-items:flex-end"><span class="fig l">${a.qty} <span style="font-size:14px;font-weight:600;color:var(--g-body)">${a.unit}</span></span>
+      <span class="pill ok">+${a.pts} pts</span></div>
+    <div class="tiny" style="margin-top:7px">${a.by}</div></div>`).join('')}`},
+ alloc(){return `
+  <div class="h2" style="margin-top:10px">All allocations</div>
+  ${G.alloc.map((a,i)=>`<div class="card" style="animation-delay:${i*60}ms">
+    <div class="row sb" style="margin-bottom:9px"><span class="pill brand">${a.brand} · ${a.role}</span><span class="tiny">${a.date}</span></div>
+    <div class="row sb" style="align-items:flex-end"><span class="fig l">${a.qty} <span style="font-size:14px;font-weight:600;color:var(--g-body)">${a.unit}</span></span>
+      <span class="pill ok">+${a.pts} pts</span></div>
+    <div class="tiny" style="margin-top:7px">${a.by}</div></div>`).join('')}`},
+ rew(){return `
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="height:120px;background:linear-gradient(140deg,#ffe6bd,#ffc066);display:flex;align-items:center;justify-content:center;color:#7a4a00">${ic('d-trophy','width:46px;height:46px')}</div>
+    <div style="padding:18px">
+      <div class="row sb" style="margin-bottom:8px"><span class="fig m">Refrigerator — 190 L</span>
+        ${got?'<span class="pill ok">Received</span>':'<span class="pill warn">Dispatched</span>'}</div>
+      <div class="tiny" style="margin-bottom:16px">Top 20 Barbenders · Dalmia TMT · Jan–Jun 2026</div>
+      ${got?'<button class="btn gh" disabled style="opacity:.6">Confirmed — thank you</button>'
+           :'<button class="btn amber" data-got>I&rsquo;ve received this</button>'}</div></div>
+  <div class="h2">Your milestones</div>
+  <div class="badges">
+    ${G.badges.map((b,i)=>`<div class="badge ${b.e?'earned':''}" style="animation-delay:${i*70}ms">
+      <div class="ph">${ic(b.i,'width:19px;height:19px')}</div><b>${b.n}</b><span>${b.s}</span></div>`).join('')}
+  </div>
+  <div class="h2">Lucky draw</div>
+  <div class="card" style="animation-delay:200ms;text-align:center">
+    <div class="ringwrap" style="width:132px;height:132px">
+      <svg class="ring" width="132" height="132" viewBox="0 0 132 132">
+        <circle cx="66" cy="66" r="54" stroke="#f2ead9" stroke-width="11"/>
+        <circle cx="66" cy="66" r="54" stroke="url(#gr1)" stroke-width="11" stroke-dasharray="339.3" stroke-dashoffset="339.3"
+          style="animation:r1 1.4s cubic-bezier(.2,.8,.2,1) .3s forwards"/>
+        <defs><linearGradient id="gr1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc066"/><stop offset="1" stop-color="#995a00"/></linearGradient></defs>
+      </svg>
+      <style>@keyframes r1{to{stroke-dashoffset:102}}</style>
+      <div class="ringmid"><span class="fig l">8</span><span class="tiny">entries</span></div></div>
+    <div class="tx" style="margin-top:10px"><b>Monsoon Mega Draw</b></div>
+    <div class="tiny" style="margin-top:4px">Draw on 28 Feb · 1 entry per tonne</div></div>`},
+ pts(){return `
+  <div class="card" style="text-align:center;padding-top:22px">
+    <div class="ringwrap">
+      <svg class="ring" width="172" height="172" viewBox="0 0 172 172">
+        <circle cx="86" cy="86" r="72" stroke="#f2ead9" stroke-width="14"/>
+        <circle cx="86" cy="86" r="72" stroke="url(#gr2)" stroke-width="14" stroke-dasharray="452.4" stroke-dashoffset="452.4"
+          style="animation:r2 1.5s cubic-bezier(.2,.8,.2,1) .25s forwards"/>
+        <defs><linearGradient id="gr2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffa525"/><stop offset="1" stop-color="#995a00"/></linearGradient></defs>
+      </svg>
+      <style>@keyframes r2{to{stroke-dashoffset:145}}</style>
+      <div class="ringmid"><span class="lab">Balance</span><span class="fig xl">12,480</span>
+        <span class="pill ok" style="margin-top:6px">+840 this month</span></div></div>
+    <div class="tiny" style="margin-top:16px">Level 4 · 2,520 points to Gold Plus</div></div>
+  <div class="card" style="animation-delay:80ms"><div class="tx" style="margin-bottom:10px"><b>1 unit = 1 point</b></div>
+    <table class="tbl"><tr><td>Steel — 1 kg</td><td>1</td></tr><tr><td>Cement — 1 bag</td><td>1</td></tr><tr><td>Paints — 1 litre</td><td>1</td></tr></table>
+    <div class="tiny" style="margin-top:12px">Your 500 kg of Dalmia TMT gave you 500 points.</div></div>
+  <div class="card" style="animation-delay:140ms">
+    <div class="row sb"><div class="col"><span class="tx"><b>Rank in Steel</b></span><span class="tiny">Sharma Steel network</span></div>
+      <span class="fig l" style="color:var(--g-brand)">#7</span></div></div>`},
+ prof(){
+  const link=(t,v,i)=>`<button class="card tap" style="animation-delay:${i*40}ms;padding:15px 16px;margin-bottom:10px">
+    <div class="row sb"><span class="tx"><b>${t}</b></span>
+      <span class="row" style="gap:8px">${v?`<span class="tiny">${v}</span>`:''}${ic('d-chev','width:15px;height:15px;color:var(--g-mute)')}</span></div></button>`;
+  return `
+  <div class="glow" style="text-align:center;padding:24px 20px 20px">
+    <div style="position:relative;width:96px;margin:0 auto 14px">
+      <svg class="ring" width="96" height="96" viewBox="0 0 96 96" style="position:absolute;inset:0">
+        <circle cx="48" cy="48" r="44" stroke="rgba(255,255,255,.2)" stroke-width="5"/>
+        <circle cx="48" cy="48" r="44" stroke="#ffc066" stroke-width="5" stroke-dasharray="276.5" stroke-dashoffset="276.5"
+          style="animation:rp 1.3s cubic-bezier(.2,.8,.2,1) .25s forwards"/></svg>
+      <style>@keyframes rp{to{stroke-dashoffset:41}}</style>
+      <div style="width:78px;height:78px;border-radius:50%;background:rgba(255,255,255,.26);margin:9px auto 0;position:relative">
+        <div style="position:absolute;right:-2px;bottom:-2px;width:28px;height:28px;border-radius:50%;background:#fff;color:var(--g-brand);display:flex;align-items:center;justify-content:center">${ic('d-cam','width:15px;height:15px')}</div></div>
+    </div>
+    <div class="fig l" style="color:#fff;font-size:22px">Ramesh Kumar</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,.8);margin-top:4px">+91 98765 43210</div>
+    <div class="row" style="gap:8px;justify-content:center;margin-top:12px">
+      <span class="pill glass">${ic('d-check','width:12px;height:12px')} KYC verified</span>
+      <span class="pill glass">Level 4 · Gold</span></div>
+    <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:10px">Profile 85% complete · add nominee for +50 pts</div>
+  </div>
+
+  <div class="card"><div class="tx" style="margin-bottom:12px"><b>About you</b></div>
+    <table class="tbl">
+      <tr><td>Mobile</td><td>+91 98765 43210</td></tr>
+      <tr><td>Email</td><td>ramesh.k@gmail.com</td></tr>
+      <tr><td>Address</td><td style="max-width:150px">Plot 14, Sector 8, Jaipur</td></tr>
+      <tr><td>Language</td><td>हिन्दी</td></tr>
+      <tr><td>Member since</td><td>April 2022</td></tr></table>
+    <div class="tiny" style="margin-top:12px">Name and mobile are set by Humbee. Contact support to change them.</div></div>
+
+  <div class="h2">Your roles</div>
+  ${[['Steel (TMT)','Barbender','Dalmia TMT','Sharma Steel Traders','d-trophy'],
+     ['Cement','Contractor','Vastav Cement','Rathore Cement Co.','d-star'],
+     ['Paints','Painter','MasterChow','Verma Paints','d-flame']].map(([ind,role,brand,by,icon],i)=>
+    `<div class="card" style="animation-delay:${i*55}ms">
+      <div class="row" style="gap:13px">
+        <div style="width:44px;height:44px;border-radius:15px;background:linear-gradient(150deg,#ffe9c6,#ffc066);display:flex;align-items:center;justify-content:center;color:#7a4a00;flex:0 0 auto">${ic(icon,'width:21px;height:21px')}</div>
+        <div class="col" style="flex:1"><div class="row sb"><span class="tx"><b>${ind}</b></span><span class="pill brand">${role}</span></div>
+          <span class="tiny" style="margin-top:5px">${brand} · set by ${by}</span></div></div></div>`).join('')}
+
+  <div class="h2">Linked partners <span class="pill brand" style="font-size:10px">5</span></div>
+  ${[['Sharma Steel Traders','Distributor · Dalmia TMT'],['Rathore Cement Co.','Distributor · Vastav'],['Gupta Traders','Dealer · Vastav']]
+    .map(([n,m],i)=>`<div class="card" style="animation-delay:${i*45}ms;padding:14px 16px">
+      <div class="row sb"><div class="col"><span class="tx"><b>${n}</b></span><span class="tiny">${m}</span></div>
+      <span class="pill ok">Active</span></div></div>`).join('')}
+  <button class="btn gh" style="margin:4px 0 6px">Request a new partner link</button>
+  <div class="tiny" style="text-align:center;margin-bottom:4px">They confirm on their side before it activates.</div>
+
+  <div class="h2">Account</div>
+  ${link('My Humbee card','QR',0)}
+  ${link('Nominee details','+50 pts',1)}
+  ${link('Notification preferences','4 on',2)}
+  ${link('Leaderboard visibility','Off',3)}
+  ${link('Help &amp; support','1800 2100 123',4)}
+  ${link('Privacy Policy','',5)}
+  ${link('Terms of Use','',6)}
+  ${link('Delete my account','',7)}
+  <button class="btn gh" style="margin-top:8px;color:#a33;border-color:#f0d6d6">Log out</button>
+  <div class="tiny" style="text-align:center;margin-top:14px;line-height:1.7">Humbee Influencer v1.0.0<br>Device 8F2A·41C9 · Android 11</div>`}
+};
+function winScreen(){
+  return `<div class="win">
+    <div class="trophy">${ic('d-trophy','width:54px;height:54px')}</div>
+    <h3>Enjoy it, Ramesh!</h3>
+    <p>Your refrigerator is confirmed. That's 3 rewards this year — you're in the top 20 barbenders for Dalmia TMT.</p>
+    <button class="btn amber" data-closewin>Back to rewards</button></div>`;
+}
+function render(){
+  dev.innerHTML=`<canvas id="fx"></canvas>
+    <div class="sb"><span>9:41</span><span>▮▮▮ 4G</span></div>
+    <div class="row sb" style="padding:4px 20px 10px;flex:0 0 auto">
+      <div class="col"><span class="tiny" style="font-weight:700">Namaste</span><span class="fig l" style="font-size:22px">Ramesh Kumar</span></div>
+      <button class="ib">${ic('d-bell')}</button></div>
+    <div class="body">${V[tab]()}</div>
+    <div class="nav">${NAV.map(([k,i,l])=>`<button class="${tab===k?'on':''}" data-t="${k}">${ic(i)}${l}</button>`).join('')}</div>`
+    +(win?winScreen():'');
+  fx=document.getElementById('fx');
+}
+dev.addEventListener('click',e=>{
+  const tb=e.target.closest('[data-t]');if(tb){tab=tb.dataset.t;win=false;clearFx();render();return}
+  if(e.target.closest('[data-got]')){got=true;win=true;render();setTimeout(burst,340);return}
+  if(e.target.closest('[data-closewin]')){win=false;clearFx();render()}
+});
+render();
+</script>

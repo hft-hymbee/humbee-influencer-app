@@ -1,0 +1,50 @@
+[
+  {
+    "id": "welspun",
+    "name": "Welspun TMT",
+    "shortName": "Welspun TMT",
+    "mono": "WT",
+    "baseUnit": "Ton",
+    "uoms": [
+      "Ton",
+      "Kg"
+    ],
+    "subIndustryId": "tmt"
+  },
+  {
+    "id": "dalmia",
+    "name": "Dalmia Cement",
+    "shortName": "Dalmia Cement",
+    "mono": "DC",
+    "baseUnit": "Bags",
+    "uoms": [
+      "Bags",
+      "Ton"
+    ],
+    "subIndustryId": "cement"
+  },
+  {
+    "id": "dp",
+    "name": "DP Paints",
+    "shortName": "DP Paints",
+    "mono": "DP",
+    "baseUnit": "Buckets",
+    "uoms": [
+      "Buckets",
+      "Litre"
+    ],
+    "subIndustryId": "painthw"
+  },
+  {
+    "id": "masterchow",
+    "name": "Masterchow",
+    "shortName": "Masterchow",
+    "mono": "MC",
+    "baseUnit": "Cases",
+    "uoms": [
+      "Cases",
+      "Units"
+    ],
+    "subIndustryId": "food"
+  }
+]

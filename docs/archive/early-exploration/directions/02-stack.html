@@ -1,0 +1,378 @@
+<title>Direction 02 — Stack · Humbee Influencer</title>
+<style>
+:root{
+  --page:#f6f2ec; --ink:#221c17; --ink-2:#544a3f; --mute:#8b8073; --rule:#e4dbcd; --brand:#995a00;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#151210;--ink:#f4efe7;--ink-2:#cec4b6;--mute:#968b7d;--rule:#302921;--brand:#dba64f;}}
+:root[data-theme="dark"]{--page:#151210;--ink:#f4efe7;--ink-2:#cec4b6;--mute:#968b7d;--rule:#302921;--brand:#dba64f;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+.stage{display:flex;gap:44px;align-items:flex-start;justify-content:center;padding:44px 24px 72px;flex-wrap:wrap}
+.brief{width:300px}
+.kicker{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--brand);margin-bottom:12px}
+.brief h1{font-size:34px;line-height:1.02;letter-spacing:-.03em;margin:0 0 14px;font-weight:700}
+.brief p{font-size:14px;line-height:1.62;color:var(--ink-2);margin:0 0 14px}
+.spec{border-top:1px solid var(--rule);margin-top:22px;padding-top:16px}
+.spec dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.spec dd{margin:0 0 14px;font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+
+.dev{
+  width:360px;height:760px;flex:0 0 auto;position:relative;overflow:hidden;display:flex;flex-direction:column;
+  background:#f4efe8;border:1px solid var(--rule);border-radius:26px;
+  box-shadow:0 2px 4px rgba(34,28,23,.05),0 34px 80px -34px rgba(34,28,23,.4);
+  --s-bg:#ffffff; --s-ground:#f4efe8; --s-ink:#2b2419; --s-body:#6b6156; --s-mute:#9a9184;
+  --s-line:#ece5d9; --s-brand:#995a00; --s-brand2:#bf7000; --s-amber:#ffa525;
+  --s-ok:#0f7a37; --s-okbg:#e7f4ea; --s-warn:#8a5a00; --s-warnbg:#fdf1dc; --s-info:#0069c2; --s-infobg:#e6f1fb;
+  --sp:cubic-bezier(.22,1.24,.36,1); --ease:cubic-bezier(.2,.8,.2,1);
+  color:var(--s-ink);
+}
+.sb{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-family:var(--mono);font-size:9.5px;color:var(--s-mute);flex:0 0 auto}
+.body{flex:1;overflow-y:auto;scrollbar-width:none;padding:0 16px 20px}
+.body::-webkit-scrollbar{display:none}
+.nav{
+  display:flex;flex:0 0 auto;margin:0 16px 16px;background:#fff;border-radius:20px;padding:6px;
+  box-shadow:0 1px 2px rgba(34,28,23,.06),0 10px 24px -12px rgba(34,28,23,.28);
+}
+.nav button{
+  flex:1;padding:9px 2px;background:none;border:0;cursor:pointer;border-radius:14px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;font-size:9.5px;font-weight:650;
+  color:var(--s-mute);transition:color .25s var(--ease),background .3s var(--ease);
+}
+.nav button.on{color:#fff;background:var(--s-brand)}
+.nav button svg{width:20px;height:20px;transition:transform .4s var(--sp)}
+.nav button.on svg{transform:translateY(-1px) scale(1.08)}
+
+/* ---- cards & depth ---- */
+.hero{
+  border-radius:24px;padding:22px;margin:4px 0 16px;color:#fff;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,#a86400 0%,#7d4a00 58%,#6b3f00 100%);
+  box-shadow:0 2px 4px rgba(120,72,0,.2),0 18px 40px -18px rgba(120,72,0,.65);
+  animation:pop .58s var(--sp) both;
+}
+.hero::after{
+  content:"";position:absolute;width:210px;height:210px;border-radius:50%;right:-70px;top:-90px;
+  background:radial-gradient(circle,rgba(255,165,37,.5),transparent 68%);
+}
+.card{
+  background:var(--s-bg);border-radius:20px;padding:16px;margin-bottom:12px;
+  box-shadow:0 1px 2px rgba(34,28,23,.05),0 8px 20px -12px rgba(34,28,23,.22);
+  animation:pop .5s var(--sp) both;
+}
+.card.tap{cursor:pointer;transition:transform .22s var(--sp),box-shadow .22s var(--ease);width:100%;text-align:left;border:0;font:inherit;display:block}
+.card.tap:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(34,28,23,.06),0 16px 30px -14px rgba(34,28,23,.3)}
+.card.tap:active{transform:scale(.975)}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.stackwrap{position:relative;margin-bottom:16px}
+.stackwrap .peek{
+  position:absolute;left:10px;right:10px;height:40px;border-radius:20px;background:#fff;opacity:.6;
+  box-shadow:0 8px 18px -12px rgba(34,28,23,.3);
+}
+.stackwrap .peek.p1{bottom:-7px;left:16px;right:16px;opacity:.75}
+.stackwrap .peek.p2{bottom:-13px;left:24px;right:24px;opacity:.45}
+
+.lab{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--s-mute)}
+.hero .lab{color:rgba(255,255,255,.72)}
+.fig{font-variant-numeric:tabular-nums;font-weight:750;letter-spacing:-.03em;line-height:1.04}
+.fig.xl{font-size:46px}.fig.l{font-size:26px}.fig.m{font-size:19px}
+.tx{font-size:13.5px;color:var(--s-body);line-height:1.5}
+.tx b{color:var(--s-ink);font-weight:680}
+.tiny{font-size:11px;color:var(--s-mute);line-height:1.5}
+.h2{font-size:17px;font-weight:720;letter-spacing:-.015em;margin:22px 4px 12px}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.pill.brand{background:#f6ecdd;color:var(--s-brand)}
+.pill.ok{background:var(--s-okbg);color:var(--s-ok)}
+.pill.warn{background:var(--s-warnbg);color:var(--s-warn)}
+.pill.info{background:var(--s-infobg);color:var(--s-info)}
+.pill.neu{background:#f1ece3;color:var(--s-body)}
+.pill.glass{background:rgba(255,255,255,.22);color:#fff}
+.row{display:flex;align-items:center;gap:10px}
+.row.sb{justify-content:space-between}
+.col{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ring{transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-linecap:round}
+.bars{display:flex;align-items:flex-end;gap:14px;height:92px;padding-top:6px}
+.bars>div{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:7px;height:100%}
+.bars i{display:block;width:100%;border-radius:10px 10px 4px 4px;background:linear-gradient(180deg,#bf7000,#995a00);
+  transform-origin:bottom;animation:grow .8s var(--sp) both}
+.bars b{font-size:9.5px;font-weight:650;color:var(--s-mute);text-align:center;line-height:1.25}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.btn{
+  width:100%;min-height:52px;border-radius:16px;border:0;cursor:pointer;font:inherit;font-size:15px;font-weight:680;
+  background:var(--s-brand);color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .2s var(--sp);box-shadow:0 8px 18px -10px rgba(120,72,0,.7);
+}
+.btn:active{transform:scale(.97)}
+.btn.gh{background:#fff;color:var(--s-brand);box-shadow:0 1px 2px rgba(34,28,23,.05),0 8px 18px -12px rgba(34,28,23,.24)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl td{padding:10px 0;border-bottom:1px solid var(--s-line);color:var(--s-body)}
+.tbl td:last-child{text-align:right;font-weight:680;color:var(--s-ink);font-variant-numeric:tabular-nums}
+.tbl tr:last-child td{border-bottom:0}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:9;background:#fff;border-radius:26px 26px 0 0;
+  padding:12px 20px 24px;box-shadow:0 -12px 40px -12px rgba(34,28,23,.4);
+  animation:rise .42s var(--sp);max-height:86%;overflow-y:auto;
+}
+@keyframes rise{from{transform:translateY(100%)}to{transform:none}}
+.scrim{position:absolute;inset:0;z-index:8;background:rgba(34,28,23,.42);border:0;padding:0;cursor:pointer;animation:fade .28s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.grab{width:40px;height:4px;border-radius:2px;background:#e0d8ca;margin:0 auto 16px}
+.stepdot{width:22px;height:22px;border-radius:50%;border:2px solid #e0d8ca;flex:0 0 auto;background:#fff;transition:all .4s var(--sp)}
+.step.done .stepdot{background:var(--s-ok);border-color:var(--s-ok)}
+.step.now .stepdot{border-color:var(--s-brand);border-width:4px;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(153,90,0,.34)}50%{box-shadow:0 0 0 8px rgba(153,90,0,0)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:760px){.stage{flex-direction:column;align-items:center;padding:24px 16px 48px}.brief{width:360px;max-width:100%}.dev{width:100%;max-width:360px}}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<g id="b-home"><path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></g>
+<g id="b-list"><path d="M4 6h16M4 12h16M4 18h10" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g>
+<g id="b-gift"><path d="M3 11h18v9a1 1 0 01-1 1H4a1 1 0 01-1-1zM3 7h18v4H3zM12 7v14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="b-coin"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M12 8v8M9.5 10h5M9.5 14h5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></g>
+<g id="b-back"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="b-chev"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="b-bell"><path d="M6 9a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6zM10 19a2 2 0 004 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></g>
+<g id="b-check"><path d="M4 12.5l5.5 5.5L20 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="b-user"><circle cx="12" cy="8.5" r="3.8" fill="none" stroke="currentColor" stroke-width="1.9"/><path d="M4.5 20a7.5 7.5 0 0115 0" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></g>
+<g id="b-cam"><path d="M3 8h4l2-3h6l2 3h4v12H3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="13.5" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></g>
+</defs></svg>
+
+<div class="stage">
+  <div class="brief">
+    <div class="kicker">Direction 02 of 04</div>
+    <h1>Stack</h1>
+    <p>Physical, layered, tactile. Content sits on cards that stack, lift and settle — so a list of allocations reads as a pile of receipts you can thumb through rather than rows in a database.</p>
+    <p>The brand brown becomes a deep gradient on the hero surface; everything else stays white and floats above a warm ground. Depth carries the hierarchy that the Ledger direction gets from rules.</p>
+    <div class="spec">
+      <dt>Motion signature</dt>
+      <dd>Spring easing with overshoot on every entrance. Cards lift on hover and compress on press. The reward stepper pulses at its live stage. Sheets rise from the bottom edge.</dd>
+      <dt>Best for</dt>
+      <dd>Familiarity. This is the visual language of every payments app on the target user's phone, so it costs them nothing to learn.</dd>
+      <dt>Risk</dt>
+      <dd>Shadows and gradients cost fill-rate on 2&nbsp;GB devices, and soft grey-on-white loses contrast in direct sunlight.</dd>
+    </div>
+  </div>
+
+  <div class="dev" id="dev"></div>
+</div>
+
+<script>
+const B={
+  user:{name:'Ramesh Kumar',pts:'12,480',partners:5,inds:3},
+  alloc:[
+    {id:1,brand:'Dalmia TMT',role:'Barbender',qty:'500',unit:'kg',prod:'TMT Bars 12 mm',by:'Sharma Steel Traders',type:'Distributor',date:'12 Feb 2026',ind:'Steel (TMT)',pts:'500',tot:'8,240 kg'},
+    {id:2,brand:'Vastav Cement',role:'Contractor',qty:'120',unit:'bags',prod:'OPC 53 Grade',by:'Gupta Traders',type:'Dealer',date:'10 Feb 2026',ind:'Cement',pts:'120',tot:'2,960 bags'},
+    {id:3,brand:'MasterChow',role:'Painter',qty:'45',unit:'litres',prod:'Interior Emulsion',by:'Verma Paints',type:'Dealer',date:'6 Feb 2026',ind:'Paints',pts:'45',tot:'610 litres'},
+    {id:4,brand:'Dalmia TMT',role:'Barbender',qty:'750',unit:'kg',prod:'TMT Bars 16 mm',by:'Sharma Steel Traders',type:'Distributor',date:'28 Jan 2026',ind:'Steel (TMT)',pts:'750',tot:'8,240 kg'}
+  ],
+  rewards:[
+    {id:1,n:'Refrigerator — 190 L',s:'Dalmia TMT · Top 20 Barbenders',p:'warn',t:'Processing',stage:1},
+    {id:2,n:'₹5,000 cash',s:'Vastav Cement · Monsoon Drive',p:'info',t:'Credited',stage:2},
+    {id:3,n:'Steel water bottle set',s:'Dalmia TMT · Q3 Volume Drive',p:'ok',t:'Received',stage:3}
+  ]
+};
+const ic=(id,s='width:20px;height:20px')=>`<svg style="${s}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const NAV=[['home','b-home','Home'],['alloc','b-list','Entries'],['rew','b-gift','Rewards'],['pts','b-coin','Points'],['prof','b-user','Profile']];
+const STAGES=['Announced','Processing','Dispatched','Received'];
+let tab='home',detail=null,sheet=false,dev=document.getElementById('dev');
+
+function allocCard(a,i){
+  return `<button class="card tap" style="animation-delay:${i*55}ms" data-a="${a.id}">
+    <div class="row sb" style="margin-bottom:10px"><span class="pill brand">${a.brand} · ${a.role}</span>
+      ${ic('b-chev','width:16px;height:16px;color:var(--s-mute)')}</div>
+    <div class="row sb" style="align-items:flex-end">
+      <div class="col"><span class="fig l">${a.qty} <span style="font-size:14px;font-weight:600;color:var(--s-body)">${a.unit}</span></span>
+        <span class="tiny" style="margin-top:4px">${a.prod}</span></div>
+      <div class="col" style="align-items:flex-end"><span class="tiny">${a.by}</span><span class="tiny">${a.date}</span></div>
+    </div></button>`;
+}
+const V={
+ home(){return `
+  <div class="hero">
+    <div class="lab">Points balance</div>
+    <div class="fig xl" style="margin:6px 0 14px;color:#fff">${B.user.pts}</div>
+    <div class="row sb"><span class="pill glass">▲ 840 this month</span>
+      <span style="font-size:12px;color:rgba(255,255,255,.8)">${B.user.inds} industries · ${B.user.partners} partners</span></div>
+  </div>
+  <button class="card tap" style="animation-delay:80ms;background:linear-gradient(135deg,#ffb648,#ffa525);color:#3a2200;box-shadow:0 10px 26px -12px rgba(255,165,37,.9)">
+    <div class="row" style="gap:14px">
+      <div style="width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.36);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;letter-spacing:.06em">UTSAV</div>
+      <div class="col" style="flex:1"><span style="font-size:11px;font-weight:750;letter-spacing:.06em;text-transform:uppercase;opacity:.72">Umang Utsav 2026</span>
+        <span class="fig m">14 March · Jaipur</span>
+        <span style="font-size:11.5px;font-weight:650;opacity:.8;margin-top:2px">You're invited · 32 days to go</span></div>
+    </div></button>
+  <div class="card" style="animation-delay:140ms">
+    <div class="row sb" style="margin-bottom:4px"><span class="tx"><b>Points by brand</b></span><span class="tiny">February</span></div>
+    <div class="bars">
+      <div><i style="height:76%;animation-delay:.24s"></i><b>Dalmia<br>TMT</b></div>
+      <div><i style="height:52%;animation-delay:.34s"></i><b>Vastav<br>Cement</b></div>
+      <div><i style="height:30%;animation-delay:.44s"></i><b>Master<br>Chow</b></div>
+    </div></div>
+  <div class="h2">Recent entries</div>
+  <div class="stackwrap"><div class="peek p2"></div><div class="peek p1"></div>
+    ${allocCard(B.alloc[0],3)}</div>
+  ${allocCard(B.alloc[1],4)}`},
+ alloc(){return `
+  <div class="row sb" style="margin:6px 4px 14px"><span class="tx"><b>${B.alloc.length} allocations</b></span>
+    <button class="pill neu" data-sheet style="border:0;cursor:pointer;font:inherit;font-size:11px;font-weight:700">Filter</button></div>
+  ${B.alloc.map(allocCard).join('')}`},
+ rew(){return `
+  <div class="h2" style="margin-top:8px">Your rewards</div>
+  ${B.rewards.map((r,i)=>`<button class="card tap" style="animation-delay:${i*55}ms" data-r="${r.id}">
+    <div class="row" style="gap:14px">
+      <div style="width:54px;height:54px;border-radius:16px;background:linear-gradient(140deg,#f2e7d6,#e6d8c0);flex:0 0 auto"></div>
+      <div class="col" style="flex:1"><span class="tx"><b>${r.n}</b></span><span class="tiny" style="margin:2px 0 7px">${r.s}</span>
+        <span class="pill ${r.p}" style="align-self:flex-start">${r.t}</span></div></div></button>`).join('')}
+  <div class="h2">Lucky draws</div>
+  <div class="card" style="animation-delay:200ms">
+    <div class="row sb" style="margin-bottom:10px"><span class="pill brand">Dalmia TMT</span><span class="pill warn">Draw on 28 Feb</span></div>
+    <div class="tx" style="margin-bottom:12px"><b>Monsoon Mega Draw</b></div>
+    <div class="row sb" style="align-items:flex-end">
+      <div class="col"><span class="fig l">8</span><span class="tiny">Your entries</span></div>
+      <span class="tiny" style="text-align:right;max-width:150px">1 entry per tonne · you bought 8 t</span></div></div>`},
+ pts(){return `
+  <div class="hero" style="text-align:center">
+    <svg class="ring" width="150" height="150" viewBox="0 0 150 150" style="margin:2px auto 4px;display:block">
+      <circle cx="75" cy="75" r="62" stroke="rgba(255,255,255,.22)" stroke-width="12"/>
+      <circle cx="75" cy="75" r="62" stroke="#ffa525" stroke-width="12" stroke-dasharray="389.6"
+        stroke-dashoffset="389.6" style="animation:ring 1.5s cubic-bezier(.2,.8,.2,1) .2s forwards"/>
+    </svg>
+    <style>@keyframes ring{to{stroke-dashoffset:108}}</style>
+    <div class="fig xl" style="color:#fff;margin-top:-96px">12,480</div>
+    <div class="lab" style="margin:96px 0 0">Points balance</div>
+  </div>
+  <div class="card"><div class="tx" style="margin-bottom:10px"><b>How points are earned</b></div>
+    <table class="tbl"><tr><td>Steel — 1 kg</td><td>1 pt</td></tr>
+      <tr><td>Cement — 1 bag</td><td>1 pt</td></tr>
+      <tr><td>Paints — 1 litre</td><td>1 pt</td></tr></table>
+    <div class="tiny" style="margin-top:12px">Your 500 kg of Dalmia TMT gave you 500 points.</div></div>
+  <div class="card" style="animation-delay:90ms;background:var(--s-infobg);box-shadow:none">
+    <div class="tx" style="color:var(--s-info);font-weight:650">1,200 points expire on 31 March 2026</div></div>
+  <button class="btn gh">See what you can get</button>`},
+ prof(){
+  const link=(t,v,i)=>`<button class="card tap" style="animation-delay:${i*45}ms;padding:15px 16px">
+    <div class="row sb"><span class="tx"><b>${t}</b></span>
+      <span class="row" style="gap:8px">${v?`<span class="tiny">${v}</span>`:''}${ic('b-chev','width:15px;height:15px;color:var(--s-mute)')}</span></div></button>`;
+  return `
+  <div class="hero" style="padding:22px 20px 20px">
+    <div class="row" style="gap:16px">
+      <div style="position:relative;flex:0 0 auto">
+        <div style="width:70px;height:70px;border-radius:26px;background:rgba(255,255,255,.26)"></div>
+        <div style="position:absolute;right:-4px;bottom:-4px;width:30px;height:30px;border-radius:11px;background:#fff;color:var(--s-brand);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px -6px rgba(0,0,0,.5)">${ic('b-cam','width:16px;height:16px')}</div></div>
+      <div class="col" style="flex:1"><span class="fig l" style="color:#fff;font-size:22px">Ramesh Kumar</span>
+        <span style="font-size:12.5px;color:rgba(255,255,255,.82);margin-top:3px">+91 98765 43210</span>
+        <span class="pill glass" style="align-self:flex-start;margin-top:9px">${ic('b-check','width:12px;height:12px')} KYC verified</span></div></div>
+  </div>
+
+  <div class="card"><div class="tx" style="margin-bottom:12px"><b>About you</b></div>
+    <table class="tbl">
+      <tr><td>Mobile</td><td>+91 98765 43210 <span class="tiny" style="font-weight:600">· locked</span></td></tr>
+      <tr><td>Email</td><td>ramesh.k@gmail.com</td></tr>
+      <tr><td>Address</td><td style="max-width:150px">Plot 14, Sector 8, Jaipur</td></tr>
+      <tr><td>Language</td><td>हिन्दी</td></tr>
+      <tr><td>Member since</td><td>April 2022</td></tr></table>
+    <div class="tiny" style="margin-top:12px">Your name and mobile are set by Humbee. Contact support to change them.</div></div>
+
+  <div class="h2">Your roles</div>
+  ${[['Steel (TMT)','Barbender','Dalmia TMT','Sharma Steel Traders'],
+     ['Cement','Contractor','Vastav Cement','Rathore Cement Co.'],
+     ['Paints','Painter','MasterChow','Verma Paints']].map(([ind,role,brand,by],i)=>
+    `<div class="card" style="animation-delay:${i*55}ms">
+      <div class="row sb" style="margin-bottom:10px"><span class="tx"><b>${ind}</b></span><span class="pill brand">${role}</span></div>
+      <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:10px"><span class="pill neu">${brand}</span></div>
+      <div class="tiny">Set by ${by}</div></div>`).join('')}
+
+  <div class="h2">Linked partners <span class="pill neu" style="font-size:10px">5</span></div>
+  <div class="stackwrap"><div class="peek p2"></div><div class="peek p1"></div>
+    <div class="card" style="animation-delay:60ms;margin-bottom:0">
+      ${[['Sharma Steel Traders','Distributor · Dalmia TMT'],['Rathore Cement Co.','Distributor · Vastav'],['Gupta Traders','Dealer · Vastav']]
+        .map(([n,m],i)=>`<div class="row sb" style="padding:${i?'12px':'0'} 0 12px;${i?'border-top:1px solid var(--s-line)':''}">
+          <div class="col"><span class="tx"><b>${n}</b></span><span class="tiny">${m}</span></div>
+          <span class="pill ok">Active</span></div>`).join('')}
+      <div class="tiny" style="text-align:center;padding-top:4px">+ 2 more</div></div></div>
+  <button class="btn gh" style="margin:14px 0 4px">Request a new partner link</button>
+  <div class="tiny" style="text-align:center;margin-bottom:6px">They confirm on their side before it activates.</div>
+
+  <div class="h2">Account</div>
+  ${link('My Humbee card','QR',0)}
+  ${link('Nominee details','Not added',1)}
+  ${link('Notification preferences','4 on',2)}
+  ${link('Leaderboard visibility','Off',3)}
+  ${link('Help &amp; support','1800 2100 123',4)}
+  ${link('Privacy Policy','',5)}
+  ${link('Terms of Use','',6)}
+  ${link('Delete my account','',7)}
+  <button class="btn gh" style="margin-top:14px;color:#a33">Log out</button>
+  <div class="tiny" style="text-align:center;margin-top:14px;line-height:1.7">Humbee Influencer v1.0.0<br>Device 8F2A·41C9 · Android 11</div>`}
+};
+function detailView(){
+  if(detail.k==='a'){
+    const a=B.alloc.find(x=>x.id===detail.id);
+    return `<div class="body" style="padding-top:6px">
+      <div class="hero" style="animation-delay:0s">
+        <span class="pill glass">${a.brand} · ${a.role}</span>
+        <div class="fig xl" style="color:#fff;margin:14px 0 4px">${a.qty} <span style="font-size:18px;font-weight:600;opacity:.8">${a.unit}</span></div>
+        <div style="font-size:12.5px;color:rgba(255,255,255,.82)">${a.prod}</div></div>
+      <div class="card"><table class="tbl">
+        <tr><td>Allocated by</td><td>${a.by}</td></tr><tr><td>Partner type</td><td>${a.type}</td></tr>
+        <tr><td>Date</td><td>${a.date}</td></tr><tr><td>Industry</td><td>${a.ind}</td></tr>
+        <tr><td>Your role</td><td>${a.role}</td></tr><tr><td>Points earned</td><td>${a.pts}</td></tr></table></div>
+      <div class="card" style="animation-delay:70ms"><div class="lab">Total from ${a.brand}</div>
+        <div class="fig l" style="margin-top:6px">${a.tot}</div></div>
+      <button class="btn gh" style="margin-top:4px">Report a problem</button></div>`;
+  }
+  const r=B.rewards.find(x=>x.id===detail.id);
+  return `<div class="body" style="padding-top:6px">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="height:132px;background:linear-gradient(140deg,#f2e7d6,#ddcbae)"></div>
+      <div style="padding:16px"><div class="fig m">${r.n}</div><div class="tiny" style="margin-top:4px">${r.s}</div></div></div>
+    <div class="card" style="animation-delay:70ms"><div class="tx" style="margin-bottom:14px"><b>Where it is now</b></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        ${STAGES.map((s,i)=>`<div class="step ${i<r.stage?'done':(i===r.stage?'now':'')}" style="display:flex;gap:12px;align-items:flex-start">
+          <div class="stepdot"></div><div class="col"><span class="tx" style="${i<=r.stage?'font-weight:680;color:var(--s-ink)':'color:var(--s-mute)'}">${s}</span></div></div>`).join('')}
+      </div></div>
+    <button class="btn">Ask about this reward</button></div>`;
+}
+function filterSheet(){
+  return `<button class="scrim" data-close-sheet aria-label="Close"></button>
+  <div class="sheet"><div class="grab"></div>
+    <div class="row sb" style="margin-bottom:16px"><span class="fig m">Filter</span>
+      <button class="pill neu" data-close-sheet style="border:0;cursor:pointer;font:inherit;font-size:11px;font-weight:700">Clear</button></div>
+    <div class="lab" style="margin-bottom:10px">Industry</div>
+    <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:20px">
+      <span class="pill brand">All</span><span class="pill neu">Steel</span><span class="pill neu">Cement</span><span class="pill neu">Paints</span></div>
+    <div class="lab" style="margin-bottom:10px">Period</div>
+    <div class="row" style="flex-wrap:wrap;gap:8px;margin-bottom:24px">
+      <span class="pill neu">This month</span><span class="pill brand">Last 6 months</span><span class="pill neu">All time</span></div>
+    <button class="btn" data-close-sheet>Show 4 allocations</button></div>`;
+}
+function head(){
+  if(detail)return `<div style="display:flex;align-items:center;gap:10px;padding:6px 16px 10px">
+    <button data-close style="background:#fff;border:0;width:40px;height:40px;border-radius:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -10px rgba(34,28,23,.4)">${ic('b-back')}</button>
+    <span class="fig m" style="flex:1">${detail.k==='a'?'Allocation':'Reward'}</span></div>`;
+  const T={home:'Namaste, Ramesh',alloc:'Allocations',rew:'Rewards',pts:'Points',prof:'Your profile'}[tab];
+  return `<div class="row sb" style="padding:6px 20px 12px">
+    <div class="col"><span class="tiny" style="font-weight:650">${tab==='home'?'Welcome back':'Humbee'}</span>
+      <span class="fig l" style="font-size:23px">${T}</span></div>
+    <button style="background:#fff;border:0;width:42px;height:42px;border-radius:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -10px rgba(34,28,23,.4)">${ic('b-bell')}</button></div>`;
+}
+function render(){
+  dev.innerHTML=`<div class="sb"><span>9:41</span><span>▮▮▮ 4G</span></div>${head()}`
+    +(detail?detailView():`<div class="body">${V[tab]()}</div>`)
+    +(detail?'':`<div class="nav">${NAV.map(([k,i,l])=>`<button class="${tab===k?'on':''}" data-t="${k}">${ic(i)}${l}</button>`).join('')}</div>`)
+    +(sheet?filterSheet():'');
+}
+dev.addEventListener('click',e=>{
+  const tb=e.target.closest('[data-t]');if(tb){tab=tb.dataset.t;detail=null;sheet=false;render();return}
+  if(e.target.closest('[data-close]')){detail=null;render();return}
+  if(e.target.closest('[data-sheet]')){sheet=true;render();return}
+  if(e.target.closest('[data-close-sheet]')){sheet=false;render();return}
+  const a=e.target.closest('[data-a]');if(a){detail={k:'a',id:+a.dataset.a};render();return}
+  const r=e.target.closest('[data-r]');if(r){detail={k:'r',id:+r.dataset.r};render()}
+});
+render();
+</script>

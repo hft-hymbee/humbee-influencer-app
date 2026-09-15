@@ -1,0 +1,51 @@
+{
+  "influencer": {
+    "name": "Sunil Jadhav"
+  },
+  "banners": [
+    {
+      "imageUrl": "assets/img/banner-1.png",
+      "alt": "Hoga Yogdaan Ka Samaan",
+      "deeplink": null
+    },
+    {
+      "imageUrl": "assets/img/banner-2.png",
+      "alt": "15.21+ Lakh Shilpkars recognised and rewarded",
+      "deeplink": null
+    }
+  ],
+  "stats": {
+    "rewardsAllotted": 11,
+    "pointsThisYear": 21400
+  },
+  "recentRewards": [
+    {
+      "gift": "Washing Machine",
+      "manufacturerName": "Welspun TMT",
+      "date": "2026-08-10",
+      "status": "In Shop",
+      "mark": "SHOP"
+    },
+    {
+      "gift": "Umang Utsav Invite",
+      "manufacturerName": "Masterchow",
+      "date": "2026-08-08",
+      "status": "Announced",
+      "mark": "UmangUtsav"
+    },
+    {
+      "gift": "Pressure Cooker",
+      "manufacturerName": "Dalmia Cement",
+      "date": "2026-08-06",
+      "status": "Redeemed",
+      "mark": "TRIP"
+    },
+    {
+      "gift": "Umang Utsav Invite",
+      "manufacturerName": "Welspun TMT",
+      "date": "2026-08-02",
+      "status": "Announced",
+      "mark": "UmangUtsav"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
+<g fill="none" stroke="#995A00" stroke-opacity="0.06" stroke-width="1.4" stroke-linecap="round">
+  <path d="M-10 118 C 20 96, 34 128, 62 104" stroke-dasharray="5 7"></path>
+  <path d="M96 34 C 124 12, 140 44, 170 22" stroke-dasharray="5 7"></path>
+  <path d="M20 176 C 52 158, 66 186, 96 168" stroke-dasharray="5 7"></path>
+</g>
+<g stroke="#995A00" stroke-opacity="0.05" stroke-width="1.4" fill="none">
+  <path d="M148 96 l14 8 v16 l-14 8 -14 -8 v-16 z"></path>
+  <path d="M40 46 l13 7.5 v15 l-13 7.5 -13 -7.5 v-15 z"></path>
+</g>
+<g opacity="0.07">
+  <g transform="translate(74,104) rotate(-14)">
+    <ellipse cx="0" cy="0" rx="10" ry="6.5" fill="#995A00"></ellipse>
+    <path d="M-4 -6 v12 M1 -6.4 v12.8" stroke="#FFF3E0" stroke-width="1.6"></path>
+    <ellipse cx="-3" cy="-8" rx="7" ry="4" fill="#FFA525" transform="rotate(-24 -3 -8)"></ellipse>
+    <ellipse cx="3" cy="-8" rx="6" ry="3.4" fill="#FFA525" transform="rotate(18 3 -8)"></ellipse>
+  </g>
+  <g transform="translate(150,44) rotate(12)">
+    <ellipse cx="0" cy="0" rx="8" ry="5.2" fill="#995A00"></ellipse>
+    <path d="M-3 -4.8 v9.6 M1 -5 v10" stroke="#FFF3E0" stroke-width="1.4"></path>
+    <ellipse cx="-2" cy="-6.4" rx="5.6" ry="3.2" fill="#FFA525" transform="rotate(-22 -2 -6.4)"></ellipse>
+    <ellipse cx="2.4" cy="-6.4" rx="4.8" ry="2.8" fill="#FFA525" transform="rotate(16 2.4 -6.4)"></ellipse>
+  </g>
+</g>
+</svg>

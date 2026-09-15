@@ -1,0 +1,766 @@
+{
+  "welspun": {
+    "3m": {
+      "totals": {
+        "quantity": {
+          "value": 14,
+          "uom": "Ton"
+        },
+        "points": 1404
+      },
+      "count": 3,
+      "items": [
+        {
+          "id": "welspun_alc_1",
+          "vcp": {
+            "name": "Mahalaxmi Steel Traders",
+            "type": "Distributor",
+            "place": "Satpur"
+          },
+          "quantity": {
+            "value": 8.4,
+            "uom": "Ton"
+          },
+          "normalisedValue": 8.4,
+          "skus": [
+            "Fe 500D 12mm",
+            "Fe 550D 16mm"
+          ],
+          "date": "2026-08-12",
+          "points": 840
+        },
+        {
+          "id": "welspun_alc_2",
+          "vcp": {
+            "name": "Nashik Build Mart",
+            "type": "Distributor",
+            "place": "Deolali"
+          },
+          "quantity": {
+            "value": 5,
+            "uom": "Ton"
+          },
+          "normalisedValue": 5,
+          "skus": [
+            "Fe 550D 16mm",
+            "Fe 500D 8mm",
+            "Fe 550D 20mm"
+          ],
+          "date": "2026-07-28",
+          "points": 500
+        },
+        {
+          "id": "welspun_alc_3",
+          "vcp": {
+            "name": "Shree Balaji Hardware",
+            "type": "Dealer",
+            "place": "Sinnar"
+          },
+          "quantity": {
+            "value": 640,
+            "uom": "Kg"
+          },
+          "normalisedValue": 0.6,
+          "skus": [
+            "Fe 500D 10mm"
+          ],
+          "date": "2026-07-09",
+          "points": 64
+        }
+      ]
+    },
+    "6m": {
+      "totals": {
+        "quantity": {
+          "value": 17.2,
+          "uom": "Ton"
+        },
+        "points": 1724
+      },
+      "count": 4,
+      "items": [
+        {
+          "id": "welspun_alc_1",
+          "vcp": {
+            "name": "Mahalaxmi Steel Traders",
+            "type": "Distributor",
+            "place": "Satpur"
+          },
+          "quantity": {
+            "value": 8.4,
+            "uom": "Ton"
+          },
+          "normalisedValue": 8.4,
+          "skus": [
+            "Fe 500D 12mm",
+            "Fe 550D 16mm"
+          ],
+          "date": "2026-08-12",
+          "points": 840
+        },
+        {
+          "id": "welspun_alc_2",
+          "vcp": {
+            "name": "Nashik Build Mart",
+            "type": "Distributor",
+            "place": "Deolali"
+          },
+          "quantity": {
+            "value": 5,
+            "uom": "Ton"
+          },
+          "normalisedValue": 5,
+          "skus": [
+            "Fe 550D 16mm",
+            "Fe 500D 8mm",
+            "Fe 550D 20mm"
+          ],
+          "date": "2026-07-28",
+          "points": 500
+        },
+        {
+          "id": "welspun_alc_3",
+          "vcp": {
+            "name": "Shree Balaji Hardware",
+            "type": "Dealer",
+            "place": "Sinnar"
+          },
+          "quantity": {
+            "value": 640,
+            "uom": "Kg"
+          },
+          "normalisedValue": 0.6,
+          "skus": [
+            "Fe 500D 10mm"
+          ],
+          "date": "2026-07-09",
+          "points": 64
+        },
+        {
+          "id": "welspun_alc_4",
+          "vcp": {
+            "name": "Mahalaxmi Steel Traders",
+            "type": "Distributor",
+            "place": "Satpur"
+          },
+          "quantity": {
+            "value": 3.2,
+            "uom": "Ton"
+          },
+          "normalisedValue": 3.2,
+          "skus": [
+            "Fe 500D 12mm"
+          ],
+          "date": "2026-03-14",
+          "points": 320
+        }
+      ]
+    },
+    "1y": {
+      "totals": {
+        "quantity": {
+          "value": 19.8,
+          "uom": "Ton"
+        },
+        "points": 1984
+      },
+      "count": 5,
+      "items": [
+        {
+          "id": "welspun_alc_1",
+          "vcp": {
+            "name": "Mahalaxmi Steel Traders",
+            "type": "Distributor",
+            "place": "Satpur"
+          },
+          "quantity": {
+            "value": 8.4,
+            "uom": "Ton"
+          },
+          "normalisedValue": 8.4,
+          "skus": [
+            "Fe 500D 12mm",
+            "Fe 550D 16mm"
+          ],
+          "date": "2026-08-12",
+          "points": 840
+        },
+        {
+          "id": "welspun_alc_2",
+          "vcp": {
+            "name": "Nashik Build Mart",
+            "type": "Distributor",
+            "place": "Deolali"
+          },
+          "quantity": {
+            "value": 5,
+            "uom": "Ton"
+          },
+          "normalisedValue": 5,
+          "skus": [
+            "Fe 550D 16mm",
+            "Fe 500D 8mm",
+            "Fe 550D 20mm"
+          ],
+          "date": "2026-07-28",
+          "points": 500
+        },
+        {
+          "id": "welspun_alc_3",
+          "vcp": {
+            "name": "Shree Balaji Hardware",
+            "type": "Dealer",
+            "place": "Sinnar"
+          },
+          "quantity": {
+            "value": 640,
+            "uom": "Kg"
+          },
+          "normalisedValue": 0.6,
+          "skus": [
+            "Fe 500D 10mm"
+          ],
+          "date": "2026-07-09",
+          "points": 64
+        },
+        {
+          "id": "welspun_alc_4",
+          "vcp": {
+            "name": "Mahalaxmi Steel Traders",
+            "type": "Distributor",
+            "place": "Satpur"
+          },
+          "quantity": {
+            "value": 3.2,
+            "uom": "Ton"
+          },
+          "normalisedValue": 3.2,
+          "skus": [
+            "Fe 500D 12mm"
+          ],
+          "date": "2026-03-14",
+          "points": 320
+        },
+        {
+          "id": "welspun_alc_5",
+          "vcp": {
+            "name": "Nashik Build Mart",
+            "type": "Distributor",
+            "place": "Deolali"
+          },
+          "quantity": {
+            "value": 2.6,
+            "uom": "Ton"
+          },
+          "normalisedValue": 2.6,
+          "skus": [
+            "Fe 550D 20mm"
+          ],
+          "date": "2025-11-20",
+          "points": 260
+        }
+      ]
+    }
+  },
+  "dalmia": {
+    "3m": {
+      "totals": {
+        "quantity": {
+          "value": 200,
+          "uom": "Bags"
+        },
+        "points": 600
+      },
+      "count": 2,
+      "items": [
+        {
+          "id": "dalmia_alc_1",
+          "vcp": {
+            "name": "Shree Balaji Hardware",
+            "type": "Dealer",
+            "place": "Sinnar"
+          },
+          "quantity": {
+            "value": 120,
+            "uom": "Bags"
+          },
+          "normalisedValue": 120,
+          "skus": [
+            "OPC 53 Grade 50kg",
+            "PPC 50kg"
+          ],
+          "date": "2026-08-04",
+          "points": 360
+        },
+        {
+          "id": "dalmia_alc_2",
+          "vcp": {
+            "name": "Om Traders",
+            "type": "Dealer",
+            "place": "Ozar"
+          },
+          "quantity": {
+            "value": 80,
+            "uom": "Bags"
+          },
+          "normalisedValue": 80,
+          "skus": [
+            "PPC 50kg"
+          ],
+          "date": "2026-07-21",
+          "points": 240
+        }
+      ]
+    },
+    "6m": {
+      "totals": {
+        "quantity": {
+          "value": 200,
+          "uom": "Bags"
+        },
+        "points": 600
+      },
+      "count": 2,
+      "items": [
+        {
+          "id": "dalmia_alc_1",
+          "vcp": {
+            "name": "Shree Balaji Hardware",
+            "type": "Dealer",
+            "place": "Sinnar"
+          },
+          "quantity": {
+            "value": 120,
+            "uom": "Bags"
+          },
+          "normalisedValue": 120,
+          "skus": [
+            "OPC 53 Grade 50kg",
+            "PPC 50kg"
+          ],
+          "date": "2026-08-04",
+          "points": 360
+        },
+        {
+          "id": "dalmia_alc_2",
+          "vcp": {
+            "name": "Om Traders",
+            "type": "Dealer",
+            "place": "Ozar"
+          },
+          "quantity": {
+            "value": 80,
+            "uom": "Bags"
+          },
+          "normalisedValue": 80,
+          "skus": [
+            "PPC 50kg"
+          ],
+          "date": "2026-07-21",
+          "points": 240
+        }
+      ]
+    },
+    "1y": {
+      "totals": {
+        "quantity": {
+          "value": 295,
+          "uom": "Bags"
+        },
+        "points": 885
+      },
+      "count": 3,
+      "items": [
+        {
+          "id": "dalmia_alc_1",
+          "vcp": {
+            "name": "Shree Balaji Hardware",
+            "type": "Dealer",
+            "place": "Sinnar"
+          },
+          "quantity": {
+            "value": 120,
+            "uom": "Bags"
+          },
+          "normalisedValue": 120,
+          "skus": [
+            "OPC 53 Grade 50kg",
+            "PPC 50kg"
+          ],
+          "date": "2026-08-04",
+          "points": 360
+        },
+        {
+          "id": "dalmia_alc_2",
+          "vcp": {
+            "name": "Om Traders",
+            "type": "Dealer",
+            "place": "Ozar"
+          },
+          "quantity": {
+            "value": 80,
+            "uom": "Bags"
+          },
+          "normalisedValue": 80,
+          "skus": [
+            "PPC 50kg"
+          ],
+          "date": "2026-07-21",
+          "points": 240
+        },
+        {
+          "id": "dalmia_alc_3",
+          "vcp": {
+            "name": "Om Traders",
+            "type": "Dealer",
+            "place": "Ozar"
+          },
+          "quantity": {
+            "value": 95,
+            "uom": "Bags"
+          },
+          "normalisedValue": 95,
+          "skus": [
+            "OPC 53 Grade 50kg"
+          ],
+          "date": "2026-02-02",
+          "points": 285
+        }
+      ]
+    }
+  },
+  "dp": {
+    "3m": {
+      "totals": {
+        "quantity": {
+          "value": 15,
+          "uom": "Buckets"
+        },
+        "points": 270
+      },
+      "count": 2,
+      "items": [
+        {
+          "id": "dp_alc_1",
+          "vcp": {
+            "name": "Om Traders",
+            "type": "Dealer",
+            "place": "Ozar"
+          },
+          "quantity": {
+            "value": 12,
+            "uom": "Buckets"
+          },
+          "normalisedValue": 12,
+          "skus": [
+            "Interior Emulsion 20L",
+            "Wall Primer 20L"
+          ],
+          "date": "2026-07-19",
+          "points": 180
+        },
+        {
+          "id": "dp_alc_2",
+          "vcp": {
+            "name": "Rangoli Paint House",
+            "type": "Distributor",
+            "place": "Panchavati"
+          },
+          "quantity": {
+            "value": 60,
+            "uom": "Litre"
+          },
+          "normalisedValue": 3,
+          "skus": [
+            "Exterior Emulsion 10L"
+          ],
+          "date": "2026-07-02",
+          "points": 90
+        }
+      ]
+    },
+    "6m": {
+      "totals": {
+        "quantity": {
+          "value": 15,
+          "uom": "Buckets"
+        },
+        "points": 270
+      },
+      "count": 2,
+      "items": [
+        {
+          "id": "dp_alc_1",
+          "vcp": {
+            "name": "Om Traders",
+            "type": "Dealer",
+            "place": "Ozar"
+          },
+          "quantity": {
+            "value": 12,
+            "uom": "Buckets"
+          },
+          "normalisedValue": 12,
+          "skus": [
+            "Interior Emulsion 20L",
+            "Wall Primer 20L"
+          ],
+          "date": "2026-07-19",
+          "points": 180
+        },
+        {
+          "id": "dp_alc_2",
+          "vcp": {
+            "name": "Rangoli Paint House",
+            "type": "Distributor",
+            "place": "Panchavati"
+          },
+          "quantity": {
+            "value": 60,
+            "uom": "Litre"
+          },
+          "normalisedValue": 3,
+          "skus": [
+            "Exterior Emulsion 10L"
+          ],
+          "date": "2026-07-02",
+          "points": 90
+        }
+      ]
+    },
+    "1y": {
+      "totals": {
+        "quantity": {
+          "value": 23,
+          "uom": "Buckets"
+        },
+        "points": 390
+      },
+      "count": 3,
+      "items": [
+        {
+          "id": "dp_alc_1",
+          "vcp": {
+            "name": "Om Traders",
+            "type": "Dealer",
+            "place": "Ozar"
+          },
+          "quantity": {
+            "value": 12,
+            "uom": "Buckets"
+          },
+          "normalisedValue": 12,
+          "skus": [
+            "Interior Emulsion 20L",
+            "Wall Primer 20L"
+          ],
+          "date": "2026-07-19",
+          "points": 180
+        },
+        {
+          "id": "dp_alc_2",
+          "vcp": {
+            "name": "Rangoli Paint House",
+            "type": "Distributor",
+            "place": "Panchavati"
+          },
+          "quantity": {
+            "value": 60,
+            "uom": "Litre"
+          },
+          "normalisedValue": 3,
+          "skus": [
+            "Exterior Emulsion 10L"
+          ],
+          "date": "2026-07-02",
+          "points": 90
+        },
+        {
+          "id": "dp_alc_3",
+          "vcp": {
+            "name": "Rangoli Paint House",
+            "type": "Distributor",
+            "place": "Panchavati"
+          },
+          "quantity": {
+            "value": 8,
+            "uom": "Buckets"
+          },
+          "normalisedValue": 8,
+          "skus": [
+            "Wall Primer 20L"
+          ],
+          "date": "2025-12-15",
+          "points": 120
+        }
+      ]
+    }
+  },
+  "masterchow": {
+    "3m": {
+      "totals": {
+        "quantity": {
+          "value": 39,
+          "uom": "Cases"
+        },
+        "points": 420
+      },
+      "count": 2,
+      "items": [
+        {
+          "id": "masterchow_alc_1",
+          "vcp": {
+            "name": "Sai Consumer Distributors",
+            "type": "Distributor",
+            "place": "Nashik Road"
+          },
+          "quantity": {
+            "value": 24,
+            "uom": "Cases"
+          },
+          "normalisedValue": 24,
+          "skus": [
+            "Hakka Noodles 400g",
+            "Pad Thai Meal Kit"
+          ],
+          "date": "2026-08-10",
+          "points": 240
+        },
+        {
+          "id": "masterchow_alc_2",
+          "vcp": {
+            "name": "Krishna Super Stockist",
+            "type": "Distributor",
+            "place": "Cidco"
+          },
+          "quantity": {
+            "value": 180,
+            "uom": "Units"
+          },
+          "normalisedValue": 15,
+          "skus": [
+            "Schezwan Sauce 220g"
+          ],
+          "date": "2026-07-26",
+          "points": 180
+        }
+      ]
+    },
+    "6m": {
+      "totals": {
+        "quantity": {
+          "value": 39,
+          "uom": "Cases"
+        },
+        "points": 420
+      },
+      "count": 2,
+      "items": [
+        {
+          "id": "masterchow_alc_1",
+          "vcp": {
+            "name": "Sai Consumer Distributors",
+            "type": "Distributor",
+            "place": "Nashik Road"
+          },
+          "quantity": {
+            "value": 24,
+            "uom": "Cases"
+          },
+          "normalisedValue": 24,
+          "skus": [
+            "Hakka Noodles 400g",
+            "Pad Thai Meal Kit"
+          ],
+          "date": "2026-08-10",
+          "points": 240
+        },
+        {
+          "id": "masterchow_alc_2",
+          "vcp": {
+            "name": "Krishna Super Stockist",
+            "type": "Distributor",
+            "place": "Cidco"
+          },
+          "quantity": {
+            "value": 180,
+            "uom": "Units"
+          },
+          "normalisedValue": 15,
+          "skus": [
+            "Schezwan Sauce 220g"
+          ],
+          "date": "2026-07-26",
+          "points": 180
+        }
+      ]
+    },
+    "1y": {
+      "totals": {
+        "quantity": {
+          "value": 53,
+          "uom": "Cases"
+        },
+        "points": 560
+      },
+      "count": 3,
+      "items": [
+        {
+          "id": "masterchow_alc_1",
+          "vcp": {
+            "name": "Sai Consumer Distributors",
+            "type": "Distributor",
+            "place": "Nashik Road"
+          },
+          "quantity": {
+            "value": 24,
+            "uom": "Cases"
+          },
+          "normalisedValue": 24,
+          "skus": [
+            "Hakka Noodles 400g",
+            "Pad Thai Meal Kit"
+          ],
+          "date": "2026-08-10",
+          "points": 240
+        },
+        {
+          "id": "masterchow_alc_2",
+          "vcp": {
+            "name": "Krishna Super Stockist",
+            "type": "Distributor",
+            "place": "Cidco"
+          },
+          "quantity": {
+            "value": 180,
+            "uom": "Units"
+          },
+          "normalisedValue": 15,
+          "skus": [
+            "Schezwan Sauce 220g"
+          ],
+          "date": "2026-07-26",
+          "points": 180
+        },
+        {
+          "id": "masterchow_alc_3",
+          "vcp": {
+            "name": "Krishna Super Stockist",
+            "type": "Distributor",
+            "place": "Cidco"
+          },
+          "quantity": {
+            "value": 14,
+            "uom": "Cases"
+          },
+          "normalisedValue": 14,
+          "skus": [
+            "Hakka Noodles 400g"
+          ],
+          "date": "2026-01-10",
+          "points": 140
+        }
+      ]
+    }
+  }
+}

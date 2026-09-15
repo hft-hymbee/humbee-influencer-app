@@ -1,0 +1,124 @@
+{
+  "summary": {
+    "raised": 6,
+    "allocated": 2,
+    "awaiting": 2
+  },
+  "counts": {
+    "All": 6,
+    "Submitted": 1,
+    "Confirmed": 1,
+    "Allocated": 2,
+    "Closed": 2
+  },
+  "items": [
+    {
+      "id": "dem_9931",
+      "manufacturer": {
+        "id": "welspun",
+        "name": "Welspun TMT",
+        "mono": "WT"
+      },
+      "product": "Fe 550D 16mm",
+      "quantity": {
+        "value": 4,
+        "uom": "Ton"
+      },
+      "date": "2026-08-14",
+      "status": "Allocated",
+      "points": 4000,
+      "pointsLabel": "+4,000 pts",
+      "note": "Mahalaxmi Steel Traders"
+    },
+    {
+      "id": "dem_9932",
+      "manufacturer": {
+        "id": "dalmia",
+        "name": "Dalmia Cement",
+        "mono": "DC"
+      },
+      "product": "DSP Cement 50kg",
+      "quantity": {
+        "value": 150,
+        "uom": "Bags"
+      },
+      "date": "2026-08-11",
+      "status": "Allocated",
+      "points": 300,
+      "pointsLabel": "+300 pts",
+      "note": "Shree Balaji Hardware"
+    },
+    {
+      "id": "dem_9933",
+      "manufacturer": {
+        "id": "dp",
+        "name": "DP Paints",
+        "mono": "DP"
+      },
+      "product": "Wall Protection 20L",
+      "quantity": {
+        "value": 80,
+        "uom": "Litre"
+      },
+      "date": "2026-08-08",
+      "status": "Confirmed",
+      "points": 240,
+      "pointsLabel": "240 pts on allocation",
+      "note": "Rangoli Paint House"
+    },
+    {
+      "id": "dem_9934",
+      "manufacturer": {
+        "id": "welspun",
+        "name": "Welspun TMT",
+        "mono": "WT"
+      },
+      "product": "Fe 500D 10mm",
+      "quantity": {
+        "value": 900,
+        "uom": "Kg"
+      },
+      "date": "2026-08-03",
+      "status": "Submitted",
+      "points": 900,
+      "pointsLabel": "900 pts expected",
+      "note": "Awaiting distributor"
+    },
+    {
+      "id": "dem_9935",
+      "manufacturer": {
+        "id": "masterchow",
+        "name": "Masterchow",
+        "mono": "MC"
+      },
+      "product": "Pad Thai Meal Kit",
+      "quantity": {
+        "value": 18,
+        "uom": "Cases"
+      },
+      "date": "2026-07-29",
+      "status": "Closed",
+      "points": 36,
+      "pointsLabel": "+36 pts",
+      "note": "Sai Consumer Distributors"
+    },
+    {
+      "id": "dem_9936",
+      "manufacturer": {
+        "id": "dalmia",
+        "name": "Dalmia Cement",
+        "mono": "DC"
+      },
+      "product": "PPC 50kg",
+      "quantity": {
+        "value": 60,
+        "uom": "Bags"
+      },
+      "date": "2026-07-22",
+      "status": "Closed",
+      "points": 60,
+      "pointsLabel": "+60 pts",
+      "note": "Om Traders"
+    }
+  ]
+}

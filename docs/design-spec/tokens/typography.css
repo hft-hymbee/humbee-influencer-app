@@ -1,0 +1,65 @@
+/* HUMBEE typography — transcribed verbatim from Theme › Typography (node 1:7).
+   Typeface Lato. Line-height ratio 1.54. Sizes/weights exactly as the spec table. */
+:root {
+  --font-brand: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-ui: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-spec: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --weight-regular: 400;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Display — 40/60/Regular */
+  --type-display-size: 40px;
+  --type-display-line: 60px;
+  --type-display-weight: 400;
+  /* Heading medium-m — 20/32/Semi-Bold */
+  --type-heading-m-size: 20px;
+  --type-heading-m-line: 32px;
+  --type-heading-m-weight: 600;
+  /* Heading small-s — 16/24/Bold */
+  --type-heading-s-size: 16px;
+  --type-heading-s-line: 24px;
+  --type-heading-s-weight: 700;
+  /* Label medium-m — 13/20/Bold */
+  --type-label-m-size: 13px;
+  --type-label-m-line: 20px;
+  --type-label-m-weight: 700;
+  /* Label small-s — 11/20/Bold */
+  --type-label-s-size: 11px;
+  --type-label-s-line: 20px;
+  --type-label-s-weight: 700;
+  /* Body large-l emphasised — 16/24/Semi-Bold */
+  --type-body-l-size: 16px;
+  --type-body-l-line: 24px;
+  --type-body-l-weight: 600;
+  /* Body medium-m — 13/20/Regular · emphasised 13/20/Semi-Bold */
+  --type-body-m-size: 13px;
+  --type-body-m-line: 20px;
+  --type-body-m-weight: 400;
+  /* Body small-s — 11/20/Regular · emphasised 11/20/Semi-Bold */
+  --type-body-s-size: 11px;
+  --type-body-s-line: 20px;
+  --type-body-s-weight: 400;
+  /* Caption — 14/24/Regular */
+  --type-caption-size: 14px;
+  --type-caption-line: 24px;
+  --type-caption-weight: 400;
+  /* Overline — 11/20/Regular, uppercase */
+  --type-overline-size: 11px;
+  --type-overline-line: 20px;
+  --type-overline-weight: 400;
+}
+
+.hb-display { font: var(--type-display-weight) var(--type-display-size)/var(--type-display-line) var(--font-brand); }
+.hb-heading-m { font: var(--type-heading-m-weight) var(--type-heading-m-size)/var(--type-heading-m-line) var(--font-brand); }
+.hb-heading-s { font: var(--type-heading-s-weight) var(--type-heading-s-size)/var(--type-heading-s-line) var(--font-brand); }
+.hb-label-m { font: var(--type-label-m-weight) var(--type-label-m-size)/var(--type-label-m-line) var(--font-brand); }
+.hb-label-s { font: var(--type-label-s-weight) var(--type-label-s-size)/var(--type-label-s-line) var(--font-brand); }
+.hb-body-l { font: var(--type-body-l-weight) var(--type-body-l-size)/var(--type-body-l-line) var(--font-brand); }
+.hb-body-m { font: var(--type-body-m-weight) var(--type-body-m-size)/var(--type-body-m-line) var(--font-brand); }
+.hb-body-m-em { font: 600 var(--type-body-m-size)/var(--type-body-m-line) var(--font-brand); }
+.hb-body-s { font: var(--type-body-s-weight) var(--type-body-s-size)/var(--type-body-s-line) var(--font-brand); }
+.hb-body-s-em { font: 600 var(--type-body-s-size)/var(--type-body-s-line) var(--font-brand); }
+.hb-caption { font: var(--type-caption-weight) var(--type-caption-size)/var(--type-caption-line) var(--font-brand); }
+.hb-overline { font: var(--type-overline-weight) var(--type-overline-size)/var(--type-overline-line) var(--font-brand); text-transform: uppercase; }

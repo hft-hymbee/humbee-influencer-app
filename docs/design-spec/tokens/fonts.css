@@ -1,0 +1,4 @@
+/* HUMBEE — webfonts. Lato is the brand typeface (Theme › Typography: "Typeface: Lato,
+   Font Weight: Regular, Semibold, Bold, Line height Ratio: 1.54"). Roboto and Inter
+   appear in the file's MUI-derived spec/annotation layers. Served from Google Fonts. */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Roboto:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap');

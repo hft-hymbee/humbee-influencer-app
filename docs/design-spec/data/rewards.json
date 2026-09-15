@@ -1,0 +1,557 @@
+{
+  "welspun": {
+    "3m": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 4,
+        "Announced": 1,
+        "In Shop": 1,
+        "Gifted": 1,
+        "Redeemed": 1
+      },
+      "items": [
+        {
+          "id": "welspun_gft_1",
+          "gift": "Washing Machine",
+          "kind": "Lucky draw",
+          "status": "In Shop",
+          "mark": "SHOP",
+          "releasedOn": "2026-08-10",
+          "vcp": {
+            "name": "Mahalaxmi Steel Traders"
+          }
+        },
+        {
+          "id": "welspun_gft_2",
+          "gift": "Umang Utsav Invite",
+          "kind": "Influencers meet",
+          "status": "Announced",
+          "mark": "UmangUtsav",
+          "releasedOn": "2026-08-02",
+          "vcp": {
+            "name": "Nashik Build Mart"
+          }
+        },
+        {
+          "id": "welspun_gft_3",
+          "gift": "Induction Stove",
+          "kind": "Lucky draw",
+          "status": "Gifted",
+          "mark": "Approved",
+          "releasedOn": "2026-07-21",
+          "vcp": {
+            "name": "Shree Balaji Hardware"
+          }
+        },
+        {
+          "id": "welspun_gft_4",
+          "gift": "Pressure Cooker",
+          "kind": "Lucky draw",
+          "status": "Redeemed",
+          "mark": "TRIP",
+          "releasedOn": "2026-06-30",
+          "vcp": {
+            "name": "Om Traders"
+          }
+        }
+      ]
+    },
+    "6m": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 4,
+        "Announced": 1,
+        "In Shop": 1,
+        "Gifted": 1,
+        "Redeemed": 1
+      },
+      "items": [
+        {
+          "id": "welspun_gft_1",
+          "gift": "Washing Machine",
+          "kind": "Lucky draw",
+          "status": "In Shop",
+          "mark": "SHOP",
+          "releasedOn": "2026-08-10",
+          "vcp": {
+            "name": "Mahalaxmi Steel Traders"
+          }
+        },
+        {
+          "id": "welspun_gft_2",
+          "gift": "Umang Utsav Invite",
+          "kind": "Influencers meet",
+          "status": "Announced",
+          "mark": "UmangUtsav",
+          "releasedOn": "2026-08-02",
+          "vcp": {
+            "name": "Nashik Build Mart"
+          }
+        },
+        {
+          "id": "welspun_gft_3",
+          "gift": "Induction Stove",
+          "kind": "Lucky draw",
+          "status": "Gifted",
+          "mark": "Approved",
+          "releasedOn": "2026-07-21",
+          "vcp": {
+            "name": "Shree Balaji Hardware"
+          }
+        },
+        {
+          "id": "welspun_gft_4",
+          "gift": "Pressure Cooker",
+          "kind": "Lucky draw",
+          "status": "Redeemed",
+          "mark": "TRIP",
+          "releasedOn": "2026-06-30",
+          "vcp": {
+            "name": "Om Traders"
+          }
+        }
+      ]
+    },
+    "1y": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 5,
+        "Announced": 1,
+        "In Shop": 1,
+        "Gifted": 1,
+        "Redeemed": 2
+      },
+      "items": [
+        {
+          "id": "welspun_gft_1",
+          "gift": "Washing Machine",
+          "kind": "Lucky draw",
+          "status": "In Shop",
+          "mark": "SHOP",
+          "releasedOn": "2026-08-10",
+          "vcp": {
+            "name": "Mahalaxmi Steel Traders"
+          }
+        },
+        {
+          "id": "welspun_gft_2",
+          "gift": "Umang Utsav Invite",
+          "kind": "Influencers meet",
+          "status": "Announced",
+          "mark": "UmangUtsav",
+          "releasedOn": "2026-08-02",
+          "vcp": {
+            "name": "Nashik Build Mart"
+          }
+        },
+        {
+          "id": "welspun_gft_3",
+          "gift": "Induction Stove",
+          "kind": "Lucky draw",
+          "status": "Gifted",
+          "mark": "Approved",
+          "releasedOn": "2026-07-21",
+          "vcp": {
+            "name": "Shree Balaji Hardware"
+          }
+        },
+        {
+          "id": "welspun_gft_4",
+          "gift": "Pressure Cooker",
+          "kind": "Lucky draw",
+          "status": "Redeemed",
+          "mark": "TRIP",
+          "releasedOn": "2026-06-30",
+          "vcp": {
+            "name": "Om Traders"
+          }
+        },
+        {
+          "id": "welspun_gft_5",
+          "gift": "Steel Dinner Set",
+          "kind": "Lucky draw",
+          "status": "Redeemed",
+          "mark": "TRIP",
+          "releasedOn": "2026-02-12",
+          "vcp": {
+            "name": "Mahalaxmi Steel Traders"
+          }
+        }
+      ]
+    }
+  },
+  "dalmia": {
+    "3m": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 2,
+        "Announced": 0,
+        "In Shop": 0,
+        "Gifted": 1,
+        "Redeemed": 1
+      },
+      "items": [
+        {
+          "id": "dalmia_gft_1",
+          "gift": "Pressure Cooker",
+          "kind": "Lucky draw",
+          "status": "Redeemed",
+          "mark": "TRIP",
+          "releasedOn": "2026-08-06",
+          "vcp": {
+            "name": "Shree Balaji Hardware"
+          }
+        },
+        {
+          "id": "dalmia_gft_2",
+          "gift": "Mixer Grinder",
+          "kind": "Lucky draw",
+          "status": "Gifted",
+          "mark": "Approved",
+          "releasedOn": "2026-07-18",
+          "vcp": {
+            "name": "Om Traders"
+          }
+        }
+      ]
+    },
+    "6m": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 2,
+        "Announced": 0,
+        "In Shop": 0,
+        "Gifted": 1,
+        "Redeemed": 1
+      },
+      "items": [
+        {
+          "id": "dalmia_gft_1",
+          "gift": "Pressure Cooker",
+          "kind": "Lucky draw",
+          "status": "Redeemed",
+          "mark": "TRIP",
+          "releasedOn": "2026-08-06",
+          "vcp": {
+            "name": "Shree Balaji Hardware"
+          }
+        },
+        {
+          "id": "dalmia_gft_2",
+          "gift": "Mixer Grinder",
+          "kind": "Lucky draw",
+          "status": "Gifted",
+          "mark": "Approved",
+          "releasedOn": "2026-07-18",
+          "vcp": {
+            "name": "Om Traders"
+          }
+        }
+      ]
+    },
+    "1y": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 2,
+        "Announced": 0,
+        "In Shop": 0,
+        "Gifted": 1,
+        "Redeemed": 1
+      },
+      "items": [
+        {
+          "id": "dalmia_gft_1",
+          "gift": "Pressure Cooker",
+          "kind": "Lucky draw",
+          "status": "Redeemed",
+          "mark": "TRIP",
+          "releasedOn": "2026-08-06",
+          "vcp": {
+            "name": "Shree Balaji Hardware"
+          }
+        },
+        {
+          "id": "dalmia_gft_2",
+          "gift": "Mixer Grinder",
+          "kind": "Lucky draw",
+          "status": "Gifted",
+          "mark": "Approved",
+          "releasedOn": "2026-07-18",
+          "vcp": {
+            "name": "Om Traders"
+          }
+        }
+      ]
+    }
+  },
+  "dp": {
+    "3m": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 1,
+        "Announced": 1,
+        "In Shop": 0,
+        "Gifted": 0,
+        "Redeemed": 0
+      },
+      "items": [
+        {
+          "id": "dp_gft_1",
+          "gift": "Ceiling Fan",
+          "kind": "Lucky draw",
+          "status": "Announced",
+          "mark": "SHOP",
+          "releasedOn": "2026-07-30",
+          "vcp": {
+            "name": "Rangoli Paint House"
+          }
+        }
+      ]
+    },
+    "6m": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 1,
+        "Announced": 1,
+        "In Shop": 0,
+        "Gifted": 0,
+        "Redeemed": 0
+      },
+      "items": [
+        {
+          "id": "dp_gft_1",
+          "gift": "Ceiling Fan",
+          "kind": "Lucky draw",
+          "status": "Announced",
+          "mark": "SHOP",
+          "releasedOn": "2026-07-30",
+          "vcp": {
+            "name": "Rangoli Paint House"
+          }
+        }
+      ]
+    },
+    "1y": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 2,
+        "Announced": 1,
+        "In Shop": 0,
+        "Gifted": 1,
+        "Redeemed": 0
+      },
+      "items": [
+        {
+          "id": "dp_gft_1",
+          "gift": "Ceiling Fan",
+          "kind": "Lucky draw",
+          "status": "Announced",
+          "mark": "SHOP",
+          "releasedOn": "2026-07-30",
+          "vcp": {
+            "name": "Rangoli Paint House"
+          }
+        },
+        {
+          "id": "dp_gft_2",
+          "gift": "Wall Clock",
+          "kind": "Lucky draw",
+          "status": "Gifted",
+          "mark": "Approved",
+          "releasedOn": "2025-12-05",
+          "vcp": {
+            "name": "Om Traders"
+          }
+        }
+      ]
+    }
+  },
+  "masterchow": {
+    "3m": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 2,
+        "Announced": 1,
+        "In Shop": 1,
+        "Gifted": 0,
+        "Redeemed": 0
+      },
+      "items": [
+        {
+          "id": "masterchow_gft_1",
+          "gift": "Umang Utsav Invite",
+          "kind": "Influencers meet",
+          "status": "Announced",
+          "mark": "UmangUtsav",
+          "releasedOn": "2026-08-08",
+          "vcp": {
+            "name": "Sai Consumer Distributors"
+          }
+        },
+        {
+          "id": "masterchow_gft_2",
+          "gift": "Electric Kettle",
+          "kind": "Lucky draw",
+          "status": "In Shop",
+          "mark": "SHOP",
+          "releasedOn": "2026-07-14",
+          "vcp": {
+            "name": "Krishna Super Stockist"
+          }
+        }
+      ]
+    },
+    "6m": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 2,
+        "Announced": 1,
+        "In Shop": 1,
+        "Gifted": 0,
+        "Redeemed": 0
+      },
+      "items": [
+        {
+          "id": "masterchow_gft_1",
+          "gift": "Umang Utsav Invite",
+          "kind": "Influencers meet",
+          "status": "Announced",
+          "mark": "UmangUtsav",
+          "releasedOn": "2026-08-08",
+          "vcp": {
+            "name": "Sai Consumer Distributors"
+          }
+        },
+        {
+          "id": "masterchow_gft_2",
+          "gift": "Electric Kettle",
+          "kind": "Lucky draw",
+          "status": "In Shop",
+          "mark": "SHOP",
+          "releasedOn": "2026-07-14",
+          "vcp": {
+            "name": "Krishna Super Stockist"
+          }
+        }
+      ]
+    },
+    "1y": {
+      "utsav": {
+        "eligible": true,
+        "city": "Ahmedabad",
+        "venue": "Gandhi Dham",
+        "date": "2026-06-24",
+        "invitedCount": 56,
+        "bannerImageUrl": "assets/img/umang-utsav-banner.png"
+      },
+      "counts": {
+        "All": 2,
+        "Announced": 1,
+        "In Shop": 1,
+        "Gifted": 0,
+        "Redeemed": 0
+      },
+      "items": [
+        {
+          "id": "masterchow_gft_1",
+          "gift": "Umang Utsav Invite",
+          "kind": "Influencers meet",
+          "status": "Announced",
+          "mark": "UmangUtsav",
+          "releasedOn": "2026-08-08",
+          "vcp": {
+            "name": "Sai Consumer Distributors"
+          }
+        },
+        {
+          "id": "masterchow_gft_2",
+          "gift": "Electric Kettle",
+          "kind": "Lucky draw",
+          "status": "In Shop",
+          "mark": "SHOP",
+          "releasedOn": "2026-07-14",
+          "vcp": {
+            "name": "Krishna Super Stockist"
+          }
+        }
+      ]
+    }
+  }
+}
