@@ -20,6 +20,7 @@ export const ERROR_CODES = {
   // catalogue
   PRODUCT_NOT_FOUND: 'PRODUCT_NOT_FOUND',
   UOM_NOT_ALLOWED: 'UOM_NOT_ALLOWED',
+  DISTRICT_INVALID: 'DISTRICT_INVALID',
   // otp
   OTP_INVALID: 'OTP_INVALID',
   OTP_EXPIRED: 'OTP_EXPIRED',
@@ -42,6 +43,16 @@ export const ERROR_CODES = {
 export const isStaleCatalog = (e: unknown) =>
   e instanceof ApiError &&
   (e.code === ERROR_CODES.PRODUCT_NOT_FOUND || e.code === ERROR_CODES.UOM_NOT_ALLOWED);
+
+/**
+ * The `district_id` sent with a demand names no district. Kept SEPARATE from `isStaleCatalog`
+ * even though both are fixed by re-fetching the industry list, because the user-facing story is
+ * different: a stale SKU asks them to pick the product again, whereas a stale district means
+ * the region their picker was built for no longer resolves and the whole picker must reload.
+ * Nothing is stored in either case.
+ */
+export const isStaleDistrict = (e: unknown) =>
+  e instanceof ApiError && e.code === ERROR_CODES.DISTRICT_INVALID;
 
 /**
  * ESI_UNKNOWN and ESI_MISMATCH both render as "Session expired. Please log in again." — the

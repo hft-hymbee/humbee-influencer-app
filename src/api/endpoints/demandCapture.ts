@@ -14,6 +14,7 @@
  */
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, query } from '../client';
+import { isStaleDistrict } from '../errors';
 import { qk } from '../keys';
 import {
   DEFAULT_PAGE_SIZE,
@@ -84,6 +85,16 @@ export function useSubmitDemand() {
     onSuccess: (_result, body) => {
       qc.invalidateQueries({ queryKey: qk.demands(body.manufacturer_id) });
       qc.invalidateQueries({ queryKey: qk.home() });
+    },
+    /**
+     * DISTRICT_INVALID means the `district_id` this submission carried names no district — the
+     * industry tree it came from is stale. Drop it here rather than in the screen: the district
+     * and the manufacturer tiles come from the SAME cached payload, so re-fetching is what
+     * makes the next attempt use a district that still resolves. Nothing was stored, so the
+     * draft is untouched and the user only has to re-pick.
+     */
+    onError: (error) => {
+      if (isStaleDistrict(error)) qc.invalidateQueries({ queryKey: qk.industries() });
     },
   });
 }

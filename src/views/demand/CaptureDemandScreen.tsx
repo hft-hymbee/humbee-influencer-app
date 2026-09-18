@@ -6,7 +6,9 @@
  *
  * V2 changed the flow in three ways:
  *   1. Industry → Manufacturer directly. The sub-industry step and the "HUMBEE will route it"
- *      branch are gone from the contract, so they are gone from here.
+ *      branch are gone from the contract, so they are gone from here. The industry step itself
+ *      then came off the screen too (client decision): the picker opens straight onto a grid of
+ *      manufacturer logo tiles, and the industry is recorded from whichever tile is tapped.
  *   2. Products load per manufacturer, on demand, instead of arriving inside the tree.
  *   3. A submission carries a LIST of products. "Add another product" builds that list; the
  *      line being composed is folded in at submit, so the common single-product capture is
@@ -20,10 +22,10 @@ import {
 } from '../../components';
 import { ModuleTabs } from './components/ModuleTabs';
 import { DemandTrail } from './components/DemandTrail';
-import { CartLines, IndustryGrid, ManufacturerRows } from './components/PickCards';
+import { CartLines, ManufacturerGrid } from './components/PickCards';
 import { useCaptureDemand } from './useCaptureDemand';
 import { normaliseDecimal } from '../../domain/format';
-import { ApiError, isStaleCatalog } from '../../api';
+import { ApiError, isStaleCatalog, isStaleDistrict } from '../../api';
 import type { CreateDemandResult } from '../../api/types';
 
 export function CaptureDemandScreen({
@@ -48,6 +50,10 @@ export function CaptureDemandScreen({
        */
       if (isStaleCatalog(e)) {
         setError('That product or unit is no longer available. Pick it again.');
+      } else if (isStaleDistrict(e)) {
+        // The industry tree has already been invalidated by the mutation, so the picker
+        // reloads itself with a district that resolves. Nothing was stored.
+        setError('Your area could not be confirmed. Choose your manufacturer again.');
       } else {
         setError(e instanceof ApiError ? e.message : 'Could not submit the demand. Try again.');
       }
@@ -76,35 +82,31 @@ export function CaptureDemandScreen({
   return (
     <Screen header={header}>
       <View style={{ gap: spacing.s20 }}>
-        {/* 1. Industry */}
+        {/*
+          1. Manufacturer — the FIRST and only picker. The industry step was removed: the
+          catalogue is already filtered to the caller's district, so the industry was a tap
+          that narrowed a list the influencer navigates by brand anyway.
+        */}
         <View style={{ gap: spacing.s }}>
-          <Text variant="overline" color={colors.textTertiary}>Industry</Text>
-          <IndustryGrid items={vm.industries} value={vm.draft.industryId} onChange={vm.chooseIndustry} />
+          <Text variant="sectionHeader">Manufacturer</Text>
+          <ManufacturerGrid
+            items={vm.manufacturers}
+            value={vm.draft.manufacturerId}
+            onChange={vm.chooseManufacturer}
+          />
         </View>
 
-        {/* 2. Manufacturer — the second and final level of the V2 picker */}
-        {vm.industry ? (
-          <View style={{ gap: spacing.s }}>
-            <Text variant="overline" color={colors.textTertiary}>Manufacturer</Text>
-            <ManufacturerRows
-              items={vm.manufacturers}
-              value={vm.draft.manufacturerId}
-              onChange={vm.chooseManufacturer}
-            />
-          </View>
-        ) : null}
-
-        {/* 3. Products already in this submission */}
+        {/* 2. Products already in this submission */}
         {vm.draft.lines.length ? (
           <View style={{ gap: spacing.s }}>
-            <Text variant="overline" color={colors.textTertiary}>
+            <Text variant="sectionHeader">
               {`In this demand · ${vm.draft.lines.length}`}
             </Text>
             <CartLines lines={vm.draft.lines} onRemove={vm.removeLine} />
           </View>
         ) : null}
 
-        {/* 4. Product + quantity */}
+        {/* 3. Product + quantity */}
         {vm.showQuantityCard ? (
           <Card padding={16}>
             <View style={{ gap: spacing.m }}>

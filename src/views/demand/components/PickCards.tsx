@@ -1,114 +1,82 @@
 /**
- * Component C12 — the selectable industry cards and the manufacturer rows.
+ * Component C12 — the selectable manufacturer tiles.
  *
- * V2 flattened the picker to TWO levels, so the sub-industry row and the "no manufacturer
- * onboarded" branch are gone: the industry list is already filtered to manufacturers active in
- * the caller's region, so an industry with nothing behind it never arrives.
+ * ONE PICKER, NOT TWO. V2 flattened the catalogue to industry → manufacturer; the screen then
+ * dropped the industry step entirely (client decision), so the influencer taps a manufacturer
+ * on the first screenful. `allManufacturers` in domain/demand.ts does the flattening and the
+ * de-duplication — a manufacturer listed under two industries is one tile here.
  *
- * ARTWORK COMES FROM THE API. V2's industry objects carry no `image_url`, but every
- * manufacturer carries a real `logo_url`, so an industry card is illustrated with the logos of
- * the manufacturers it actually contains — which is both live data and more informative than a
- * generic industry illustration. Nothing here is keyed to a bundled file: a new industry from
- * Ops renders correctly with no app release, which a hardcoded code→asset map could not do.
+ * ARTWORK COMES FROM THE API. Every manufacturer carries a real `logo_url`, so the tile is the
+ * brand's own logo with its name beneath. Nothing is keyed to a bundled file: a manufacturer
+ * Ops onboards tomorrow renders correctly with no app release, which a hardcoded id→asset map
+ * could not do. The `mono` hexagon is the fallback when a brand has no artwork on file.
  */
 import React from 'react';
 import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { colors, radius, spacing } from '../../../theme';
 import { Card, HexMark, Icon, Text } from '../../../components';
-import type { CatalogManufacturer, Industry } from '../../../api/types';
-
-/** Up to three logos per industry card; more than that and they stop being legible. */
-const MAX_LOGOS = 3;
-
-export function IndustryGrid({
-  items, value, onChange,
-}: { items: Industry[]; value: number | null; onChange: (id: number) => void }) {
-  return (
-    <View style={styles.grid}>
-      {items.map(item => {
-        const active = item.id === value;
-        const logos = item.manufacturers.filter(m => m.logo_url).slice(0, MAX_LOGOS);
-        return (
-          <Pressable key={item.id} onPress={() => onChange(item.id)} style={styles.gridCell}
-            accessibilityRole="button" accessibilityState={{ selected: active }}>
-            <Card selected={active} padding={0} style={styles.clip}>
-              <View>
-                <View style={styles.industryArt}>
-                  {logos.length ? (
-                    logos.map(m => (
-                      <Image
-                        key={m.id}
-                        source={{ uri: m.logo_url! }}
-                        resizeMode="contain"
-                        style={[styles.logo, logos.length > 1 ? styles.logoSmall : null]}
-                        accessibilityLabel={m.name}
-                      />
-                    ))
-                  ) : (
-                    // Every manufacturer in this industry is missing a logo — keep the rhythm.
-                    <Icon name="Cluster" size={28} color={colors.textTertiary} />
-                  )}
-                </View>
-                {active ? <View style={styles.veil} /> : null}
-                {/* 24px tick badge, industry cards only. */}
-                <View style={[styles.tick, active ? styles.tickOn : styles.tickOff]}>
-                  {active ? <Icon name="CheckCircle" size={16} color={colors.white} /> : null}
-                </View>
-              </View>
-              <View style={styles.caption}>
-                <Text variant="rowTitle" numberOfLines={1}>{item.name}</Text>
-                <Text variant="meta" color={colors.textTertiary} numberOfLines={1}>
-                  {`${item.manufacturers.length} manufacturer${item.manufacturers.length === 1 ? '' : 's'}`}
-                </Text>
-              </View>
-            </Card>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
-}
+import type { PickableManufacturer } from '../../../domain/demand';
 
 /**
- * The manufacturers of the chosen industry — now the LAST step of the picker before products.
- * The real `logo_url` leads, with the `mono` hexagon as the fallback for a manufacturer that
- * has no artwork on file. `base_unit` and `uoms` can both be empty for a partially-configured
- * manufacturer; the row says so rather than showing a blank line.
+ * The manufacturer picker: a 2-up grid of SQUARE logo tiles, brand name along the bottom.
+ *
+ * SQUARE, AND ALWAYS HALF-WIDTH. The cell is `width: '50%'` with a 6px inner gutter and the
+ * grid cancels the outer half with a negative margin, so the 12px column gap is exact at every
+ * screen width without measuring anything. `flexGrow` is deliberately absent: with it, a lone
+ * manufacturer — the common case for an influencer mapped to one brand — stretched into a
+ * full-width banner.
  */
-export function ManufacturerRows({
+export function ManufacturerGrid({
   items, value, onChange,
-}: { items: CatalogManufacturer[]; value: number | null; onChange: (id: number) => void }) {
+}: {
+  items: PickableManufacturer[];
+  value: number | null;
+  onChange: (id: number, industryId: number) => void;
+}) {
   return (
-    <View style={{ gap: spacing.s }}>
+    <View style={styles.grid}>
       {items.map(m => {
         const active = m.id === value;
         return (
-          <Pressable key={m.id} onPress={() => onChange(m.id)}
-            accessibilityRole="button" accessibilityState={{ selected: active }}>
-            <Card selected={active} padding={14}>
-              <View style={styles.mfrRow}>
-                {m.logo_url ? (
-                  <Image
-                    source={{ uri: m.logo_url }}
-                    resizeMode="contain"
-                    style={styles.mfrLogo}
-                    accessibilityLabel={m.name}
-                  />
-                ) : (
-                  <HexMark
-                    size={36}
-                    backgroundColor={active ? colors.primary100 : colors.sunken}
-                    label={m.mono}
-                    labelColor={active ? colors.white : colors.textSecondary}
-                  />
-                )}
-                <View style={{ flex: 1 }}>
-                  <Text variant="rowTitle">{m.name}</Text>
-                  <Text variant="meta" color={colors.textTertiary}>
-                    {m.base_unit ? `Reported in ${m.base_unit}` : 'Onboarded on HUMBEE · your district'}
-                  </Text>
+          <Pressable
+            key={m.id}
+            onPress={() => onChange(m.id, m.industryId)}
+            style={styles.gridCell}
+            accessibilityRole="button"
+            accessibilityState={{ selected: active }}
+            accessibilityLabel={`${m.name}, ${m.industryName}`}
+          >
+            <Card selected={active} padding={0} style={styles.clip}>
+              <View style={styles.tile}>
+                {/* Art fills whatever the square has left once the caption is laid out. */}
+                <View style={styles.artWrap}>
+                  <View style={styles.art}>
+                    {m.logo_url ? (
+                      <Image
+                        source={{ uri: m.logo_url }}
+                        resizeMode="contain"
+                        style={styles.logo}
+                        accessibilityLabel={m.name}
+                      />
+                    ) : (
+                      // No artwork on file — the brand's monogram keeps the grid's rhythm.
+                      <HexMark
+                        size={52}
+                        backgroundColor={colors.surface}
+                        label={m.mono}
+                        labelColor={colors.textSecondary}
+                      />
+                    )}
+                  </View>
+                  {active ? <View style={styles.veil} /> : null}
+                  {/* 24px tick badge, over the art only — never over the name. */}
+                  <View style={[styles.tick, active ? styles.tickOn : styles.tickOff]}>
+                    {active ? <Icon name="CheckCircle" size={16} color={colors.white} /> : null}
+                  </View>
                 </View>
-                <Icon name="CheckCircle" size={24} color={active ? colors.primary100 : colors.border} />
+                <View style={styles.caption}>
+                  <Text variant="rowTitle" numberOfLines={2}>{m.name}</Text>
+                </View>
               </View>
             </Card>
           </Pressable>
@@ -152,24 +120,28 @@ export function CartLines({
 }
 
 const styles = StyleSheet.create({
-  // Wraps: V2 can return up to eight industries, where V1's two-column row assumed two.
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.s12 },
-  gridCell: { flexGrow: 1, flexBasis: '46%' },
+  /**
+   * Wraps: the flattened catalogue is dozens of manufacturers, not a fixed two-column row.
+   * The 12px column gap is built from a 6px gutter on each cell, with the outer halves pulled
+   * back by this negative margin — percentage widths and absolute gaps cannot be mixed in one
+   * `gap`, and this way nothing has to be measured.
+   */
+  grid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -6 },
+  gridCell: { width: '50%', paddingHorizontal: 6, paddingBottom: spacing.s12 },
   clip: { overflow: 'hidden' },
-  industryArt: {
-    width: '100%',
-    height: 92,
+  /** The tile is square; the caption takes what it needs and the art keeps the rest. */
+  tile: { aspectRatio: 1 },
+  artWrap: { flex: 1 },
+  art: {
+    flex: 1,
     backgroundColor: colors.illustrationTint,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.s,
-    paddingHorizontal: spacing.s,
+    padding: spacing.s12,
   },
-  logo: { width: 64, height: 64 },
-  logoSmall: { width: 40, height: 40 },
-  mfrRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.s12 },
-  mfrLogo: { width: 36, height: 36 },
+  // `contain` inside the box: brand logos arrive at wildly different aspect ratios and must
+  // not be cropped or stretched.
+  logo: { width: '100%', height: '100%' },
   // Selected cards get a chestnut veil over the illustration.
   veil: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(153,90,0,0.18)' },
   tick: {
@@ -184,7 +156,7 @@ const styles = StyleSheet.create({
   },
   tickOn: { backgroundColor: colors.primary100 },
   tickOff: { backgroundColor: 'rgba(255,255,255,0.75)' },
-  caption: { paddingHorizontal: spacing.s12, paddingVertical: spacing.s10 },
+  caption: { paddingHorizontal: spacing.s10, paddingVertical: spacing.s10 },
   cart: {
     borderRadius: radius.m,
     borderWidth: 1,

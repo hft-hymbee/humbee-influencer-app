@@ -100,12 +100,19 @@ was deleted, so `PointsExplainer` reads it from here and there is no second way 
 | Spec | `docs/design-spec/04-screens/06-capture-demand.md`, `07-demand-captured.md`, `08-my-demands.md` |
 | API | `GET /demand-capture/industries`, `GET /demand-capture/manufacturers/{id}/products`, `POST /demand-capture/demands`, `GET /demand-capture/demands?manufacturer_id=` |
 
-**This module changed the most in V2. The five things that break it:**
+**This module changed the most in V2. The six things that break it:**
 
-1. **The picker is TWO levels: industry → manufacturer.** Sub-industries were flattened away, and
-   with them the "no manufacturer onboarded, HUMBEE will route it" branch — the industry list is
-   already filtered to manufacturers active in the caller's region, so an industry with nothing
-   behind it never arrives. There is no `sku_category_id` on the wire any more.
+1. **The payload is two levels — the SCREEN is one.** V2 flattened sub-industries away, and with
+   them the "no manufacturer onboarded, HUMBEE will route it" branch: the industry list already
+   arrives filtered to manufacturers active in the caller's region, so an industry with nothing
+   behind it never appears. There is no `sku_category_id` on the wire any more.
+   **The industry step was then removed from the screen entirely** (client decision, Sep 2026 —
+   this DIVERGES from `docs/design-spec/04-screens/06-capture-demand.md`, which still shows an
+   Industry grid as step 1). `allManufacturers()` in `domain/demand.ts` flattens the tree and
+   dedupes by id — a brand listed under two industries is one tile — and the picker opens
+   straight onto a grid of manufacturer logo tiles, name beneath. The industry is not lost: it
+   rides on each entry, is recorded on the draft when a tile is tapped, and is what the trail
+   still shows beside the manufacturer name ("CEMENT · DALMIA BHARAT CEMENT").
 2. **Products are a separate call** for the chosen manufacturer, not embedded in the tree. Their
    `uoms` is what the API validates against, so it outranks the manufacturer's copy of the list.
 3. **A submission is a LIST of products and is ATOMIC.** Each line becomes its own demand row; if
@@ -115,7 +122,20 @@ was deleted, so `PointsExplainer` reads it from here and there is no second way 
 4. **Capture is ONLINE-ONLY.** No `client_ref`, no `Idempotency-Key`, no batch drain, no outbox —
    without a client ref a replay cannot be made safe. `feature_flags.offline_demand_queue` is
    false. A failure keeps every selection on screen instead of queueing.
-5. **A demand carries no status, no points and no VCP.** My Demands therefore has no status chips,
+5. **The submit body carries a `district_id`, and there are TWO districts that are not
+   interchangeable.** Send the one from `GET /demand-capture/industries` — the district the
+   influencer **trades** in, the VCP behind their last allocation, and the only district the
+   picker's manufacturers are active in. **Never** `GET /me`'s `influencer.district_id`, which is
+   where they **registered**: for a mason onboarded in one district but buying through the next
+   one's VCPs these differ, and `/me`'s value files the demand against a district that never
+   offered them that manufacturer. The server validates only that the id names a *real* district,
+   not that it is the caller's, so whatever the app sends is what per-district demand reporting
+   shows. It is read live from the industries query at submit time (`useCaptureDemand.ts`) rather
+   than snapshotted into the draft, so a cached tree cannot carry a stale district into a submit.
+   The field is optional on the wire **only** as a shim for builds predating it; new builds always
+   send it. `DISTRICT_INVALID` ⇒ nothing stored, the industry tree is invalidated by the mutation's
+   `onError` and the user re-picks.
+6. **A demand carries no status, no points and no VCP.** My Demands therefore has no status chips,
    no stat tiles and no points line, and it **is** manufacturer-scoped (`manufacturer_id` is
    required and there is no cross-manufacturer list). Rebuilding any of the removed fields would
    mean inventing them.
@@ -366,7 +386,7 @@ mechanical.
 | 10 | **Inset-shadow borders are approximated** with `borderWidth`; `Card` compensates the 1px shift on selection | `src/components/Card.tsx` | Inherent to RN. Verify against the prototype |
 | 11 | **Native projects are not yet configured** for flavors, ProGuard, deep-link intent filters or Firebase | `android/`, `ios/` | `docs/10` §1.3 |
 | 12 | **`role-per-industry` is unimplemented** because no designed screen shows a role | — | **Blocking product decision** — `docs/06-inputs-needed.md` #1. Do **not** invent a role tag. V2 *does* now ship it: `GET /me`'s `manufacturers[].trade` is the role for that manufacturer's industry, and `useManufacturerScope()` exposes it — the data is there, the design is not |
-| 14 | **Industry cards are illustrated with manufacturer logos**, not industry artwork — V2 dropped `image_url` from the industry payload | `src/views/demand/components/PickCards.tsx` | Restore `image_url` on the payload. The current form is live-data-driven (a new industry renders with no app release) but a logo is not an illustration |
+| 14 | ~~Industry cards are illustrated with manufacturer logos~~ — **moot: the industry step is gone from screen 06.** The picker is manufacturer logo tiles, which is what `logo_url` was always for, so V2 dropping `image_url` no longer costs anything | `src/views/demand/components/PickCards.tsx` | Nothing. Closed by the picker change |
 | 16 | **Device-token registration has no endpoint** (`PUT /me/device` is gone) | — | Blocks push delivery; raise with the backend |
 | 13 | **~69 `no-inline-styles` lint warnings** remain in non-list screens. The per-row hot paths (LeaderboardTable, DemandCard, AllocationCard, GiftCard) **are** converted to `StyleSheet.create`, because those allocate per row per frame. The rest allocate once per screen render | `src/views/**`, `src/components/**` | Mechanical cleanup. **The rule is left ON rather than silenced** so the backlog stays visible — `npm run lint` shows 0 errors, N warnings |
 

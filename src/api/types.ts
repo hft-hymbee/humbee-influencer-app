@@ -169,6 +169,25 @@ export type CreateDemandBody = {
   manufacturer_id: number;
   /** Optional in V2. Send it when the manufacturer is one the influencer is mapped to. */
   company_esi_id?: number;
+  /**
+   * THE DISTRICT THE DEMAND IS FILED AGAINST — and there are two districts in this app that
+   * are NOT interchangeable:
+   *
+   *   `GET /demand-capture/industries` → `district_id`  the district they TRADE in (the VCP
+   *                                                     behind their last allocation). ✅ this one
+   *   `GET /me` → `influencer.district_id`              the district they REGISTERED in. ❌ never
+   *
+   * For a mason onboarded in one district but buying through the next one's VCPs these differ,
+   * and `/me`'s value would file the demand against a district that never offered them this
+   * manufacturer. The picker only lists manufacturers active in the trading district, so the
+   * industries payload is the only correct source.
+   *
+   * Optional on the wire ONLY as a compatibility shim for builds that predate the field — those
+   * fall back to the server resolving the district. New builds always send it. An id naming no
+   * district is `DISTRICT_INVALID` and stores nothing. Not echoed in the response: it is stored
+   * for per-district demand reporting, never rendered.
+   */
+  district_id?: number;
   items: DemandItemInput[];
 };
 /** Atomic: if any line fails validation nothing is stored, so this can never list a phantom. */

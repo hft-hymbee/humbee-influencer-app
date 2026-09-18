@@ -1,6 +1,6 @@
 export { api, query, setAccessToken, getAccessToken, restoreSession, setUnauthorizedHandler } from './client';
 export {
-  ApiError, ERROR_CODES, isOffline, isUnauthorized, isEsiProblem, isStaleCatalog,
+  ApiError, ERROR_CODES, isOffline, isUnauthorized, isEsiProblem, isStaleCatalog, isStaleDistrict,
   hasCode, fallbackMessage, deletionRefusalCopy,
 } from './errors';
 export type { ApiErrorKind } from './errors';

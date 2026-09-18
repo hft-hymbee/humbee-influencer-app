@@ -4,7 +4,10 @@
  *
  * WHAT V2 CHANGED, and why this file looks different:
  *   - The picker is TWO levels (industry → manufacturer), not four. Sub-industry is gone, and
- *     with it the sub-industry UOM fallback.
+ *     with it the sub-industry UOM fallback. **The industry level was then removed from the
+ *     SCREEN as well** (client decision, after the V2 rework): the payload is still a tree, but
+ *     `allManufacturers` flattens it and the user picks a manufacturer in one tap. The industry
+ *     survives as metadata on the draft and in the trail, not as a step.
  *   - Products are a SEPARATE fetch for the chosen manufacturer, not embedded in the tree.
  *   - There is no "no manufacturer onboarded" branch any more: the industry list is already
  *     filtered to manufacturers active in the caller's region, so an industry with no
@@ -36,6 +39,39 @@ export const EMPTY_DRAFT: DemandDraft = {
 
 export function findIndustry(industries: Industry[], id: number | null): Industry | undefined {
   return id == null ? undefined : industries.find(i => i.id === id);
+}
+
+/** A manufacturer plus the industry it was listed under — the picker's row type. */
+export type PickableManufacturer = CatalogManufacturer & {
+  industryId: number;
+  industryCode: string;
+  industryName: string;
+};
+
+/**
+ * EVERY manufacturer in the catalogue, flattened out of the industry tree.
+ *
+ * The picker shows manufacturers directly — the industry step was removed from screen 06 —
+ * so the two-level payload has to collapse to one list. The industry is not discarded: it
+ * rides along on each entry, because the draft still records `industryId` and the trail still
+ * shows the industry code beside the manufacturer name.
+ *
+ * DEDUPED BY ID. The same manufacturer can be listed under more than one industry (a cement
+ * brand that also sells TMT), and the API takes the manufacturer id alone — so a duplicate
+ * tile would be two ways to make the identical selection. First listing wins, which keeps the
+ * server's ordering.
+ */
+export function allManufacturers(industries: Industry[]): PickableManufacturer[] {
+  const seen = new Set<number>();
+  const out: PickableManufacturer[] = [];
+  for (const ind of industries) {
+    for (const m of ind.manufacturers) {
+      if (seen.has(m.id)) continue;
+      seen.add(m.id);
+      out.push({ ...m, industryId: ind.id, industryCode: ind.code, industryName: ind.name });
+    }
+  }
+  return out;
 }
 
 /**
@@ -137,12 +173,17 @@ export function draftItems(draft: DemandDraft, resolvedUom: string): DemandItemI
  * server rejects as PRODUCT_NOT_FOUND. That is why they live here rather than inline.
  */
 export const resets = {
-  onIndustry: (industryId: number): DemandDraft => ({ ...EMPTY_DRAFT, industryId }),
-  /** Changing manufacturer empties the cart: its lines are that manufacturer's product ids. */
-  onManufacturer: (d: DemandDraft, manufacturerId: number): DemandDraft =>
+  /**
+   * Changing manufacturer empties the cart: its lines are that manufacturer's product ids.
+   *
+   * `industryId` is recorded FROM the chosen manufacturer rather than chosen separately — the
+   * industry step is no longer on screen 06, but the industry is still what the trail shows
+   * beside the manufacturer name, and it is carried on every entry `allManufacturers` returns.
+   */
+  onManufacturer: (d: DemandDraft, manufacturerId: number, industryId: number | null = null): DemandDraft =>
     d.manufacturerId === manufacturerId
       ? d
-      : { ...d, manufacturerId, productId: null, qty: '', uom: '', lines: [] },
+      : { ...d, industryId, manufacturerId, productId: null, qty: '', uom: '', lines: [] },
   onProduct: (d: DemandDraft, productId: number): DemandDraft => ({ ...d, productId }),
   addLine: (d: DemandDraft, label: string, uom: string): DemandDraft =>
     canAddLine(d)

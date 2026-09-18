@@ -10,10 +10,10 @@ import {
 import { statusStyle, GIFT_STATUSES } from '../src/domain/status';
 import { can, DEFAULT_ENTITLEMENTS, isKnownModule } from '../src/domain/entitlements';
 import {
-  canAddLine, draftItems, EMPTY_DRAFT, effectiveUom, isDraftSubmittable, isDuplicateLine,
-  resets, showQuantity, uomList,
+  allManufacturers, canAddLine, draftItems, EMPTY_DRAFT, effectiveUom, isDraftSubmittable,
+  isDuplicateLine, resets, showQuantity, uomList,
 } from '../src/domain/demand';
-import type { CatalogManufacturer, ManufacturerProducts } from '../src/api/types';
+import type { CatalogManufacturer, Industry, ManufacturerProducts } from '../src/api/types';
 
 describe('en-IN formatting', () => {
   it('groups the Indian way, not the US way', () => {
@@ -105,6 +105,35 @@ describe('entitlements', () => {
   });
 });
 
+describe('the flattened manufacturer picker', () => {
+  const mfr = (id: number, name: string): CatalogManufacturer =>
+    ({ id, name, mono: name.slice(0, 2), logo_url: null, base_unit: null, uoms: [] });
+  const catalogue: Industry[] = [
+    { id: 1, code: 'CEMENT', name: 'Cement', manufacturers: [mfr(10, 'Dalmia'), mfr(11, 'Shree')] },
+    // Dalmia again, under a second industry — the API takes the manufacturer id alone.
+    { id: 2, code: 'STEEL', name: 'Steel', manufacturers: [mfr(10, 'Dalmia'), mfr(12, 'Welspun')] },
+  ];
+
+  it('flattens every industry into one list, in server order', () => {
+    expect(allManufacturers(catalogue).map(m => m.id)).toEqual([10, 11, 12]);
+  });
+
+  it('shows a manufacturer listed under two industries exactly once', () => {
+    expect(allManufacturers(catalogue).filter(m => m.id === 10)).toHaveLength(1);
+  });
+
+  it('keeps the industry on each entry — the trail and the draft still need it', () => {
+    const [dalmia, , welspun] = allManufacturers(catalogue);
+    // First listing wins, so Dalmia carries Cement rather than Steel.
+    expect(dalmia).toMatchObject({ industryId: 1, industryCode: 'CEMENT', industryName: 'Cement' });
+    expect(welspun).toMatchObject({ industryId: 2, industryCode: 'STEEL' });
+  });
+
+  it('is empty, not broken, for a catalogue with no manufacturers', () => {
+    expect(allManufacturers([{ id: 1, code: 'CEMENT', name: 'Cement', manufacturers: [] }])).toEqual([]);
+  });
+});
+
 describe('demand state machine', () => {
   const mfr: CatalogManufacturer = {
     id: 288311, name: 'Welspun Shield TMT', mono: 'WT', logo_url: null,
@@ -171,13 +200,14 @@ describe('demand state machine', () => {
 
   it('clears downstream choices on every reset — a stranded form is unsubmittable', () => {
     const full = { ...EMPTY_DRAFT, industryId: 2, manufacturerId: 288311, productId: 231, qty: '4', uom: 'Kg', lines: [line] };
-    expect(resets.onIndustry(3)).toEqual({ ...EMPTY_DRAFT, industryId: 3 });
     // Switching manufacturer MUST empty the cart: its lines are the old manufacturer's product
     // ids, and sending one against another manufacturer is a PRODUCT_NOT_FOUND.
-    const afterMfr = resets.onManufacturer(full, 293612);
-    expect(afterMfr).toMatchObject({ manufacturerId: 293612, productId: null, qty: '', uom: '', lines: [] });
+    const afterMfr = resets.onManufacturer(full, 293612, 7);
+    expect(afterMfr).toMatchObject({
+      industryId: 7, manufacturerId: 293612, productId: null, qty: '', uom: '', lines: [],
+    });
     // Re-tapping the SAME manufacturer is a no-op, not a wipe.
-    expect(resets.onManufacturer(full, 288311)).toBe(full);
+    expect(resets.onManufacturer(full, 288311, 2)).toBe(full);
   });
 
   it('moves the composed line into the cart and clears it for the next product', () => {

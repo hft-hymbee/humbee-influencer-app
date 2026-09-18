@@ -6,6 +6,10 @@
  *
  * V2 shape: industries → manufacturers (two levels), then a SEPARATE products call for the
  * chosen manufacturer, then an atomic multi-product submission.
+ *
+ * The SCREEN, though, has one picker, not two: `allManufacturers` flattens the tree so the
+ * influencer taps a manufacturer straight away. The industry rides along on each entry and is
+ * recorded on the draft when a tile is tapped.
  */
 import { useMemo } from 'react';
 import {
@@ -13,8 +17,8 @@ import {
 } from '../../api';
 import { useDemandDraftStore } from '../../store/demandDraftStore';
 import {
-  canAddLine, draftItems, draftSummary, effectiveUom, findIndustry, findManufacturer,
-  findProduct, isDraftSubmittable, isDuplicateLine, showQuantity, uomList,
+  allManufacturers, canAddLine, draftItems, draftSummary, effectiveUom, findIndustry,
+  findManufacturer, findProduct, isDraftSubmittable, isDuplicateLine, showQuantity, uomList,
 } from '../../domain/demand';
 import type { CreateDemandResult } from '../../api/types';
 
@@ -34,8 +38,24 @@ export function useCaptureDemand() {
 
   // Memoised: a fresh [] on every render would re-run the lookups below every time.
   const industries = useMemo(() => catalog?.industries ?? [], [catalog]);
+
+  /**
+   * The district the demand will be FILED against — read live from the industries payload,
+   * never snapshotted into the draft.
+   *
+   * The contract asks that a cached tree cannot carry a stale district into a submit. Reading
+   * `catalog.district_id` at submit time gives that for free: the same query that produced the
+   * manufacturer tiles produces the district, so the two can never disagree, and a refetch
+   * updates both at once. Copying it into the zustand draft when a tile is tapped would be the
+   * one way to get them out of step.
+   *
+   * NOT `/me`'s district — see the comment on `CreateDemandBody.district_id`.
+   */
+  const districtId = catalog?.district_id;
   const industry = findIndustry(industries, draft.industryId);
   const manufacturer = findManufacturer(industries, draft.manufacturerId);
+  /** The picker's only list: every manufacturer in the catalogue, deduped, industry attached. */
+  const manufacturers = useMemo(() => allManufacturers(industries), [industries]);
 
   // Step 2 of the contract: the SKU list is fetched for the chosen manufacturer only.
   const productsQuery = useProductsQuery(draft.manufacturerId);
@@ -56,10 +76,14 @@ export function useCaptureDemand() {
   const lineCount = draft.lines.length + (canAddLine(draft) ? 1 : 0);
   const trailSteps = [
     {
-      label: 'Industry',
+      // Step 1 is the manufacturer now — the industry step is off the screen, so naming the
+      // trail step "Industry" would point at a choice the user is never asked to make.
+      label: 'Manufacturer',
       icon: 'Cluster' as const,
-      done: !!industry && !!manufacturer,
-      value: manufacturer ? `${industry?.code ?? ''} · ${manufacturer.name}`.trim() : industry?.name ?? 'Not chosen',
+      done: !!manufacturer,
+      value: manufacturer
+        ? `${industry?.code ? `${industry.code} · ` : ''}${manufacturer.name}`
+        : 'Not chosen',
     },
     {
       label: 'Product',
@@ -82,8 +106,8 @@ export function useCaptureDemand() {
     industries,
     industry,
     manufacturer,
-    /** Manufacturers of the chosen industry — the second and final level of the picker. */
-    manufacturers: industry?.manufacturers ?? [],
+    /** THE picker — every manufacturer, flat. No industry step precedes it. */
+    manufacturers,
     draft,
     uoms,
     uom,
@@ -99,7 +123,6 @@ export function useCaptureDemand() {
     summary: draftSummary(draft, manufacturer, products),
     trailSteps,
 
-    chooseIndustry: store.chooseIndustry,
     chooseManufacturer: store.chooseManufacturer,
     chooseProduct: store.chooseProduct,
     setQty: store.setQty,
@@ -122,6 +145,7 @@ export function useCaptureDemand() {
       return submit.mutateAsync({
         manufacturer_id: draft.manufacturerId,
         company_esi_id: esiFor(draft.manufacturerId),
+        district_id: districtId,
         items,
       });
     },

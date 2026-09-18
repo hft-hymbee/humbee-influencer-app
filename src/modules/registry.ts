@@ -18,7 +18,7 @@ export const ALL_MODULES: readonly ModuleManifest[] = [
   {
     id: 'leaderboard',
     entitlement: 'leaderboard',
-    nav: { label: 'Ranking', icon: { active: 'PerformanceFilled', inactive: 'PerformanceOutlined' }, order: 20 },
+    nav: { label: 'Leaderboard', icon: { active: 'PerformanceFilled', inactive: 'PerformanceOutlined' }, order: 20 },
     route: 'Leaderboard',
     deepLinks: ['humbee://leaderboard'],
   },

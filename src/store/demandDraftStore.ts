@@ -20,8 +20,8 @@ type DraftState = {
    */
   tab: DemandTab;
   setTab: (tab: DemandTab) => void;
-  chooseIndustry: (id: number) => void;
-  chooseManufacturer: (id: number) => void;
+  /** `industryId` is the industry the tapped tile was listed under — not a separate step. */
+  chooseManufacturer: (id: number, industryId: number | null) => void;
   chooseProduct: (id: number) => void;
   setQty: (qty: string) => void;
   setUom: (uom: string) => void;
@@ -35,8 +35,8 @@ export const useDemandDraftStore = create<DraftState>(set => ({
   draft: EMPTY_DRAFT,
   tab: 'new',
   setTab: tab => set({ tab }),
-  chooseIndustry: id => set({ draft: resets.onIndustry(id) }),
-  chooseManufacturer: id => set(s => ({ draft: resets.onManufacturer(s.draft, id) })),
+  chooseManufacturer: (id, industryId) =>
+    set(s => ({ draft: resets.onManufacturer(s.draft, id, industryId) })),
   chooseProduct: id => set(s => ({ draft: resets.onProduct(s.draft, id) })),
   setQty: qty => set(s => ({ draft: { ...s.draft, qty } })),
   setUom: uom => set(s => ({ draft: { ...s.draft, uom } })),
