@@ -89,7 +89,17 @@ export const typography = {
   body: t(13, 20, 400),
   /** Chip labels, points card title, medal figures */
   bodyBold: t(13, 20, 700),
-  /** "INDUSTRY", "QUICK LINKS", "MY REWARDS", "PERIOD" */
+  /**
+   * In-screen section headers — "Quick Links", "My Rewards".
+   *
+   * This is `Heading/small` from the HUMBEE design-system file (Figma node 1-7, the type ramp
+   * the VCP app is built on): Lato Bold 16/24. It REPLACES `overline` for section headers on
+   * Home, where the 11px uppercase grey read as too small and too light against the 15px card
+   * titles beneath it. `overline` stays for the small uppercase labels it was drawn for
+   * ("INDUSTRY", "PERIOD"), which sit above form controls, not above sections.
+   */
+  sectionHeader: t(16, 24, 700),
+  /** "INDUSTRY", "PERIOD" — small uppercase labels above a control */
   overline: t(11, 20, 700, { letterSpacing: 0.5, textTransform: 'uppercase' }),
   /** Card meta, VCP line, stat labels */
   meta: t(11, 16, 400),
