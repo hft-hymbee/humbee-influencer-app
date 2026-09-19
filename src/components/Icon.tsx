@@ -32,7 +32,8 @@ export type IconName =
   | 'InventoryFilled' | 'InventoryOutlined'
   | 'RewardsFilled' | 'RewardsOutlined'
   | 'InfoOutlined' | 'CheckCircle' | 'Cluster' | 'VCPManagement'
-  | 'LogoutOutlined' | 'Delete' | 'ChevronDown' | 'ChevronUp' | 'Bell' | 'Search' | 'Close';
+  | 'LogoutOutlined' | 'Delete' | 'ChevronDown' | 'ChevronUp' | 'Bell' | 'Search' | 'Close'
+  | 'LocationPin' | 'LocationMarker' | 'Map' | 'BusinessOutlined' | 'MyLocation';
 
 /** 24x24 viewBox paths. Solid fills, tinted with the `color` prop. */
 const PATHS: Record<IconName, string[]> = {
@@ -60,6 +61,14 @@ const PATHS: Record<IconName, string[]> = {
   Bell: ['M12 2a6 6 0 016 6v4l2 3H4l2-3V8a6 6 0 016-6zm0 18a3 3 0 002.8-2H9.2A3 3 0 0012 20z'],
   Search: ['M10 3a7 7 0 015.5 11.3l4.6 4.6-1.4 1.4-4.6-4.6A7 7 0 1110 3zm0 2a5 5 0 100 10 5 5 0 000-10z'],
   Close: ['M6.4 5L12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4z'],
+  // Site capture (spec §5). PLACEHOLDER geometry like the rest of this file's non-nav glyphs —
+  // the HUMBEE set has LocationPin / LocationMarker / Map / BusinessOutlined and they are still
+  // to be exported. Tracked in docs/06-inputs-needed.md.
+  LocationPin: ['M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z'],
+  LocationMarker: ['M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 11a4 4 0 110-8 4 4 0 010 8z'],
+  Map: ['M15 4l-6 2-4.4-1.5a1 1 0 00-1.6.8v13a1 1 0 00.7 1L9 21l6-2 4.4 1.5a1 1 0 001.6-.8v-13a1 1 0 00-.7-1L15 4zm0 2.2l4 1.36v10.24l-4-1.36V6.2zM9 7.8v10.24l-4 1.36V9.16L9 7.8zm2 .04l2-.67v10.3l-2 .67V7.84z'],
+  BusinessOutlined: ['M3 21V8l7-4v3l6-3v5h5v12H3zm2-2h4v-3H5v3zm0-5h4v-3H5v3zm0-5h4V6.2L5 8.3V9zm6 10h3v-3h-3v3zm0-5h3v-3h-3v3zm0-5h3V6.3l-3 1.5V9zm5 10h3v-3h-3v3zm0-5h3v-3h-3v3z'],
+  MyLocation: ['M12 8a4 4 0 100 8 4 4 0 000-8zm8.94 3A9.01 9.01 0 0013 3.06V1h-2v2.06A9.01 9.01 0 003.06 11H1v2h2.06A9.01 9.01 0 0011 20.94V23h2v-2.06A9.01 9.01 0 0020.94 13H23v-2h-2.06zM12 19a7 7 0 110-14 7 7 0 010 14z'],
 };
 
 export type IconProps = { name: IconName; size?: number; color?: string };

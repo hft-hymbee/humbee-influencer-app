@@ -13,9 +13,10 @@
  */
 import { useMemo } from 'react';
 import {
-  useIndustriesQuery, useManufacturerScope, useProductsQuery, useSubmitDemand,
+  useIndustriesQuery, useManufacturerScope, useProductsQuery, useRefreshCatalogue, useSubmitDemand,
 } from '../../api';
 import { useDemandDraftStore } from '../../store/demandDraftStore';
+import { isSiteComplete, siteInput } from '../../domain/site';
 import {
   allManufacturers, canAddLine, draftItems, draftSummary, effectiveUom, findIndustry,
   findManufacturer, findProduct, isDraftSubmittable, isDuplicateLine, showQuantity, uomList,
@@ -23,10 +24,12 @@ import {
 import type { CreateDemandResult } from '../../api/types';
 
 export function useCaptureDemand() {
-  const { data: catalog, isPending } = useIndustriesQuery();
+  const industriesQuery = useIndustriesQuery();
+  const { data: catalog, isPending } = industriesQuery;
   const draft = useDemandDraftStore(s => s.draft);
   const store = useDemandDraftStore();
   const submit = useSubmitDemand();
+  const refreshCatalogue = useRefreshCatalogue();
 
   /**
    * The influencer's own manufacturer mappings, from GET /me. Used ONLY to attach the matching
@@ -120,6 +123,15 @@ export function useCaptureDemand() {
     canAdd: canAddLine(draft),
     isDuplicate: isDuplicateLine(draft, draft.productId),
     canSubmit: isDraftSubmittable(draft),
+    /**
+     * Why Submit is disabled, in the user's terms — or null when it is live. Only the SITE gets
+     * a line: a missing product is obvious from an empty cart, whereas a missing site is a card
+     * further up the screen that is easy to scroll past.
+     */
+    submitBlockedReason:
+      draft.manufacturerId != null && !isSiteComplete(draft.site)
+        ? 'Add the construction site to submit'
+        : null,
     summary: draftSummary(draft, manufacturer, products),
     trailSteps,
 
@@ -130,6 +142,24 @@ export function useCaptureDemand() {
     addLine: () => store.addLine(product?.label ?? '', uom),
     removeLine: store.removeLine,
     reset: store.reset,
+
+    /**
+     * Pull to refresh. Re-reads the catalogue AND empties the draft.
+     *
+     * The wipe is not incidental — it is what makes the refresh safe. Every id on the draft
+     * (manufacturer, products, the cart's lines) was resolved against the catalogue that is
+     * being replaced, and a refresh is how a user reacts to the picker looking wrong or to a
+     * DISTRICT_INVALID. Keeping a half-built cart across it would let ids from the old tree
+     * ride into a submit against the new one, which is exactly the PRODUCT_NOT_FOUND the reset
+     * rules exist to prevent. Nothing is lost that was stored: capture is online-only and a
+     * draft never left the device.
+     */
+    refresh: () => {
+      store.reset();
+      return refreshCatalogue();
+    },
+    /** `isPending` is the first load — that is the skeleton's job, not the spinner's. */
+    isRefreshing: industriesQuery.isFetching && !industriesQuery.isPending,
 
     isSubmitting: submit.isPending,
 
@@ -146,6 +176,15 @@ export function useCaptureDemand() {
         manufacturer_id: draft.manufacturerId,
         company_esi_id: esiFor(draft.manufacturerId),
         district_id: districtId,
+        /**
+         * ONE SITE PER SUBMISSION, shared by every line. `siteInput` returns undefined rather
+         * than a partial block, so an incomplete site is structurally unable to reach the wire
+         * — the contract's site is all-or-nothing and this is where that is enforced.
+         *
+         * Note `site.district_id` inside this block is NOT the `district_id` above it: the top
+         * level one is where the influencer trades, this one is where the material is going.
+         */
+        site: siteInput(draft.site),
         items,
       });
     },

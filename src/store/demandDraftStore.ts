@@ -8,6 +8,7 @@
  */
 import { create } from 'zustand';
 import { EMPTY_DRAFT, resets, type DemandDraft } from '../domain/demand';
+import type { DraftSite } from '../domain/site';
 
 export type DemandTab = 'new' | 'mine';
 
@@ -28,6 +29,12 @@ type DraftState = {
   /** Commits the in-progress line to the cart. `uom` is the resolved one, never ''. */
   addLine: (label: string, uom: string) => void;
   removeLine: (productId: number) => void;
+  /**
+   * Attach or clear the construction site. It lives on the DRAFT rather than in the site
+   * screens' own state so that backing out of the address form and returning keeps the pin and
+   * the typed lines (spec §8, "Back from S6").
+   */
+  setSite: (site: DraftSite | null) => void;
   reset: () => void;
 };
 
@@ -42,5 +49,6 @@ export const useDemandDraftStore = create<DraftState>(set => ({
   setUom: uom => set(s => ({ draft: { ...s.draft, uom } })),
   addLine: (label, uom) => set(s => ({ draft: resets.addLine(s.draft, label, uom) })),
   removeLine: productId => set(s => ({ draft: resets.removeLine(s.draft, productId) })),
+  setSite: site => set(s => ({ draft: resets.setSite(s.draft, site) })),
   reset: () => set({ draft: EMPTY_DRAFT, tab: 'new' }),
 }));

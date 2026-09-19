@@ -34,6 +34,7 @@ Parent entity: Twenty Point Nine Five Ventures Pvt. Ltd. (20p95) · https://humb
 | **PER-MODULE CONTEXT — read before touching any module** | **`docs/11-feature-reference.md`** |
 | How to build it: RN CLI bootstrap, MVVM layering, query/state/storage structure, libraries, CI | `docs/10-rn-cli-implementation-guide.md` |
 | **The design spec of record** — 10 screen specs, tokens, fixtures, assets, prototype | **`docs/design-spec/`** |
+| **Construction-site capture** — the 8-screen site flow on Demand Capture, and what the V2 contract changed about it | **`docs/construction-site-address-capture.md`** |
 | Design system strategy, token pipeline, **and the precedence rules when specs conflict** | `docs/02-design-system.md` |
 | API integration + client data rules | `docs/03-api-integration-and-data.md` |
 | Design-system library reference (variant matrices, icons, status semantics) | `docs/design-system/HUMBEE-DESIGN-RULES.md` (loaded by the `humbee-design-system` skill) |

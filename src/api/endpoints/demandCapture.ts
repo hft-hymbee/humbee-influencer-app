@@ -36,15 +36,38 @@ export function useIndustriesQuery() {
 }
 
 /**
+ * Pull-to-refresh for the capture screen's catalogue.
+ *
+ * Refetches the industry tree, which is the part that is cached hard (an hour, and in steady
+ * state not re-fetched at all because `catalog_version` gates it). The SKU lists carry
+ * `staleTime: 0` and so need nothing dropped here — the next manufacturer pick fetches them
+ * fresh by itself.
+ */
+export function useRefreshCatalogue() {
+  const qc = useQueryClient();
+  return () => qc.invalidateQueries({ queryKey: qk.industries() });
+}
+
+/**
  * `company_esi_id` is deliberately NOT sent: the picker lists manufacturers the influencer is
  * not yet mapped to, and those must still open (V2 §4).
+ *
+ * NOT CACHED. `staleTime: 0` means every manufacturer pick hits the network — including
+ * re-picking one chosen a moment ago, because the key becomes active again while stale and
+ * refetches. SKUs and their `points_hint` are the one part of the catalogue that moves without
+ * `catalog_version` moving, and a demand raised against a withdrawn SKU is rejected at submit,
+ * so a stale list costs the user a whole capture. One small request per pick buys that back.
+ *
+ * `gcTime` is left at the default: the previous response stays in cache and renders while the
+ * refetch is in flight, which keeps the Select from flashing empty on a re-pick. `isPending`
+ * (not `isFetching`) drives the skeleton, so only a first-ever load shows one.
  */
 export function useProductsQuery(manufacturerId: number | null) {
   return useQuery({
     queryKey: qk.products(manufacturerId ?? 0),
     queryFn: () => api.get<ManufacturerProducts>(`/demand-capture/manufacturers/${manufacturerId}/products`),
     enabled: manufacturerId != null,
-    staleTime: 30 * 60_000,
+    staleTime: 0,
   });
 }
 

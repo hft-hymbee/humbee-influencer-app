@@ -30,6 +30,9 @@ export function DemandTabScreen({ onOpenProfile }: { onOpenProfile: () => void }
       onOpenProfile={onOpenProfile}
       onTabChange={setTab}
       onSubmitted={result => nav.navigate('DemandCaptured', { result })}
+      // Same route for "Add" and "Change" — the flow seeds itself from the draft's site, so
+      // changing an address opens the map where the user left it rather than at a centroid.
+      onCaptureSite={() => nav.navigate('SiteCapture')}
     />
   );
 }

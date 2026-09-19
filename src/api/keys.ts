@@ -21,6 +21,7 @@ export const qk = {
   industries:         ()                           => ['demand-capture', 'industries'] as const,
   products:           (mfrId: number)              => ['demand-capture', 'products', mfrId] as const,
   demands:            (mfrId: number)              => ['demand-capture', 'demands', mfrId] as const,
+  reverseGeocode:     (lat: string, lng: string) => ['address', 'reverse-geocode', lat, lng] as const,
   home:               ()                           => ['home'] as const,
   leaderboard:        (mfrId: number)              => ['leaderboard', mfrId] as const,
   allocations:        (mfrId: number, p: Period)   => ['allocations', mfrId, p] as const,

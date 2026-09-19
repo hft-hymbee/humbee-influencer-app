@@ -147,6 +147,90 @@ export type Quantity = { value: number; uom: string };
 export type DemandManufacturer = { id: number; name: string; mono: string; logo_url: string | null };
 
 /**
+ * ---------- the construction site ----------
+ *
+ * Coordinates are STRINGS on every one of these types, and that is deliberate: the contract
+ * says to echo `geo_coordinates` back exactly as it arrived, digit for digit. Parsing to a
+ * float and re-serialising would quietly round the pin the device reported (V2 §4).
+ */
+export type GeoCoordinates = { latitude: string; longitude: string };
+
+/**
+ * `GET /address/reverse-geocode` — a pin in, the platform's own geography out.
+ *
+ * THE IDS ARE THE POINT. The `*_name` fields exist so the user can confirm what they picked;
+ * the ids are what a site is stored against. Never send a name back.
+ *
+ * `pincode_id` can be null, and a null pin is UNUSABLE for a site: the server derives state and
+ * district from the pincode, so a site without one cannot be filed. `location_id` can also be
+ * null — that one is routine (the locality Google names is simply not one the platform lists)
+ * and is sent through as null.
+ */
+export type ReverseGeocode = {
+  formatted_address: string;
+  address_line_1: string;
+  address_line_2: string | null;
+  landmark: string | null;
+  state_id: number | null;
+  state_name: string | null;
+  district_id: number | null;
+  district_name: string | null;
+  location_id: number | null;
+  location_name: string | null;
+  pincode_id: number | null;
+  geo_coordinates: GeoCoordinates;
+};
+
+/**
+ * The `site` block on a demand submission. Built from a reverse-geocode, with the two free-text
+ * lines and the landmark editable — a plot number is never in a geocode.
+ *
+ * ALL OR NOTHING. `site` may be omitted from the body entirely, but a site that is present must
+ * carry every required field; there is no half-captured site. `domain/site.ts` is where that is
+ * enforced, so a partial one cannot reach the wire.
+ *
+ * THE PINCODE WINS. The stored state and district are the pincode's, not these. A `district_id`
+ * or `state_id` that CONTRADICTS the pincode is rejected outright rather than corrected, so
+ * these must be the ids the geocode returned and not ids assembled from anywhere else.
+ */
+export type SiteInput = {
+  address_line_1: string;
+  address_line_2?: string | null;
+  landmark?: string | null;
+  /** REQUIRED and the anchor — state and district are derived from it server-side. */
+  pincode_id: number;
+  /** Optional but recommended: 28 pincodes span two districts and this disambiguates. */
+  district_id?: number | null;
+  state_id?: number | null;
+  location_id?: number | null;
+  latitude: string;
+  longitude: string;
+};
+
+/**
+ * The site as it comes BACK — on the create response and on every demand row. It carries the
+ * resolved names beside the ids, plus `formatted_address`, the server's single already
+ * de-duplicated line. PREFER `formatted_address` over joining the parts in the app: a geocode
+ * routinely repeats the locality in `address_line_2` and again as the location name.
+ */
+export type DemandSite = {
+  id: number;
+  address_line_1: string;
+  address_line_2: string | null;
+  landmark: string | null;
+  pincode_id: number;
+  district_id: number;
+  district: string;
+  state_id: number;
+  state: string;
+  location_id: number | null;
+  location: string | null;
+  latitude: string;
+  longitude: string;
+  formatted_address: string;
+};
+
+/**
  * A demand row. It carries NO status, NO VCP, NO points and NO `date_label` — those arrive
  * with the fulfilment mechanism that does not exist yet (V2 §4). Do not render a status chip
  * or a points figure against a claim.
@@ -158,6 +242,11 @@ export type Demand = {
   product: string;
   quantity: Quantity;
   normalised_quantity: Quantity;
+  /**
+   * NULL for demands captured before sites existed, or by a build that sends none. Render
+   * those rows WITHOUT the address block — never hide the row itself.
+   */
+  site: DemandSite | null;
   /** ISO. The app formats it — there is no server-composed label. */
   date: string;
 };
@@ -188,6 +277,19 @@ export type CreateDemandBody = {
    * for per-district demand reporting, never rendered.
    */
   district_id?: number;
+  /**
+   * The construction site — ONE PER SUBMISSION, shared by every line, because the user picks a
+   * location once and then ticks the SKUs they need there.
+   *
+   * `site.district_id` IS NOT the `district_id` above. The top-level one is where the influencer
+   * TRADES (from the picker); this one is where the concrete is GOING. They differ whenever
+   * someone buys near home for a site a district away, and nothing reconciles them — both are
+   * sent, each from its own source.
+   *
+   * Optional on the wire only so older builds keep working; this build always sends it, and the
+   * screen will not let a demand be submitted without one.
+   */
+  site?: SiteInput;
   items: DemandItemInput[];
 };
 /** Atomic: if any line fails validation nothing is stored, so this can never list a phantom. */

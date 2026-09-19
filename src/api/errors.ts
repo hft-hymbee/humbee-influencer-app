@@ -21,6 +21,11 @@ export const ERROR_CODES = {
   PRODUCT_NOT_FOUND: 'PRODUCT_NOT_FOUND',
   UOM_NOT_ALLOWED: 'UOM_NOT_ALLOWED',
   DISTRICT_INVALID: 'DISTRICT_INVALID',
+  // construction site
+  COORDINATES_INVALID: 'COORDINATES_INVALID',
+  PINCODE_NOT_SERVICEABLE: 'PINCODE_NOT_SERVICEABLE',
+  REVERSE_GEOCODE_FAILED: 'REVERSE_GEOCODE_FAILED',
+  SITE_ADDRESS_INVALID: 'SITE_ADDRESS_INVALID',
   // otp
   OTP_INVALID: 'OTP_INVALID',
   OTP_EXPIRED: 'OTP_EXPIRED',
@@ -53,6 +58,39 @@ export const isStaleCatalog = (e: unknown) =>
  */
 export const isStaleDistrict = (e: unknown) =>
   e instanceof ApiError && e.code === ERROR_CODES.DISTRICT_INVALID;
+
+/**
+ * The pin cannot become a site. Three codes, one user action in all three — move the pin:
+ *
+ *   COORDINATES_INVALID     not a point on earth; validated BEFORE any geocode is attempted,
+ *                           so a transposed pair fails fast and costs nothing
+ *   PINCODE_NOT_SERVICEABLE a real place the platform does not serve
+ *   REVERSE_GEOCODE_FAILED  the provider failed — the one of the three that is RETRYABLE
+ *
+ * A null `pincode_id` on an otherwise successful geocode belongs here too, but it arrives as a
+ * SUCCESS, not an error: `domain/site.ts` is what turns it into "we do not serve this location".
+ */
+export const isPinUnusable = (e: unknown) =>
+  e instanceof ApiError &&
+  (e.code === ERROR_CODES.COORDINATES_INVALID ||
+   e.code === ERROR_CODES.PINCODE_NOT_SERVICEABLE ||
+   e.code === ERROR_CODES.REVERSE_GEOCODE_FAILED);
+
+/** Only REVERSE_GEOCODE_FAILED is worth a Retry button; the other two need a new pin. */
+export const isGeocodeRetryable = (e: unknown) =>
+  e instanceof ApiError && e.code === ERROR_CODES.REVERSE_GEOCODE_FAILED;
+
+/**
+ * The `site` on a submission did not validate — an unserved pincode, a district or state that
+ * contradicts it, a locality outside it, or coordinates that are not a point on earth.
+ *
+ * The server REJECTS a contradiction rather than silently correcting it, precisely so a site is
+ * never quietly filed somewhere the app never showed the user. `message` names which check
+ * failed and is the only place that detail exists — but it is localised display copy, so it is
+ * shown, never branched on. The app's action is the same in all five cases: back to the map.
+ */
+export const isSiteRejected = (e: unknown) =>
+  e instanceof ApiError && e.code === ERROR_CODES.SITE_ADDRESS_INVALID;
 
 /**
  * ESI_UNKNOWN and ESI_MISMATCH both render as "Session expired. Please log in again." — the

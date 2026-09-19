@@ -20,14 +20,25 @@ import { StyleSheet, View } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { colors, spacing } from '../../theme';
 import {
-  Card, EmptyState, HexMark, ManufacturerTabs, Screen, ScreenHeader, SkeletonCards, Text,
+  Card, EmptyState, HexMark, Icon, ManufacturerTabs, Screen, ScreenHeader, SkeletonCards, Text,
 } from '../../components';
 import { ModuleTabs } from './components/ModuleTabs';
 import { useDemandsQuery, useManufacturerScope } from '../../api';
 import { formatDate, formatQuantity } from '../../domain/format';
+import { demandSiteLine } from '../../domain/site';
 import type { Demand } from '../../api/types';
 
 function DemandCard({ demand }: { demand: Demand }) {
+  /**
+   * The SERVER's single line, never a join of the parts. It arrives already de-duplicated — a
+   * geocode routinely repeats the locality in `address_line_2` and again as the location name —
+   * and it is what every other surface shows for this demand.
+   *
+   * Null for demands captured before sites existed. Those rows render WITHOUT the address
+   * block, never hidden: the demand is still real and still the influencer's.
+   */
+  const site = demandSiteLine(demand.site);
+
   return (
     <Card padding={14}>
       <View style={styles.cardBody}>
@@ -40,6 +51,15 @@ function DemandCard({ demand }: { demand: Demand }) {
             </Text>
           </View>
         </View>
+
+        {site ? (
+          <View style={styles.siteRow}>
+            <Icon name="LocationPin" size={16} color={colors.textTertiary} />
+            <Text variant="body" color={colors.textSecondary} style={styles.grow} numberOfLines={2}>
+              {site}
+            </Text>
+          </View>
+        ) : null}
 
         <View style={styles.cardFooter}>
           <Text variant="rowTitle" style={styles.grow}>
@@ -123,6 +143,7 @@ export function MyDemandsScreen({
 const styles = StyleSheet.create({
   cardBody: { gap: spacing.s10 },
   cardTop: { flexDirection: 'row', alignItems: 'center', gap: spacing.s10 },
+  siteRow: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.s6 },
   grow: { flex: 1 },
   cardFooter: {
     borderTopWidth: 1,

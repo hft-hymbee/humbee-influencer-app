@@ -14,29 +14,47 @@
  *      line being composed is folded in at submit, so the common single-product capture is
  *      still one pass down the screen with no extra tap.
  */
-import React, { useState } from 'react';
-import { View } from 'react-native';
-import { colors, spacing } from '../../theme';
+import React, { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { colors, radius, spacing } from '../../theme';
 import {
-  Button, Card, Input, Screen, ScreenHeader, Select, SkeletonBlock, Text, UomSelector,
+  Button, Card, Icon, Input, Screen, ScreenHeader, Select, SkeletonBlock, Text, UomSelector,
 } from '../../components';
 import { ModuleTabs } from './components/ModuleTabs';
 import { DemandTrail } from './components/DemandTrail';
 import { CartLines, ManufacturerGrid } from './components/PickCards';
+import { SiteSlotCard } from './site/SiteSlotCard';
 import { useCaptureDemand } from './useCaptureDemand';
 import { normaliseDecimal } from '../../domain/format';
-import { ApiError, isStaleCatalog, isStaleDistrict } from '../../api';
+import { ApiError, isSiteRejected, isStaleCatalog, isStaleDistrict } from '../../api';
 import type { CreateDemandResult } from '../../api/types';
 
 export function CaptureDemandScreen({
-  onOpenProfile, onTabChange, onSubmitted,
+  onOpenProfile, onTabChange, onSubmitted, onCaptureSite,
 }: {
   onOpenProfile: () => void;
   onTabChange: (tab: 'new' | 'mine') => void;
   onSubmitted: (result: CreateDemandResult) => void;
+  /** Opens the site flow (map → search → address form). */
+  onCaptureSite: () => void;
 }) {
   const vm = useCaptureDemand();
   const [error, setError] = useState<string | null>(null);
+
+  /**
+   * S7's one-time confirmation strip. Derived from the site APPEARING on the draft rather than
+   * passed back through navigation: the site flow writes to the draft and pops, so there is no
+   * return value to carry a flag on, and watching the transition keeps the two screens from
+   * having to know about each other.
+   */
+  const [siteJustSaved, setSiteJustSaved] = useState(false);
+  const hadSite = useRef(vm.draft.site != null);
+  useEffect(() => {
+    const has = vm.draft.site != null;
+    if (has && !hadSite.current) setSiteJustSaved(true);
+    if (!has) setSiteJustSaved(false);
+    hadSite.current = has;
+  }, [vm.draft.site]);
 
   const submit = async () => {
     setError(null);
@@ -50,6 +68,14 @@ export function CaptureDemandScreen({
        */
       if (isStaleCatalog(e)) {
         setError('That product or unit is no longer available. Pick it again.');
+      } else if (isSiteRejected(e)) {
+        /**
+         * The site did not validate — an unserved pincode, or a district or state that
+         * contradicts it. `message` names which check failed and is the only place that detail
+         * exists, so it is shown rather than replaced. Nothing was stored, and the fix is
+         * always the same: back to the map.
+         */
+        setError(e instanceof ApiError ? e.message : 'That site address could not be used. Pick the location again.');
       } else if (isStaleDistrict(e)) {
         // The industry tree has already been invalidated by the mutation, so the picker
         // reloads itself with a district that resolves. Nothing was stored.
@@ -79,9 +105,27 @@ export function CaptureDemandScreen({
     );
   }
 
+  /**
+   * Pull to refresh re-reads the catalogue and empties the draft (see `refresh` in the VM).
+   * The error banner goes with it: it described a submission attempt against the tree that has
+   * just been replaced.
+   */
+  const refresh = () => {
+    setError(null);
+    setSiteJustSaved(false);
+    vm.refresh();
+  };
+
   return (
-    <Screen header={header}>
+    <Screen header={header} onRefresh={refresh} refreshing={vm.isRefreshing}>
       <View style={{ gap: spacing.s20 }}>
+        {siteJustSaved ? (
+          <View style={styles.savedStrip}>
+            <Icon name="CheckCircle" size={16} color={colors.success100} />
+            <Text variant="body" color={colors.textSecondary}>Site address saved</Text>
+          </View>
+        ) : null}
+
         {/*
           1. Manufacturer — the FIRST and only picker. The industry step was removed: the
           catalogue is already filtered to the caller's district, so the industry was a tap
@@ -89,6 +133,7 @@ export function CaptureDemandScreen({
         */}
         <View style={{ gap: spacing.s }}>
           <Text variant="sectionHeader">Manufacturer</Text>
+          {/* Tapping the selected tile again unticks it and empties the draft. */}
           <ManufacturerGrid
             items={vm.manufacturers}
             value={vm.draft.manufacturerId}
@@ -163,6 +208,15 @@ export function CaptureDemandScreen({
           </Card>
         ) : null}
 
+        {/*
+          4. The construction site. Its position is FIXED — below the cart lines, above Submit —
+          so that filling it swaps the empty slot for the site card in place and nothing on the
+          screen shifts under the user's thumb.
+        */}
+        {vm.draft.manufacturerId != null ? (
+          <SiteSlotCard site={vm.draft.site} onAdd={onCaptureSite} onChange={onCaptureSite} />
+        ) : null}
+
         {error ? <Text variant="body" color={colors.error100}>{error}</Text> : null}
 
         <Button
@@ -172,7 +226,25 @@ export function CaptureDemandScreen({
           loading={vm.isSubmitting}
           fullWidth
         />
+
+        {/* Says WHY Submit is dead, rather than leaving a disabled button to be puzzled over. */}
+        {vm.submitBlockedReason ? (
+          <Text variant="meta" color={colors.textSecondary} style={{ textAlign: 'center' }}>
+            {vm.submitBlockedReason}
+          </Text>
+        ) : null}
       </View>
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  savedStrip: {
+    backgroundColor: colors.success10,
+    borderRadius: radius.m,
+    padding: spacing.s10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.s,
+  },
+});

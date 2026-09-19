@@ -18,6 +18,7 @@
  * rule three different ways.
  */
 import type { CatalogManufacturer, DemandItemInput, Industry, ManufacturerProducts, Product } from '../api/types';
+import { isSiteComplete, type DraftSite } from './site';
 
 /** One line of the cart. `uom` is always resolved — never the empty string. */
 export type DraftLine = { productId: number; label: string; qty: string; uom: string };
@@ -31,10 +32,19 @@ export type DemandDraft = {
   /** '' means "first UOM the manufacturer offers". */
   uom: string;
   lines: DraftLine[];
+  /**
+   * The construction site the material is for — ONE PER CART, not per line (spec R1). The cart
+   * is already several products against one manufacturer; a site per line would multiply taps
+   * for no business gain.
+   *
+   * Null until captured. It SURVIVES a change of manufacturer or products (spec R6): the site
+   * is about the destination, not the goods. It is cleared only with the cart itself.
+   */
+  site: DraftSite | null;
 };
 
 export const EMPTY_DRAFT: DemandDraft = {
-  industryId: null, manufacturerId: null, productId: null, qty: '', uom: '', lines: [],
+  industryId: null, manufacturerId: null, productId: null, qty: '', uom: '', lines: [], site: null,
 };
 
 export function findIndustry(industries: Industry[], id: number | null): Industry | undefined {
@@ -147,9 +157,15 @@ export function canAddLine(draft: DemandDraft): boolean {
 /**
  * Submit is enabled when the cart has at least one line, or the line being composed is itself
  * valid — so a single-product capture never requires an explicit "Add" tap first.
+ *
+ * AND a complete site (spec R2). Without geography a demand is not actionable downstream: a VCP
+ * cannot allocate against a claim with no destination. The gate is `isSiteComplete`, not merely
+ * "a site exists", because the contract's site block is all-or-nothing.
  */
 export function isDraftSubmittable(draft: DemandDraft): boolean {
-  return draft.manufacturerId != null && (draft.lines.length > 0 || canAddLine(draft));
+  return draft.manufacturerId != null
+    && (draft.lines.length > 0 || canAddLine(draft))
+    && isSiteComplete(draft.site);
 }
 
 /**
@@ -176,14 +192,24 @@ export const resets = {
   /**
    * Changing manufacturer empties the cart: its lines are that manufacturer's product ids.
    *
+   * Re-tapping the manufacturer that is ALREADY selected TOGGLES IT OFF, back to an empty
+   * draft. The tile is the only selected-state control on the screen and it carries a tick, so
+   * a second tap reads as "untick this" — leaving the selection stuck with no way back except
+   * picking a different brand would be the surprising behaviour. It clears the cart for the
+   * same reason a switch does: the lines hold that manufacturer's product ids and mean nothing
+   * without it.
+   *
    * `industryId` is recorded FROM the chosen manufacturer rather than chosen separately — the
    * industry step is no longer on screen 06, but the industry is still what the trail shows
    * beside the manufacturer name, and it is carried on every entry `allManufacturers` returns.
    */
   onManufacturer: (d: DemandDraft, manufacturerId: number, industryId: number | null = null): DemandDraft =>
     d.manufacturerId === manufacturerId
-      ? d
+      ? EMPTY_DRAFT
+      // `site` is deliberately carried over (spec R6) — it is where the material is going, and
+      // that does not change because the brand did.
       : { ...d, industryId, manufacturerId, productId: null, qty: '', uom: '', lines: [] },
+  setSite: (d: DemandDraft, site: DraftSite | null): DemandDraft => ({ ...d, site }),
   onProduct: (d: DemandDraft, productId: number): DemandDraft => ({ ...d, productId }),
   addLine: (d: DemandDraft, label: string, uom: string): DemandDraft =>
     canAddLine(d)

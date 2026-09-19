@@ -115,6 +115,11 @@ was deleted, so `PointsExplainer` reads it from here and there is no second way 
    still shows beside the manufacturer name ("CEMENT · DALMIA BHARAT CEMENT").
 2. **Products are a separate call** for the chosen manufacturer, not embedded in the tree. Their
    `uoms` is what the API validates against, so it outranks the manufacturer's copy of the list.
+   **The SKU list is not cached** (`staleTime: 0`, client decision Sep 2026): every manufacturer
+   pick hits `GET /demand-capture/manufacturers/{id}/products`, including re-picking one chosen a
+   moment ago. SKUs and `points_hint` move without `catalog_version` moving, and a demand raised
+   against a withdrawn SKU is rejected at submit — one small request per pick is cheaper than
+   losing a capture.
 3. **A submission is a LIST of products and is ATOMIC.** Each line becomes its own demand row; if
    any line fails validation nothing is stored, so a receipt can never show a phantom product. A
    product may appear **only once** per submission — enforced in `domain/demand.ts`, not by a
@@ -135,14 +140,59 @@ was deleted, so `PointsExplainer` reads it from here and there is no second way 
    The field is optional on the wire **only** as a shim for builds predating it; new builds always
    send it. `DISTRICT_INVALID` ⇒ nothing stored, the industry tree is invalidated by the mutation's
    `onError` and the user re-picks.
-6. **A demand carries no status, no points and no VCP.** My Demands therefore has no status chips,
+6. **A demand is raised FOR A CONSTRUCTION SITE, and the site is a CART-level property.** One
+   site per submission, shared by every line (spec R1), because the user picks a location once
+   and then ticks the SKUs they need there. Submit is blocked until it exists (R2). The flow is
+   `SiteCaptureFlow` — map picker → search → address form — at `src/views/demand/site/`, and it
+   is one root route because the three screens share a single pin.
+   - **The pin is the source of truth** (R3). `GET /address/reverse-geocode` turns it into the
+     platform's geography, and **the IDS are what get sent** — `pincode_id` is the anchor, and
+     the server derives the stored state and district from it. A `district_id` or `state_id`
+     that contradicts the pincode is **rejected**, not corrected, so those three fields are
+     rendered READ-ONLY on the address form and the pin is how they change.
+   - **`site.district_id` is not the body's `district_id`** (see rule 5). Top level = where the
+     influencer trades; `site` = where the material is going. Both are sent, from their own
+     sources, and nothing reconciles them.
+   - **All or nothing.** `siteInput()` in `domain/site.ts` returns `undefined` rather than a
+     partial block, so an incomplete site cannot reach the wire. `SITE_ADDRESS_INVALID` ⇒
+     nothing stored, and the user goes back to the map.
+   - **A geocode can succeed and still be unusable:** a null `pincode_id` means there is nothing
+     to derive from. That arrives as a SUCCESS, so `isPinServiceable` is what turns it into "we
+     do not serve this location".
+   - **The OS location prompt fires only from an explicit "Use Current Location" tap** (R4),
+     never on screen entry, and a denial is never a dead end (R5) — the manual pin completes the
+     whole flow. All of it is behind `src/platform/location.ts`; no screen touches GPS directly.
+     **There is no in-app rationale dialog** — the system prompt already asks the same question
+     with the same three choices, so ours went first and could grant nothing. Spec S3 is
+     superseded; see the note at the top of `docs/construction-site-address-capture.md`.
+   - **Maps: Google on Android** (needs `HUMBEE_MAPS_API_KEY` — a blank key builds and renders a
+     grey map, which is the first thing to check if the picker comes up empty) **and Apple Maps
+     on iOS**, which needs no key. iOS also needs `pod install` for `react-native-maps` and
+     `@react-native-community/geolocation`.
+   - **Changing manufacturer or products KEEPS the site** (R6); clearing the cart clears it.
+   - Not built, for want of endpoints: place search results (S5) and saved sites (R7). See
+     `docs/06-inputs-needed.md` 15h/15i.
+7. **A demand row carries its `site`, and `formatted_address` is what the card shows.** The
+   server's line is already de-duplicated — a geocode repeats the locality in `address_line_2`
+   and again as the location name — so it is preferred over joining the parts. `site` is **null**
+   for demands captured before sites existed; those rows render **without** the address block
+   rather than being hidden.
+8. **A demand carries no status, no points and no VCP.** My Demands therefore has no status chips,
    no stat tiles and no points line, and it **is** manufacturer-scoped (`manufacturer_id` is
    required and there is no cross-manufacturer list). Rebuilding any of the removed fields would
    mean inventing them.
 
 Reset rules live in `domain/demand.ts`. Switching manufacturer **empties the cart** — its lines
 are the previous manufacturer's product ids, and sending one against another manufacturer is a
-`PRODUCT_NOT_FOUND`.
+`PRODUCT_NOT_FOUND`. **Re-tapping the manufacturer that is already selected unticks it** and
+resets the draft to empty (client decision, Sep 2026): the tile carries a tick, so a second tap
+has to be able to undo the first, and the cart it held means nothing without the brand.
+
+**Pull to refresh** (screen 06) re-reads `GET /demand-capture/industries` and **empties the
+draft** (the SKU lists need no invalidation — they are never cached). The wipe is what makes it safe: every id on the draft was
+resolved against the tree being replaced, so carrying a half-built cart across a refresh is how
+an old product id reaches a new catalogue. Nothing is lost — capture is online-only and a draft
+never left the device.
 
 Screen 07 renders the `POST /demand-capture/demands` response and makes **no** call — the
 contract puts everything it needs in the response body, which also dodges read-replica lag. Its
