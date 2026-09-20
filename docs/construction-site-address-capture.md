@@ -16,10 +16,14 @@
 >    `pincode_id` / `district_id` / `state_id` from `GET /address/reverse-geocode`. The server
 >    derives the stored state and district from the pincode and REJECTS ids that contradict it,
 >    so S6 renders those three read-only — which is what S6's own note already told the user.
-> 2. **S5's results list and R7's saved sites have no endpoint.** V2 ships reverse-geocode only:
->    there is no `/geo/search` and no `/influencer/sites`. The search screen is built and wired;
->    its results are empty until the endpoint exists. Saved sites and the "save this site"
->    checkbox are not built. Raised in `docs/06-inputs-needed.md`.
+> 2. **S5's search is BUILT, against two endpoints rather than the proposed one.** Not
+>    `/geo/search`, but Google's own two-call model: `GET /address/search` returns candidates
+>    carrying a `place_id` and nothing else — no coordinates, no ids — and
+>    `GET /address/places/{place_id}` resolves the chosen one into the same shape a dropped pin
+>    returns. A client `session_token` spans both so Google bills one session instead of N
+>    requests. Three-character minimum, 300 ms debounce, map centre as a ranking bias.
+>    **R7's saved sites are still not built** — there is no `/influencer/sites`, and the S6
+>    "save this site" checkbox is omitted with it (`docs/06-inputs-needed.md` 15i).
 > 3. **No `geocodeRaw`, no `accuracyM`, no `source`, no `capturedAt` on the wire.** The contract
 >    stores none of them. They live on the draft, where they drive the S4 accuracy line, and
 >    stop at the submit boundary.

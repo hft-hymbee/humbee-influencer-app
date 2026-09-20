@@ -36,12 +36,12 @@ export function CentrePin({
 
       <View style={styles.pinWrap}>
         {/*
-          A teardrop, not a disc with a box under it. The head is a circle whose BOTTOM-LEFT
-          corner is squared off and the whole mark rotated 45° — the standard way to get a
-          balloon pin out of two radii without an SVG path. The glyph inside is counter-rotated
-          so it sits upright.
+          A teardrop: a circle with ONE square corner, rotated 45° so that corner becomes the
+          downward point. The square corner must be the BOTTOM-RIGHT one — under a clockwise
+          45° turn, bottom-right lands at 6 o'clock. (Squaring bottom-LEFT instead points the
+          pin at 9 o'clock, i.e. sideways.) The glyph is counter-rotated to sit upright.
         */}
-        <View style={[styles.drop, { width: size, height: size, borderTopLeftRadius: size / 2, borderTopRightRadius: size / 2, borderBottomRightRadius: size / 2 }]}>
+        <View style={[styles.drop, { width: size, height: size, borderTopLeftRadius: size / 2, borderTopRightRadius: size / 2, borderBottomLeftRadius: size / 2 }]}>
           <View style={styles.upright}>
             <Icon name="LocationPin" size={size === 34 ? 16 : 19} color={colors.white} />
           </View>

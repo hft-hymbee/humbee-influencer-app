@@ -104,11 +104,15 @@ export function useSiteCapture() {
       });
       return;
     }
-    // R5: a failure is never a dead end — say what happened and leave the manual pin working.
+    /**
+     * R5: a failure is never a dead end. By the time this is reached BOTH a GPS attempt and a
+     * coarse one have failed, so the copy says what to do rather than restating the obvious —
+     * the map is already usable and the pin is already on screen.
+     */
     setFixError(
-      result.reason === 'permission' ? 'Location access is off. Move the pin by hand instead.'
-      : result.reason === 'timeout' ? 'Could not get a fix. Move the pin by hand instead.'
-      : 'Location is unavailable. Move the pin by hand instead.',
+      result.reason === 'permission' ? 'Location access is off. Move the map to place the pin.'
+      : result.reason === 'timeout' ? 'No signal for a location yet. Move the map to place the pin.'
+      : 'Location is unavailable. Move the map to place the pin.',
     );
   }, []);
 

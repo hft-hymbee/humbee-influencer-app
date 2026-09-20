@@ -80,6 +80,12 @@ export function useDemandsQuery(manufacturerId: number | null) {
   return useInfiniteQuery({
     queryKey: qk.demands(manufacturerId ?? 0),
     enabled: manufacturerId != null,
+    /**
+     * `staleTime: 0` — every visit re-reads. Each row carries an ePIN that rotates after any
+     * action on that demand, so a cached list shows a code the VCP's app will reject. The rows
+     * themselves would happily cache; the code on them will not.
+     */
+    staleTime: 0,
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       api.get<DemandList>(

@@ -182,6 +182,62 @@ export type ReverseGeocode = {
 };
 
 /**
+ * `GET /address/search` — one row of the dropdown.
+ *
+ * A suggestion is a CANDIDATE, not an address: it carries no coordinates and no component ids.
+ * `place_id` is the only field that goes back to the server, and it is opaque and short-lived —
+ * Google's ids are not stable identifiers. Never persist one, never send one as a site's
+ * address; a stale one returns `PLACE_NOT_FOUND` and the answer is to search again.
+ *
+ * `main_text` / `secondary_text` are Google's split for a two-line row; `description` is the
+ * two joined for a one-line row. Render one shape or the other, not both.
+ */
+export type AddressSuggestion = {
+  place_id: string;
+  description: string | null;
+  main_text: string | null;
+  secondary_text: string | null;
+  /** Where the typed words matched, as [offset, length] into the string each list names. */
+  main_text_matched: { offset: number; length: number }[];
+  description_matched: { offset: number; length: number }[];
+  types: string[];
+  /**
+   * Present only when the request carried coordinates, and STRAIGHT-LINE, not travel distance.
+   * Never sort by it: the list arrives in Google's relevance order, which already accounts for
+   * proximity, and re-sorting would demote the better match.
+   */
+  distance_metres: number | null;
+};
+
+export type AddressSearchResult = {
+  /**
+   * Echoed back so a LATE ANSWER CAN BE DISCARDED. Autocomplete fires per keystroke and the
+   * replies arrive out of order — a response for "adi" landing after one for "adina" would
+   * otherwise repaint the list with stale rows.
+   */
+  query: string;
+  session_token: string | null;
+  /** Empty is a normal answer — nothing matched. It is not an error and not a retry prompt. */
+  suggestions: AddressSuggestion[];
+};
+
+/**
+ * `GET /address/places/{place_id}` — a chosen suggestion, resolved.
+ *
+ * IDENTICAL to the reverse-geocode response plus the two place fields, and deliberately so:
+ * the app has ONE path from "an address the user settled on" into the `site` block, whether
+ * they searched for it or dropped a pin on it. The component ids come from geocoding the
+ * place's COORDINATES through the same resolver the pin uses, not from parsing Google's
+ * address text — so a searched place and a pin on the same spot cannot land in different
+ * districts.
+ */
+export type PlaceDetails = ReverseGeocode & {
+  place_id: string;
+  /** The place's own label ("Adina Station"). Not part of the address and not stored. */
+  place_name: string | null;
+};
+
+/**
  * The `site` block on a demand submission. Built from a reverse-geocode, with the two free-text
  * lines and the landmark editable — a plot number is never in a geocode.
  *
@@ -231,6 +287,55 @@ export type DemandSite = {
 };
 
 /**
+ * The code the influencer READS OUT to a VCP to confirm an allocation against this demand.
+ * Uber's trip PIN, for cement.
+ *
+ * It is on the influencer's OWN list and on no other endpoint — a dealer who could read it
+ * would not need to ask, and the asking is the whole point: it is how the demand records that
+ * the influencer agreed to this allocation.
+ *
+ * NEVER CACHE IT. It rotates after every action on the demand — a successful verification
+ * issues a new one, and so does an allocation being attributed — so a code shown from a stale
+ * list WILL BE REJECTED. That is why the demand list is excluded from the persisted query
+ * cache (api/queryClient.ts) and refetches on mount.
+ *
+ * `attempts_remaining` counts down as the VCP mistypes; at zero the demand cannot be verified
+ * until the code rotates. It is shown to the INFLUENCER precisely because they are the one who
+ * can see something going wrong and say so.
+ *
+ * `code` is null on rows predating the column — render the card without the block, not a blank.
+ */
+export type DemandEpin = {
+  /** Length is server config (`DEMAND_EPIN_LENGTH`), today 4. Never assume it in a layout. */
+  code: string | null;
+  issued_at: string | null;
+  attempts_remaining: number;
+  /** The LAST successful verification — which used the PREVIOUS code, not this one. */
+  verified_at: string | null;
+};
+
+/**
+ * How much of a demand has been met.
+ *
+ * RENDERED as the status chip on My Demands (client decision, Sep 2026), superseding V2's "a
+ * demand carries no status" and the no-chip design built on it. It is still NOT the PRD's
+ * Submitted → Confirmed → Allocated → Closed chain — `Confirmed` needs an acknowledgement
+ * nothing emits — so do not map these three onto those four.
+ *
+ * `status` is the stable key to branch on (`OPEN`, `PARTIALLY_FULFILLED`, `FULFILLED`);
+ * `status_label` is the localised copy to render. Never derive the status from the numbers:
+ * the rule is `allocated >= demanded`, it belongs to the VCP order system, and it lives on the
+ * server so the two cannot drift. All three quantities are in the BASE unit.
+ */
+export type DemandFulfilment = {
+  status: string;
+  status_label: string | null;
+  demanded: Quantity;
+  allocated: Quantity;
+  remaining: Quantity;
+};
+
+/**
  * A demand row. It carries NO status, NO VCP, NO points and NO `date_label` — those arrive
  * with the fulfilment mechanism that does not exist yet (V2 §4). Do not render a status chip
  * or a points figure against a claim.
@@ -247,6 +352,13 @@ export type Demand = {
    * those rows WITHOUT the address block — never hide the row itself.
    */
   site: DemandSite | null;
+  /** The code read out to a VCP. Display what the latest read returned; never cache it. */
+  epin: DemandEpin;
+  /**
+   * Optional because rows predating the derivation carry none — those render with no chip
+   * rather than a fabricated "Open".
+   */
+  fulfilment?: DemandFulfilment;
   /** ISO. The app formats it — there is no server-composed label. */
   date: string;
 };

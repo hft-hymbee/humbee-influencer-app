@@ -85,10 +85,10 @@ android {
         versionCode 1
         versionName "1.0"
 
-        // Google Maps key for the construction-site picker. Read from gradle.properties (or
-        // ORG_GRADLE_PROJECT_HUMBEE_MAPS_API_KEY in CI) and NEVER committed — a Maps key in the
-        // repo is a billable key in the repo. An empty value builds fine and renders a blank
-        // map tile grid, which is the symptom to look for if the picker comes up grey.
+        // Google Maps key for the construction-site picker. Read from gradle.properties, or
+        // overridden per-machine via ~/.gradle/gradle.properties, or in CI via
+        // ORG_GRADLE_PROJECT_HUMBEE_MAPS_API_KEY. An empty value builds fine and renders a
+        // blank tile grid — the first symptom to check if the picker comes up grey.
         manifestPlaceholders = [
             humbeeMapsApiKey: (project.findProperty("HUMBEE_MAPS_API_KEY") ?: "")
         ]

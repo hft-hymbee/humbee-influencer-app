@@ -1,7 +1,7 @@
 export { api, query, setAccessToken, getAccessToken, restoreSession, setUnauthorizedHandler } from './client';
 export {
   ApiError, ERROR_CODES, isOffline, isUnauthorized, isEsiProblem, isStaleCatalog, isStaleDistrict,
-  isPinUnusable, isGeocodeRetryable, isSiteRejected,
+  isPinUnusable, isGeocodeRetryable, isSiteRejected, isPlaceExpired, isSearchUnavailable,
   hasCode, fallbackMessage, deletionRefusalCopy,
 } from './errors';
 export type { ApiErrorKind } from './errors';

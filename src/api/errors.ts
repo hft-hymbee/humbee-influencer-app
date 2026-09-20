@@ -25,6 +25,9 @@ export const ERROR_CODES = {
   COORDINATES_INVALID: 'COORDINATES_INVALID',
   PINCODE_NOT_SERVICEABLE: 'PINCODE_NOT_SERVICEABLE',
   REVERSE_GEOCODE_FAILED: 'REVERSE_GEOCODE_FAILED',
+  SEARCH_QUERY_TOO_SHORT: 'SEARCH_QUERY_TOO_SHORT',
+  ADDRESS_SEARCH_FAILED: 'ADDRESS_SEARCH_FAILED',
+  PLACE_NOT_FOUND: 'PLACE_NOT_FOUND',
   SITE_ADDRESS_INVALID: 'SITE_ADDRESS_INVALID',
   // otp
   OTP_INVALID: 'OTP_INVALID',
@@ -79,6 +82,24 @@ export const isPinUnusable = (e: unknown) =>
 /** Only REVERSE_GEOCODE_FAILED is worth a Retry button; the other two need a new pin. */
 export const isGeocodeRetryable = (e: unknown) =>
   e instanceof ApiError && e.code === ERROR_CODES.REVERSE_GEOCODE_FAILED;
+
+/**
+ * The place id the user tapped no longer resolves. EXPECTED, not exceptional: Google's ids
+ * expire, and a place it can name but not locate (indexed without geometry) returns the same
+ * code because the app's next action is identical — search again, do not retry the id.
+ */
+export const isPlaceExpired = (e: unknown) =>
+  e instanceof ApiError && e.code === ERROR_CODES.PLACE_NOT_FOUND;
+
+/**
+ * Search itself broke. Distinct from an empty result list, which is a normal answer meaning
+ * "nothing matched": this means the request failed — most often the Places API not being
+ * enabled on the key, which is a separate console toggle from the Geocoding API. Surfacing it
+ * as an error rather than as an empty list is what keeps that misconfiguration visible instead
+ * of reading as "no such place".
+ */
+export const isSearchUnavailable = (e: unknown) =>
+  e instanceof ApiError && e.code === ERROR_CODES.ADDRESS_SEARCH_FAILED;
 
 /**
  * The `site` on a submission did not validate — an unserved pincode, a district or state that

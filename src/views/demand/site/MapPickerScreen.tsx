@@ -25,17 +25,30 @@ import { LocationSheet } from './LocationSheet';
 import { useSiteCapture } from './useSiteCapture';
 
 /**
- * Where the map opens when there is nothing better: the influencer's district centre. Zoom is
- * expressed as a delta — 0.01 ≈ street level, which is the spec's "zoom 16".
+ * Where the map opens when there is nothing better. Zoom is expressed as a delta —
+ * 0.01 ≈ street level, which is the spec's "zoom 16".
  */
 const STREET_DELTA = 0.01;
+
+/**
+ * NEW DELHI — Connaught Place. The default camera when there is no site on the draft and no
+ * GPS fix yet.
+ *
+ * It opens at STREET level rather than zoomed out over the country. A wide camera looks safer
+ * but is worse to use: panning from four degrees of latitude down to a rooftop is a long drag
+ * on a phone, and the pin sits over nowhere in particular the whole way.
+ *
+ * It is a CAMERA POSITION, not a pin. The sheet deliberately stays empty — "Move the map to
+ * place the pin" — until the user actually moves the map or takes a fix, so Confirm cannot be
+ * pressed on an address nobody chose. That matters more than a pre-filled sheet here: for a
+ * user who taps through, a default that resolves to a real Delhi address is a demand filed
+ * against the wrong site, which nothing downstream would catch.
+ */
 const FALLBACK_REGION: Region = {
-  // Geographic centre of India. Only ever seen when there is no site, no fix and no district
-  // centroid — the pin is immediately moved by the user from here.
-  latitude: 22.9734,
-  longitude: 78.6569,
-  latitudeDelta: 4,
-  longitudeDelta: 4,
+  latitude: 28.6139,
+  longitude: 77.2090,
+  latitudeDelta: STREET_DELTA,
+  longitudeDelta: STREET_DELTA,
 };
 
 export function MapPickerScreen({

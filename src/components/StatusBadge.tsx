@@ -12,11 +12,22 @@ import { radius, spacing } from '../theme';
 import { statusStyle } from '../domain/status';
 import { Text } from './Text';
 
-export function StatusBadge({ status, height = 24 }: { status: string; height?: number }) {
-  const s = statusStyle(status);
+export function StatusBadge({
+  status, label, height = 24, styleFor = statusStyle,
+}: {
+  /** The STABLE key. Colour is chosen from this, never from the label. */
+  status: string;
+  /** Server-localised display copy, when it differs from the key (demand fulfilment). */
+  label?: string;
+  height?: number;
+  /** Which status machine this belongs to — gifts by default (domain/status.ts). */
+  styleFor?: (status: string) => { bg: string; fg: string };
+}) {
+  const s = styleFor(status);
+  const text = label ?? status;
   return (
     <View
-      accessibilityLabel={`Status: ${status}`}
+      accessibilityLabel={`Status: ${text}`}
       style={{
         height,
         // C5: 8px at the 22px height (Home's list), 10px at 24px (cards).
@@ -27,7 +38,7 @@ export function StatusBadge({ status, height = 24 }: { status: string; height?: 
         justifyContent: 'center',
       }}
     >
-      <Text variant="metaBold" color={s.fg}>{status}</Text>
+      <Text variant="metaBold" color={s.fg} numberOfLines={1}>{text}</Text>
     </View>
   );
 }

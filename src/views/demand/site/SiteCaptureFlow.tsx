@@ -27,13 +27,34 @@ export function SiteCaptureFlow({ onDone, onCancel }: { onDone: () => void; onCa
   /** A search pick has to reach the map's VM; this carries it across the step change. */
   const [searchPick, setSearchPick] = useState<GeoCoordinates | null>(null);
   const setSite = useDemandDraftStore(s => s.setSite);
+  const draftSite = useDemandDraftStore(s => s.draft.site);
+
+  /**
+   * Where the map is, as far as the search screen is concerned: the last pick, else the site
+   * already on the draft. Used only to bias ranking.
+   */
+  const pinned = searchPick ?? draftSite?.coords ?? null;
 
   if (step === 'search') {
     return (
       <LocationSearchScreen
+        // The map centre biases ranking. Null on a first search, which the server answers
+        // nationally — correct, since there is nothing yet to be near.
+        near={pinned}
         onBack={() => setStep('map')}
         onUseCurrentLocation={() => { setSearchPick(null); setStep('map'); }}
-        onPick={coords => { setSearchPick(coords); setStep('map'); }}
+        /**
+         * The place arrives already RESOLVED — coordinates and component ids — and the
+         * endpoint has primed the reverse-geocode cache with it. So handing the map its
+         * coordinates costs no second lookup and, more importantly, keeps the better
+         * `address_line_1`: for a point with no street number the geocoder's own first line
+         * is a plus code or a bare pincode, and the place endpoint substitutes the name the
+         * user just tapped. Re-resolving here would put the junk back.
+         */
+        onPicked={place => {
+          if (place.geo_coordinates) setSearchPick(place.geo_coordinates);
+          setStep('map');
+        }}
       />
     );
   }

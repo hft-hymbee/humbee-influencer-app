@@ -1,6 +1,9 @@
 /**
  * Device location — the only place the app touches GPS or a permission prompt.
  *
+ * No watcher anywhere in here: a site is a point the user confirms, not a track, and a running
+ * watch on a 2 GB phone outdoors costs battery for nothing.
+ *
  * Confined to one file for the same reason the icon set is: the moment a second screen calls
  * `Geolocation` directly, the rules below stop being rules. They are not incidental —
  *
@@ -16,6 +19,25 @@
  */
 import { Linking, PermissionsAndroid, Platform } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
+
+/**
+ * Configured ONCE, at module load, before any call can reach the native side.
+ *
+ * `skipPermissionRequests: true` is the load-bearing one: without it the library fires its OWN
+ * permission request the first time a position is asked for, on top of the one this file just
+ * made — which is how a single tap produces two system dialogs. Permissions are requested here
+ * explicitly and nowhere else.
+ *
+ * `authorizationLevel: 'whenInUse'` matches the plist string and the manifest; the app has no
+ * business asking for 'always'.
+ */
+Geolocation.setRNConfiguration({
+  skipPermissionRequests: true,
+  authorizationLevel: 'whenInUse',
+  // 'auto' prefers Google Play Services' fused provider where it exists and falls back to the
+  // platform LocationManager where it does not — which is the right order on Indian Android.
+  locationProvider: 'auto',
+});
 
 export type PermissionOutcome =
   | 'granted'
@@ -89,13 +111,24 @@ export async function requestLocationPermission(): Promise<PermissionOutcome> {
 }
 
 /**
- * One position, once. No watcher: a site is a point the user confirms, not a track, and a
- * running watch on a 2 GB phone outdoors costs battery for nothing.
+ * One position, once — but in TWO ATTEMPTS, because one is not reliable on this hardware.
  *
- * The 15 s timeout and `maximumAge` of a minute are tuned for the actual setting — a first fix
- * outdoors on an entry-level device is slow, and a fix from a minute ago is the same building.
+ * `enableHighAccuracy: true` asks Android for a GPS-grade fix and nothing else. Inside a shed,
+ * under a slab, or on a cold receiver that has not seen the sky in an hour, that simply never
+ * arrives and the call dies at the timeout — which is the "Could not get a fix" the field sees
+ * while the status bar cheerfully shows a location icon. The icon means the OS has *a*
+ * position, from wifi and cell, which high-accuracy mode declines to hand over.
+ *
+ * So: ask for the good fix briefly, and if it does not come, take the coarse one. A coarse fix
+ * is not a failure here — it puts the map within a block or two of the site, and the user was
+ * always going to nudge the pin onto the actual gate. A pin they adjust beats a red error.
+ *
+ * `maximumAge` on the second pass is deliberately generous: a fix from two minutes ago is the
+ * same building, and reusing it is instant where a fresh acquisition is not.
  */
-export function getCurrentFix(): Promise<{ ok: true; fix: Fix } | { ok: false; reason: FixFailure }> {
+function positionOnce(options: {
+  enableHighAccuracy: boolean; timeout: number; maximumAge: number;
+}): Promise<{ ok: true; fix: Fix } | { ok: false; reason: FixFailure }> {
   return new Promise(resolve => {
     Geolocation.getCurrentPosition(
       pos => resolve({
@@ -112,9 +145,26 @@ export function getCurrentFix(): Promise<{ ok: true; fix: Fix } | { ok: false; r
           error?.code === 1 ? 'permission' : error?.code === 3 ? 'timeout' : 'unavailable';
         resolve({ ok: false, reason });
       },
-      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 60_000 },
+      options,
     );
   });
+}
+
+export async function getCurrentFix(): Promise<
+  { ok: true; fix: Fix } | { ok: false; reason: FixFailure }
+> {
+  // Pass 1: a real GPS fix, given 8 seconds. Long enough for a warm receiver outdoors, short
+  // enough that a cold one indoors does not hold the user at a spinner.
+  const precise = await positionOnce({
+    enableHighAccuracy: true, timeout: 8_000, maximumAge: 60_000,
+  });
+  if (precise.ok) return precise;
+
+  // A refused permission is not going to be fixed by asking again with looser options.
+  if (precise.reason === 'permission') return precise;
+
+  // Pass 2: whatever the OS already has — wifi, cell, a recent cached fix.
+  return positionOnce({ enableHighAccuracy: false, timeout: 12_000, maximumAge: 120_000 });
 }
 
 /** The only repair for a 'blocked' permission — the prompt will not come back on its own. */

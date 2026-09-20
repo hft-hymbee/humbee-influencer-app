@@ -170,17 +170,56 @@ was deleted, so `PointsExplainer` reads it from here and there is no second way 
      on iOS**, which needs no key. iOS also needs `pod install` for `react-native-maps` and
      `@react-native-community/geolocation`.
    - **Changing manufacturer or products KEEPS the site** (R6); clearing the cart clears it.
-   - Not built, for want of endpoints: place search results (S5) and saved sites (R7). See
-     `docs/06-inputs-needed.md` 15h/15i.
+   - **Search is two calls, and a suggestion is not an address.** `GET /address/search` returns
+     candidates with a `place_id` and no coordinates; `GET /address/places/{place_id}` resolves
+     the tapped one into the reverse-geocode shape, and the app primes the reverse-geocode cache
+     with it so the map reads it as a dropped pin. Do NOT re-geocode a picked place: the place
+     endpoint substitutes the tapped name for `address_line_1` where the geocoder would return
+     a plus code or a bare pincode, and re-resolving throws that away. One `session_token`
+     (client-generated) spans both calls — that is what Google bills as one session. Minimum 3
+     characters, 300 ms debounce; both are the server's rules and cost a billable request each
+     if ignored. `PLACE_NOT_FOUND` is expected, not exceptional — ids expire; re-search rather
+     than retry. These endpoints are **missing from `V2/01-api-reference.md`** — see the backend
+     repo's `design_docs/influencer.md`.
+   - Still not built, for want of an endpoint: saved sites (R7). `docs/06-inputs-needed.md` 15i.
 7. **A demand row carries its `site`, and `formatted_address` is what the card shows.** The
    server's line is already de-duplicated — a geocode repeats the locality in `address_line_2`
    and again as the location name — so it is preferred over joining the parts. `site` is **null**
    for demands captured before sites existed; those rows render **without** the address block
    rather than being hidden.
-8. **A demand carries no status, no points and no VCP.** My Demands therefore has no status chips,
+8. **Every demand carries an ePIN — the code the influencer READS OUT to a VCP** to confirm an
+   allocation against it. Four digits today, but the length is server config, so never lay out
+   for a fixed count. It is on the influencer's own list and on no other endpoint: a dealer who
+   could read it would not need to ask, and the asking is what records the influencer's
+   agreement. **It rotates after every action on the demand**, so the app renders what the
+   latest read returned and never shows a cached one — `demand-capture` queries are excluded
+   from the persisted cache and the list carries `staleTime: 0` for exactly this reason. A code
+   shown from a stale list is rejected, and the influencer reads it out twice before anyone
+   suspects the app. `attempts_remaining` is surfaced only once it is low: at zero the demand
+   cannot be verified until the code rotates, and the influencer is the only person positioned
+   to notice. Rendered Uber/Rapido-style — digit boxes, above the address block on the card.
+9. **`fulfilment` IS the demand status, and it is rendered.** `OPEN` /
+   `PARTIALLY_FULFILLED` / `FULFILLED`, derived server-side from allocations. This supersedes
+   V2's "a demand carries no status" and the no-chip design built on it (client decision, Sep
+   2026). Colour comes from `fulfilmentStyle()` keyed on the STABLE `status`; the visible text
+   is `status_label`, which is localised — colouring by the label would leave a Hindi build
+   grey. **Never derive the status from the quantities**: the rule is `allocated >= demanded`,
+   it belongs to the VCP order system, and it lives on the server so the two cannot drift.
+   It is **not** the PRD's Submitted → Confirmed → Allocated → Closed chain; `Confirmed` needs
+   an acknowledgement nothing emits, so do not map three states onto four. A row without
+   `fulfilment` renders no chip rather than a fabricated "Open".
+10. **A demand carries no status, no points and no VCP.** My Demands therefore has no status chips,
    no stat tiles and no points line, and it **is** manufacturer-scoped (`manufacturer_id` is
    required and there is no cross-manufacturer list). Rebuilding any of the removed fields would
    mean inventing them.
+
+**Signing out is a teardown, not a status flip.** `resetUserStateOnSignOut()`
+(`src/store/resetOnSignOut.ts`) drops the TanStack Query cache, resets the demand draft and the
+persisted selection **in memory**, and then clears MMKV — in that order, because the persist
+middleware writes on every `set` and clearing disk first only means the reset re-writes it.
+`language` survives: it is a device preference, not a user's. The same teardown runs on sign-IN,
+because a force-kill mid-logout would otherwise leave the previous user's cache on disk for the
+next cold start to hydrate. Covered by `__tests__/signOut.test.ts`.
 
 Reset rules live in `domain/demand.ts`. Switching manufacturer **empties the cart** — its lines
 are the previous manufacturer's product ids, and sending one against another manufacturer is a

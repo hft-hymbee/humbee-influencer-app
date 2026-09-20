@@ -59,14 +59,7 @@ export function SiteAddressForm({
   );
 
   return (
-    <Screen
-      header={header}
-      footer={
-        <View style={styles.footer}>
-          <Button label="Save Site Address" onPress={save} fullWidth />
-        </View>
-      }
-    >
+    <Screen header={header}>
       <View style={styles.body}>
         {/*
           Not a live map — a static line naming the pin, with the way back to it. Rendering a
@@ -124,6 +117,15 @@ export function SiteAddressForm({
         <Text variant="meta" color={colors.textTertiary}>
           Pincode, District and State came from the pin. Change the pin to change them.
         </Text>
+
+        {/*
+          The button FLOWS with the fields rather than being pinned to the bottom of the screen.
+          Pinned, it stranded itself a long way below the last input on a tall handset — the
+          form reads as finished and the action is somewhere else entirely — and it sat under
+          the Android navigation bar, which clipped the label. Inline, it lands where the eye
+          already is: immediately after the last thing the user filled in.
+        */}
+        <Button label="Save Site Address" onPress={save} fullWidth />
       </View>
     </Screen>
   );
@@ -171,11 +173,5 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: colors.sunken,
     paddingHorizontal: spacing.s12,
-  },
-  footer: {
-    padding: spacing.m,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    backgroundColor: colors.surface,
   },
 });
