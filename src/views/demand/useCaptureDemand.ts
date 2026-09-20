@@ -172,7 +172,7 @@ export function useCaptureDemand() {
       if (draft.manufacturerId == null) return null;
       const items = draftItems(draft, uom);
       if (!items.length) return null;
-      return submit.mutateAsync({
+      const result = await submit.mutateAsync({
         manufacturer_id: draft.manufacturerId,
         company_esi_id: esiFor(draft.manufacturerId),
         district_id: districtId,
@@ -187,6 +187,22 @@ export function useCaptureDemand() {
         site: siteInput(draft.site),
         items,
       });
+
+      /**
+       * SUBMITTED MEANS SPENT. The draft is cleared the moment the server accepts it, not when
+       * the user next navigates, so there is no window in which a cart that has already been
+       * filed is still sitting on the screen waiting to be filed again. V2 capture carries no
+       * client ref, so a duplicate submission cannot be de-duplicated server-side — which makes
+       * the window a real risk rather than a tidiness concern.
+       *
+       * Safe to clear here because the receipt (screen 07) renders from the RESPONSE passed
+       * through navigation, never from the draft.
+       *
+       * Only on success: a rejection leaves every selection exactly as the user meant it, which
+       * is the whole point of an atomic submission.
+       */
+      store.reset();
+      return result;
     },
   };
 }
