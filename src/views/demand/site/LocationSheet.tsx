@@ -1,16 +1,20 @@
 /**
- * The map picker's bottom sheet — spec S2 (collapsed), S4 (a fix, with derived chips) and S8
+ * The map picker's bottom sheet — spec S2 (collapsed), S4 (a fix) and S8
  * (fallback copy). One component: the three states differ in what is known about the pin, not
  * in what the sheet is.
  *
- * THE DERIVED CHIPS ARE THE POINT OF THIS SHEET. They show the influencer the geography the
- * pin resolved to — pincode, district, state, locality — BEFORE they commit to it. That
- * matters here more than in most address flows, because those four values are not typed and
- * cannot be typed: the server derives the stored state and district from the pincode and
- * rejects anything that contradicts it. If the pin is wrong, this is where it must be caught.
+ * WHAT THE SHEET SHOWS IS THE ADDRESS, NOT ITS COMPONENTS. The derived geography — pincode,
+ * district, state, locality — used to sit here as a row of chips. It does not any more: the
+ * sheet's job is to let a thumb confirm "yes, that is the place", and the formatted address
+ * already says so in words the user reads faster than four key/value pills.
+ *
+ * Nothing is lost by dropping them. Those values are not typed and cannot be typed — the
+ * server derives the stored state and district from the pincode and rejects anything that
+ * contradicts it — and the S6 address form shows all three as read-only fields, one screen
+ * later, next to Change On Map. That is where a wrong pin is caught.
  */
 import React from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, elevation, radius, spacing } from '../../../theme';
 import { Button, HexMark, Icon, Text } from '../../../components';
@@ -32,7 +36,6 @@ export function LocationSheet({
   canConfirm: boolean;
 }) {
   const insets = useSafeAreaInsets();
-  const hasChips = site && (site.pincodeId || site.districtName || site.stateName || site.locationName);
 
   return (
     <View style={[styles.sheet, { paddingBottom: insets.bottom + spacing.m }]}>
@@ -71,15 +74,6 @@ export function LocationSheet({
         )}
       </View>
 
-      {hasChips ? (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
-          {site!.pincodeId ? <DerivedChip label="Pincode" value={String(site!.pincodeId)} /> : null}
-          {site!.districtName ? <DerivedChip label="District" value={site!.districtName} /> : null}
-          {site!.stateName ? <DerivedChip label="State" value={site!.stateName} /> : null}
-          {site!.locationName ? <DerivedChip label="Area" value={site!.locationName} /> : null}
-        </ScrollView>
-      ) : null}
-
       {accuracy ? (
         <Text variant="metaBold" color={accuracy.weak ? colors.warning200 : colors.success100}>
           {accuracy.text}
@@ -108,16 +102,6 @@ export function LocationSheet({
         fullWidth
       />
       <Button label="Confirm Location" onPress={onConfirm} disabled={!canConfirm} fullWidth />
-    </View>
-  );
-}
-
-/** A read-only key/value pill. Announced as "Pincode 302012" — key and value in one label. */
-function DerivedChip({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.chip} accessibilityLabel={`${label} ${value}`}>
-      <Text variant="meta" color={colors.textSecondary}>{label}</Text>
-      <Text variant="metaBold" color={colors.textPrimary}>{value}</Text>
     </View>
   );
 }
@@ -160,18 +144,6 @@ const styles = StyleSheet.create({
   hex: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
   hexIcon: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
   grow: { flex: 1 },
-  chips: { gap: spacing.s, paddingRight: spacing.m },
-  chip: {
-    height: 28,
-    borderRadius: radius.pill,
-    backgroundColor: colors.sunken,
-    borderWidth: 1,
-    borderColor: colors.border,
-    paddingHorizontal: spacing.s10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.s6,
-  },
   strip: {
     borderRadius: radius.m,
     padding: spacing.s10,

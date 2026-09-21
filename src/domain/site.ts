@@ -85,20 +85,25 @@ export function isPinServiceable(site: DraftSite | null): boolean {
   return site?.pincodeId != null;
 }
 
-/** Spec S6: required, 3–120 characters. A plot number is never in a geocode, so it is typed. */
+/**
+ * Spec S6: required, up to 120 characters. A plot number is never in a geocode, so it is typed.
+ *
+ * NO MINIMUM LENGTH. The spec asks for three characters; real plot numbers are shorter than
+ * that — "14", "B2", "7A" — so the rule rejected correct answers and left the user with an
+ * error they could only clear by padding it. Empty is the only thing this field cannot be.
+ */
 export function addressLine1Error(value: string): string | null {
   const v = value.trim();
   if (!v) return 'Add the plot or house number';
-  if (v.length < 3) return 'Too short — add the plot or house number';
   if (v.length > 120) return 'Keep this under 120 characters';
   return null;
 }
 
-/** Spec S6: required, 3–80. Drivers need a landmark as much as an address in site geography. */
+/** Spec S6: required, up to 80. Drivers need a landmark as much as an address in site
+ * geography. No minimum, for the same reason as line 1. */
 export function landmarkError(value: string): string | null {
   const v = value.trim();
   if (!v) return 'Add a nearby school, temple or factory';
-  if (v.length < 3) return 'Too short to find the site by';
   if (v.length > 80) return 'Keep this under 80 characters';
   return null;
 }

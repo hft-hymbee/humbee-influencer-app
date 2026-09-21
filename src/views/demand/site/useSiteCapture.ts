@@ -22,6 +22,19 @@ import {
 /** Debounced against camera idle (spec S2): the map never blocks, the lookup just trails it. */
 const GEOCODE_DEBOUNCE_MS = 400;
 
+/**
+ * The FALLBACK test for "is this camera rest our own animation coming to a stop" — how close
+ * the centre has to land to the point we drove to. 3e-5° ≈ 3.3 m, well inside any fix this
+ * flow will see and far under a deliberate drag.
+ *
+ * It is a fallback because `onRegionChangeComplete` carries `isGesture`, which answers the
+ * question outright; Apple Maps does not always send it, hence the geometry. Either way the
+ * point is the same: the camera move that FOLLOWS "Use Current Location" must not read as a
+ * user drag, or the fresh GPS fix is demoted to `manual_pin` the instant it lands and the
+ * accuracy circle goes with it.
+ */
+const CAMERA_EPSILON_DEG = 3e-5;
+
 export type PinState = {
   coords: GeoCoordinates | null;
   source: SiteSource;
@@ -44,9 +57,28 @@ export function useSiteCapture() {
 
   /** What the lookup actually runs against — `pin.coords` after the debounce has settled. */
   const [settled, setSettled] = useState<GeoCoordinates | null>(pin.coords);
+
+  /**
+   * Where the CAMERA has been asked to go, when the pin was placed by something other than a
+   * drag — a GPS fix or a search result.
+   *
+   * The pin is painted at the centre of the SCREEN, so moving `pin.coords` without moving the
+   * camera moves nothing the user can see: the mark stays over whatever was already under it
+   * and quietly stops describing the coordinates in the sheet. The screen owns the MapView, so
+   * it has to be told; `nonce` is what makes a second tap on the same spot re-centre.
+   */
+  const [cameraTarget, setCameraTarget] = useState<{ coords: GeoCoordinates; nonce: number } | null>(null);
+
   const [permission, setPermission] = useState<PermissionOutcome>('denied');
   const [locating, setLocating] = useState(false);
   const [fixError, setFixError] = useState<string | null>(null);
+
+  /** The last coordinates we drove the camera to, for the epsilon test in `movePin`. */
+  const placed = useRef<GeoCoordinates | null>(null);
+  const sendCamera = useCallback((coords: GeoCoordinates) => {
+    placed.current = coords;
+    setCameraTarget(t => ({ coords, nonce: (t?.nonce ?? 0) + 1 }));
+  }, []);
 
   /**
    * A READ, not a prompt — this is what R4 turns on. It tells the map whether to show the
@@ -77,8 +109,17 @@ export function useSiteCapture() {
 
   /** Moving the map moves the pin. Dragging after a fix makes it a placed pin, not a measured
    * one — the accuracy circle and its claim belong to the fix, not to wherever it was dragged. */
-  const movePin = useCallback((coords: GeoCoordinates) => {
+  const movePin = useCallback((coords: GeoCoordinates, opts?: { isGesture?: boolean }) => {
     setFixError(null);
+    // The camera arriving where WE sent it is not the user moving the pin — it is the pin the
+    // user asked for, finally under the mark. Leave the source and the accuracy alone, and
+    // keep waiting: the rest that ends the wait is the first one a thumb causes.
+    const sent = placed.current;
+    if (sent) {
+      if (opts?.isGesture === false) return;
+      if (opts?.isGesture == null && nearlySame(sent, coords)) return;
+      placed.current = null;
+    }
     setPin(p => (
       p.source === 'gps' && p.coords && sameCoords(p.coords, coords)
         ? p
@@ -90,18 +131,19 @@ export function useSiteCapture() {
   const dropPinFromSearch = useCallback((coords: GeoCoordinates) => {
     setFixError(null);
     setPin({ coords, source: 'search', accuracyM: null });
-  }, []);
+    sendCamera(coords);
+  }, [sendCamera]);
 
   const locate = useCallback(async () => {
     setLocating(true);
     const result = await getCurrentFix();
     setLocating(false);
     if (result.ok) {
-      setPin({
-        coords: { latitude: result.fix.latitude, longitude: result.fix.longitude },
-        source: 'gps',
-        accuracyM: result.fix.accuracyM,
-      });
+      const coords = { latitude: result.fix.latitude, longitude: result.fix.longitude };
+      setPin({ coords, source: 'gps', accuracyM: result.fix.accuracyM });
+      // Without this the fix only ever reaches the sheet. The mark is the centre of the
+      // screen, so the map is what has to move for the pin to land on the user.
+      sendCamera(coords);
       return;
     }
     /**
@@ -114,7 +156,7 @@ export function useSiteCapture() {
       : result.reason === 'timeout' ? 'No signal for a location yet. Move the map to place the pin.'
       : 'Location is unavailable. Move the map to place the pin.',
     );
-  }, []);
+  }, [sendCamera]);
 
   /**
    * R4 lives here: the OS prompt is reachable ONLY through this path, which only an explicit
@@ -138,6 +180,8 @@ export function useSiteCapture() {
 
   return {
     pin,
+    /** The screen animates its MapView here whenever `nonce` changes. See `sendCamera`. */
+    cameraTarget,
     /** Null until a pin resolves; the S6 form edits a COPY of this, not this. */
     resolved,
     isGeocoding: geocode.isFetching,
@@ -164,3 +208,8 @@ export function useSiteCapture() {
 
 const sameCoords = (a: GeoCoordinates, b: GeoCoordinates) =>
   a.latitude === b.latitude && a.longitude === b.longitude;
+
+/** Same point to within CAMERA_EPSILON_DEG. Coordinates arrive as strings off the wire. */
+const nearlySame = (a: GeoCoordinates, b: GeoCoordinates) =>
+  Math.abs(Number(a.latitude) - Number(b.latitude)) < CAMERA_EPSILON_DEG &&
+  Math.abs(Number(a.longitude) - Number(b.longitude)) < CAMERA_EPSILON_DEG;

@@ -8,11 +8,11 @@
  *
  * The three designed states are ONE screen, differing only in what the sheet and banner say:
  *   S2  default — no fix yet, pin at the last site or the district centroid
- *   S4  a GPS fix — accuracy circle, derived chips, the pin has grown
+ *   S4  a GPS fix — camera recentred on it, accuracy circle, the pin has grown
  *   S8  permission denied or GPS off — banner, and the manual pin still completes the flow (R5)
  */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import MapView, { Circle, PROVIDER_GOOGLE, type Region } from 'react-native-maps';
+import MapView, { Circle, PROVIDER_GOOGLE, type Details, type Region } from 'react-native-maps';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, elevation, hitSlopFor, radius, spacing } from '../../../theme';
@@ -67,7 +67,8 @@ export function MapPickerScreen({
 
   /**
    * Applied ONCE per pick. `seedCoords` is a handover, not state: re-applying it on every
-   * render would pin the camera to the search result and make the map undraggable.
+   * render would pin the camera to the search result and make the map undraggable. The camera
+   * follows because `dropPinFromSearch` raises a camera target, same as a GPS fix does.
    */
   const seeded = useRef<string | null>(null);
   useEffect(() => {
@@ -76,13 +77,28 @@ export function MapPickerScreen({
     if (seeded.current === key) return;
     seeded.current = key;
     vm.dropPinFromSearch(seedCoords);
+  }, [seedCoords, vm]);
+
+  /**
+   * THE ONE PLACE THE CAMERA IS DRIVEN FROM. The mark is nailed to the centre of the screen,
+   * so a pin the user did not drag into place — a GPS fix, a search result — only becomes
+   * visible when the map moves under it. Without this, "Use Current Location" updated the
+   * sheet and left the mark sitting over wherever the map already was.
+   *
+   * Keyed on the nonce, not the coordinates, so tapping again after drifting away re-centres
+   * on the same fix.
+   */
+  const target = vm.cameraTarget;
+  useEffect(() => {
+    if (!target) return;
     map.current?.animateToRegion({
-      latitude: Number(seedCoords.latitude),
-      longitude: Number(seedCoords.longitude),
+      latitude: Number(target.coords.latitude),
+      longitude: Number(target.coords.longitude),
       latitudeDelta: STREET_DELTA,
       longitudeDelta: STREET_DELTA,
-    }, 200);
-  }, [seedCoords, vm]);
+    }, 350);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target?.nonce]);
 
   const initialRegion = useMemo<Region>(() => (
     vm.pin.coords
@@ -98,13 +114,16 @@ export function MapPickerScreen({
   /**
    * Every camera rest reports the centre as the new pin. The VM debounces the geocode behind
    * this, so dragging across a city costs one lookup, not one per frame.
+   *
+   * `isGesture` is passed straight through and is load-bearing: it is how the VM tells a thumb
+   * apart from its own `animateToRegion` settling, and so whether a GPS fix survives landing.
    */
-  const onRegionChangeComplete = useCallback((region: Region) => {
+  const onRegionChangeComplete = useCallback((region: Region, details: Details) => {
     setMovedOnce(true);
     vm.movePin({
       latitude: region.latitude.toFixed(6),
       longitude: region.longitude.toFixed(6),
-    });
+    }, { isGesture: details?.isGesture });
   }, [vm]);
 
   const accuracy = accuracyLabel(vm.pin.accuracyM, vm.pin.source);
@@ -142,7 +161,7 @@ export function MapPickerScreen({
             }}
             radius={vm.pin.accuracyM ?? 0}
             fillColor={colors.info10}
-            strokeColor={colors.info25}
+            strokeColor={colors.info100}
             strokeWidth={1}
           />
         ) : null}

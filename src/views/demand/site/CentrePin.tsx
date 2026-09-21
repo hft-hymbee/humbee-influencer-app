@@ -7,58 +7,92 @@
  * touch on a 34px target, which is what a draggable marker would demand from someone standing
  * on a site in the sun.
  *
- * The mark is two views and no renderer: a circle with one squared corner, rotated 45° into a
- * teardrop, over a grey ground pad. No SVG, because this sits on top of a map that is already
- * the most expensive thing on the screen.
+ * THE TIP IS THE COORDINATE, so the tip — not the middle of the mark — has to land on the
+ * map's centre. That is what `bottom: '50%'` on the anchor buys: the column's bottom edge sits
+ * exactly on the vertical centre line and the mark grows upward out of it. Centring the mark
+ * itself instead (the obvious thing, and what this did before) puts the tip half a pin BELOW
+ * the coordinate the sheet is describing — about 25 m at street zoom.
+ *
+ * It is drawn as one SVG path rather than a rotated square, because a 45°-rotated square makes
+ * a wide, blunt tail and the mark is a teardrop: a full circle with two straight tangents
+ * running down to a point. `react-native-svg` is already loaded for the icon set, the path is
+ * static, and this re-renders only when the fix state changes — never per map frame.
  */
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { colors, radius, spacing } from '../../../theme';
+import Svg, { G, Path } from 'react-native-svg';
+import { colors, elevation, radius, spacing } from '../../../theme';
 import { Icon, Text } from '../../../components';
+
+/**
+ * The mark, in its own 48 × 55 space; `size` scales this whole box.
+ *
+ * Body: r = 24 about (24, 24). Tip: (24, 55). The arc ends are the TANGENT POINTS from the tip
+ * — cos α = r/d = 24/31 — so the straight edges meet the circle without a crease. Move the tip
+ * and these two numbers have to move with it.
+ */
+const PIN_W = 48;
+const PIN_H = 55;
+const PIN_PATH = 'M8.8 42.57A24 24 0 1 1 39.2 42.57L24 55Z';
+
+/** The white glyph inside the body: the icon set's LocationMarker, centred in the circle. */
+const GLYPH_PATH = 'M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 11a4 4 0 110-8 4 4 0 010 8z';
+const GLYPH_SCALE = 1.2;
+const GLYPH_OFFSET = 24 - 12 * GLYPH_SCALE;
 
 export function CentrePin({
   size = 34, showTooltip, dragChip,
-}: { size?: number; showTooltip?: boolean; dragChip?: boolean }) {
+}: {
+  /** Width of the mark. Height follows the 48:55 aspect — the tip stays on the centre either way. */
+  size?: number;
+  showTooltip?: boolean;
+  dragChip?: boolean;
+}) {
+  const height = (size * PIN_H) / PIN_W;
+
   return (
     <View style={styles.centre} pointerEvents="none">
-      {/* Tooltip on arrival (S2); after a fix it becomes the "Drag to adjust" chip (S4) — the
-          user's job changes from PLACING the pin to CHECKING it, so the copy changes with it. */}
-      {dragChip ? (
-        <View style={styles.chip}>
-          <Icon name="Map" size={16} color={colors.textPrimary} />
-          <Text variant="metaBold" color={colors.textPrimary}>Drag to adjust</Text>
-        </View>
-      ) : showTooltip ? (
-        <View style={styles.tooltip}>
-          <Text variant="metaBold" color={colors.white}>Move map to place the pin</Text>
-        </View>
-      ) : null}
-
-      <View style={styles.pinWrap}>
-        {/*
-          A teardrop: a circle with ONE square corner, rotated 45° so that corner becomes the
-          downward point. The square corner must be the BOTTOM-RIGHT one — under a clockwise
-          45° turn, bottom-right lands at 6 o'clock. (Squaring bottom-LEFT instead points the
-          pin at 9 o'clock, i.e. sideways.) The glyph is counter-rotated to sit upright.
-        */}
-        <View style={[styles.drop, { width: size, height: size, borderTopLeftRadius: size / 2, borderTopRightRadius: size / 2, borderBottomLeftRadius: size / 2 }]}>
-          <View style={styles.upright}>
-            <Icon name="LocationPin" size={size === 34 ? 16 : 19} color={colors.white} />
+      <View style={styles.anchor}>
+        {/* Tooltip on arrival (S2); after a fix it becomes the "Drag to adjust" chip (S4) — the
+            user's job changes from PLACING the pin to CHECKING it, so the copy changes with it. */}
+        {dragChip ? (
+          <View style={styles.chip}>
+            <Icon name="Map" size={16} color={colors.textPrimary} />
+            <Text variant="metaBold" color={colors.textPrimary}>Drag to adjust</Text>
           </View>
+        ) : showTooltip ? (
+          <View style={styles.tooltip}>
+            <Text variant="metaBold" color={colors.white}>Move map to place the pin</Text>
+          </View>
+        ) : null}
+
+        {/* The shadow is on the wrapper, not the path: RN cannot shadow an SVG path, and a
+            shadow is what stops the mark reading as painted flat onto the map. */}
+        <View style={[styles.mark, { width: size, height }]}>
+          <Svg width={size} height={height} viewBox={`0 0 ${PIN_W} ${PIN_H}`}>
+            <Path d={PIN_PATH} fill={colors.primary100} />
+            <G transform={`translate(${GLYPH_OFFSET} ${GLYPH_OFFSET}) scale(${GLYPH_SCALE})`}>
+              <Path d={GLYPH_PATH} fill={colors.white} />
+            </G>
+          </Svg>
         </View>
-        {/* The pad the pin stands on — grey, so it reads as shadow on the ground, not as part
-            of the mark. It is what stops the tip looking like it floats. */}
-        <View style={styles.pad} />
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  centre: {
-    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+  centre: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  /**
+   * Bottom edge on the vertical centre line, full width so the chip centres over the mark
+   * however wide its copy gets. The column grows upward: chip, gap, mark, tip.
+   */
+  anchor: {
+    position: 'absolute',
+    bottom: '50%',
+    left: 0,
+    right: 0,
     alignItems: 'center',
-    justifyContent: 'center',
     gap: spacing.s,
   },
   tooltip: {
@@ -76,21 +110,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: spacing.s6,
   },
-  pinWrap: { alignItems: 'center' },
-  drop: {
-    backgroundColor: colors.primary100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    // 45° turns the one square corner into the downward point.
-    transform: [{ rotate: '45deg' }],
-  },
-  upright: { transform: [{ rotate: '-45deg' }] },
-  pad: {
-    width: 14,
-    height: 6,
-    borderRadius: 3,
-    // Overlaps the tip so the pin sits IN the pad rather than above it.
-    marginTop: -3,
-    backgroundColor: colors.dotInactive,
-  },
+  mark: { ...elevation.e2 },
 });
