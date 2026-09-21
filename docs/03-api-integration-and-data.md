@@ -119,9 +119,12 @@ be built before the backend did, and the backend exists now. Every screen reads 
 | | |
 | --- | --- |
 | Where the base URL lives | `src/api/config.ts` — one constant pair, `API_BASE_URL` + `PLATFORM_BASE_URL` |
-| Android emulator | `http://10.0.2.2:8001` — **`localhost` resolves to the emulator itself**, not the host running Docker. `10.0.2.2` is the AVD's alias for the host loopback, and `config.ts` picks it per-platform |
+| **What it is set to today** | `http://localhost:8001`, for every platform — the app is developed against a **USB-connected Android device** (Sep 2026) |
+| **Android device over USB** | `localhost` works ONLY with a reverse port forward: **`npm run dev:reverse`** (or `adb reverse tcp:8001 tcp:8001` by hand). Without it `localhost` is the phone itself. It does NOT survive a replug, a reboot or `adb kill-server` — a "Network request failed" while Metro still serves the bundle is almost always this. `npm run start` and `npm run android` run `dev:reverse` first; after a mid-session replug, run it yourself |
+| **When the app makes no request at all** | Not a network fault. If the JS runtime never starts there is nothing to make one — see `11-feature-reference.md` §8b-run2, where a foreign Metro on :8081 produces exactly that |
+| Android emulator | `http://10.0.2.2:8001` — **`localhost` resolves to the emulator itself**, not the host running Docker. `10.0.2.2` is the AVD's alias for the host loopback |
 | iOS simulator | `http://localhost:8001` — the simulator shares the host's network stack |
-| Physical device | The host's LAN IP. Neither alias works |
+| iOS physical device | The host's LAN IP. There is **no `adb reverse` equivalent**, so `localhost` cannot work; the Mac and the phone must share a network and the backend must bind `0.0.0.0`, not `127.0.0.1` |
 | Cleartext HTTP | Already allowed in debug via the `usesCleartextTraffic` manifest placeholder. A release build over plain HTTP will be blocked, as it should be |
 | Is the backend up? | `npm run api:smoke` — logs in for real and calls all 11 endpoints the UI calls |
 

@@ -146,9 +146,11 @@ Rules: Android — request `ACCESS_FINE_LOCATION` (+ `ACCESS_COARSE_LOCATION`); 
 
 - Camera animates to the fix, 200ms `cubic-bezier(0.4,0,0.2,1)`.
 - Accuracy circle: `rgba(0,129,242,0.16)` fill, `inset 0 0 0 1px rgba(0,129,242,0.5)`, radius = reported accuracy in metres mapped to map scale.
+- Camera recentres on the fix and the pin lands on it — the mark is nailed to the centre of the screen, so the map moving IS the pin moving.
 - Pin grows to 40px and gains a white chip above it — `HUMBEEIconsMap` 16 + "Drag to adjust" — because after an automatic fix the user's job changes from *placing* to *checking*.
 - Search bar now shows the resolved area name ("Jhotwara, Jaipur") 15/22 600 instead of the placeholder.
-- Sheet expands: hexagon + address block (line 1 16/24 700, line 2 13/20 `#666666`); **derived chips** in a wrapping row — 28px pills, `#F7F7F7`, `inset 0 0 0 1px #E5E5E5`, key 11/20 400 `#666666` + value 11/20 700 (`Pincode 302012`, `District Jaipur`, `State Rajasthan`, `Tehsil Jhotwara`). Chips exist so the influencer sees the derived geography *before* committing.
+- Sheet expands: hexagon + address block (line 1 16/24 700, line 2 13/20 `#666666`).
+- ~~**Derived chips** in a wrapping row (`Pincode 302012`, `District Jaipur`, `State Rajasthan`, `Tehsil Jhotwara`)~~ — **REMOVED from the sheet, client decision, 2026-09-21.** The sheet's job is to confirm *the place*, and the formatted address already says it. The derived geography is still shown, read-only, one screen later on S6 next to `Change On Map`, which is where a wrong pin is corrected anyway. `DerivedChip` is gone with them.
 - Accuracy line: "Accurate to 8 m · GPS" 11/20 700 `#008000`. Above 100m use `#FFBF40` and the copy "Weak signal — check the pin".
 - Primary: `Confirm Location` (filled, 48) → S6.
 
@@ -173,9 +175,9 @@ Standard app header (back arrow, title **Site Address**, subtitle "Check what we
 
 | Label | Placeholder | Source | Validation |
 | --- | --- | --- | --- |
-| Address Line 1 | Plot / house number, street | geocode `road`/`house_number`, usually needs typing | required, 3–120 chars |
+| Address Line 1 | Plot / house number, street | geocode `road`/`house_number`, usually needs typing | required, up to 120 chars (no minimum — "14" and "B2" are real plot numbers) |
 | Address Line 2 | Area, colony | geocode `suburb`/`neighbourhood` | optional, ≤ 120 |
-| Enter Landmark | Nearest school, temple, factory | nearest POI suggestion | required, 3–80 |
+| Enter Landmark | Nearest school, temple, factory | nearest POI suggestion | required, up to 80 (no minimum) |
 | Pincode | 302012 | geocode `postcode` | required, exactly 6 digits, numeric keypad, must resolve to the same state |
 | District | District | geocode `state_district` | required |
 | State | State | geocode `state` | required |
@@ -206,9 +208,8 @@ Pincode and District sit side by side (12px gap); the rest are full width.
 | --- | --- |
 | `SiteSlotCard` | Empty/filled states = S1 / S7. Single component, `site` nullable. |
 | `MapPickerScreen` | Owns camera, centre pin, FAB, sheet, geocode debounce and all three map states (S2/S4/S8). |
-| `CentrePin` | Sizes 34 (idle) / 40 (fix), optional tooltip or drag chip. |
-| `LocationSheet` | Collapsed/expanded, address block, derived chips, accuracy line, actions. |
-| `DerivedChip` | key + value pill, read-only. |
+| `CentrePin` | One SVG teardrop, tip anchored on the map centre. Widths 34 (idle) / 40 (fix), optional tooltip or drag chip. |
+| `LocationSheet` | Collapsed/expanded, address block, accuracy line, actions. |
 | `PermissionRationaleDialog` | Reusable for any future permission ask. |
 | `LocationSearchScreen` | Field + current-location row + saved sites + results + empty state. |
 | `SiteAddressForm` | Thumbnail, six inputs, save toggle, validation. |
@@ -287,7 +288,7 @@ Geocoding provider decision is open — Google Places/Geocoding gives the best I
 | Reverse geocode fails / offline | Sheet shows "Could not read this location" + `Retry`; `Confirm Location` stays enabled — the pin's lat/lng is kept and the user types the address in S6. |
 | Pincode not returned | Field is empty and focused first in S6, with helper "Needed for delivery". |
 | GPS fix > 100m accuracy | Amber accuracy line + "Weak signal — check the pin". |
-| User drags after a fix | `source` becomes `manual_pin`, accuracy circle hides, chips refresh. |
+| User drags after a fix | `source` becomes `manual_pin`, accuracy circle hides, address refreshes. The camera settling at the END of our own animation is not a drag — `onRegionChangeComplete`'s `isGesture` is what tells them apart, or a 3e-5° tolerance where the platform omits it. |
 | Location services off (device-level) | S8 banner copy: "Turn on device location, or move the pin by hand." |
 | No network at all | Map shows cached tiles if available, else a `No internet` illustration with `Retry`; manual pin + typed address still submits, queued offline. |
 | Back from S6 | Returns to S4 with pin and typed values preserved (state lives in the demand draft, not the screen). |
@@ -302,7 +303,7 @@ Geocoding provider decision is open — Google Places/Geocoding gives the best I
 - Body text ≥ 13px; nothing below 11px and only for overlines/meta.
 - Contrast: chestnut `#995A00` on white = 5.4:1; `#666666` on white = 5.7:1; white on chestnut = 5.4:1. No alpha-muted text over map art — copy sits on solid surfaces only.
 - The centre-pin pattern needs an accessible alternative: expose `Confirm Location` and the address text to screen readers with a live region announcing each new reverse-geocode result ("Pin at Plot 14, Road No. 3, Jaipur").
-- Derived chips are announced as "Pincode 302012" etc.; the map itself is marked decorative with a text summary.
+- The map itself is marked decorative with a text summary; the sheet carries the address in text.
 - All copy is Title Case for headings/buttons, sentence case for helper text — localisation-ready (Hindi first).
 
 ---
