@@ -14,8 +14,8 @@ import {
   isDuplicateLine, resets, showQuantity, uomList,
 } from '../src/domain/demand';
 import {
-  accuracyLabel, demandSiteLine, draftSiteLine, isPinServiceable, isSiteComplete, siteFromGeocode,
-  siteInput, type DraftSite,
+  accuracyLabel, addressLine1Error, demandSiteLine, draftSiteLine, isPinServiceable,
+  isSiteComplete, landmarkError, siteFromGeocode, siteInput, type DraftSite,
 } from '../src/domain/site';
 import type {
   CatalogManufacturer, DemandSite, Industry, ManufacturerProducts, ReverseGeocode,
@@ -295,9 +295,17 @@ describe('construction site', () => {
   it('refuses to build a partial site block — all or nothing', () => {
     expect(siteInput(null)).toBeUndefined();
     expect(siteInput({ ...SITE, addressLine1: '' })).toBeUndefined();
-    expect(siteInput({ ...SITE, addressLine1: 'ab' })).toBeUndefined();   // under 3
+    expect(siteInput({ ...SITE, addressLine1: '   ' })).toBeUndefined();  // whitespace is empty
     expect(siteInput({ ...SITE, landmark: '' })).toBeUndefined();         // required
     expect(siteInput({ ...SITE, pincodeId: null })).toBeUndefined();
+  });
+
+  // There is NO minimum length on the typed lines: "14" and "B2" are real plot numbers, and a
+  // rule that rejects them leaves the user padding a correct answer to clear an error.
+  it('accepts a two-character plot number', () => {
+    expect(addressLine1Error('14')).toBeNull();
+    expect(landmarkError('KV')).toBeNull();
+    expect(siteInput({ ...SITE, addressLine1: 'B2' })!.address_line_1).toBe('B2');
   });
 
   it('sends ids, never names, and trims an empty optional line to null', () => {
