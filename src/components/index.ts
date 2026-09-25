@@ -23,6 +23,7 @@ export { Disclosure } from './Disclosure';
 export { Screen, ScreenHeader } from './Screen';
 export { OfflineBanner, useIsOffline } from './OfflineBanner';
 export { BannerCarousel } from './BannerCarousel';
+export { default as RemoteSvg } from './RemoteSVGRenderer';
 export { Select } from './Select';
 export type { SelectOption } from './Select';
 export { UomSelector } from './UomSelector';

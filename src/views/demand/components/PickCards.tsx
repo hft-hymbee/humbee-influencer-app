@@ -12,10 +12,16 @@
  * could not do. The `mono` hexagon is the fallback when a brand has no artwork on file.
  */
 import React from 'react';
-import { Image, Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { colors, radius, spacing } from '../../../theme';
-import { Card, HexMark, Icon, Text } from '../../../components';
+import { Card, HexMark, Icon, RemoteSvg, Text } from '../../../components';
 import type { PickableManufacturer } from '../../../domain/demand';
+
+function Monogram({ mono }: { mono: string }) {
+  return (
+    <HexMark size={52} backgroundColor={colors.surface} label={mono} labelColor={colors.textSecondary} />
+  );
+}
 
 /**
  * The manufacturer picker: a 2-up grid of SQUARE logo tiles, brand name along the bottom.
@@ -52,20 +58,20 @@ export function ManufacturerGrid({
                 <View style={styles.artWrap}>
                   <View style={styles.art}>
                     {m.logo_url ? (
-                      <Image
-                        source={{ uri: m.logo_url }}
-                        resizeMode="contain"
+                      // Logos arrive as S3 `.svg`, which <Image> cannot decode. The WebView
+                      // must not swallow the tap — the whole tile is the button.
+                      <View
                         style={styles.logo}
+                        pointerEvents="none"
+                        accessible
+                        accessibilityRole="image"
                         accessibilityLabel={m.name}
-                      />
+                      >
+                        <RemoteSvg uri={m.logo_url} fit="cover" />
+                      </View>
                     ) : (
                       // No artwork on file — the brand's monogram keeps the grid's rhythm.
-                      <HexMark
-                        size={52}
-                        backgroundColor={colors.surface}
-                        label={m.mono}
-                        labelColor={colors.textSecondary}
-                      />
+                      <Monogram mono={m.mono} />
                     )}
                   </View>
                   {active ? <View style={styles.veil} /> : null}
@@ -137,10 +143,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.illustrationTint,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: spacing.s12,
   },
-  // `contain` inside the box: brand logos arrive at wildly different aspect ratios and must
-  // not be cropped or stretched.
+  // Edge to edge, `cover`: the logo fills the art area as designed. The S3 logos carry their
+  // own white margin around the mark, so the crop eats padding, not the brand.
   logo: { width: '100%', height: '100%' },
   // Selected cards get a chestnut veil over the illustration.
   veil: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(153,90,0,0.18)' },
