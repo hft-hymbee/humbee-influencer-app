@@ -14,6 +14,7 @@
  */
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, query } from '../client';
+import { isStaleDistrict } from '../errors';
 import { qk } from '../keys';
 import {
   DEFAULT_PAGE_SIZE,
@@ -35,15 +36,38 @@ export function useIndustriesQuery() {
 }
 
 /**
+ * Pull-to-refresh for the capture screen's catalogue.
+ *
+ * Refetches the industry tree, which is the part that is cached hard (an hour, and in steady
+ * state not re-fetched at all because `catalog_version` gates it). The SKU lists carry
+ * `staleTime: 0` and so need nothing dropped here — the next manufacturer pick fetches them
+ * fresh by itself.
+ */
+export function useRefreshCatalogue() {
+  const qc = useQueryClient();
+  return () => qc.invalidateQueries({ queryKey: qk.industries() });
+}
+
+/**
  * `company_esi_id` is deliberately NOT sent: the picker lists manufacturers the influencer is
  * not yet mapped to, and those must still open (V2 §4).
+ *
+ * NOT CACHED. `staleTime: 0` means every manufacturer pick hits the network — including
+ * re-picking one chosen a moment ago, because the key becomes active again while stale and
+ * refetches. SKUs and their `points_hint` are the one part of the catalogue that moves without
+ * `catalog_version` moving, and a demand raised against a withdrawn SKU is rejected at submit,
+ * so a stale list costs the user a whole capture. One small request per pick buys that back.
+ *
+ * `gcTime` is left at the default: the previous response stays in cache and renders while the
+ * refetch is in flight, which keeps the Select from flashing empty on a re-pick. `isPending`
+ * (not `isFetching`) drives the skeleton, so only a first-ever load shows one.
  */
 export function useProductsQuery(manufacturerId: number | null) {
   return useQuery({
     queryKey: qk.products(manufacturerId ?? 0),
     queryFn: () => api.get<ManufacturerProducts>(`/demand-capture/manufacturers/${manufacturerId}/products`),
     enabled: manufacturerId != null,
-    staleTime: 30 * 60_000,
+    staleTime: 0,
   });
 }
 
@@ -56,6 +80,12 @@ export function useDemandsQuery(manufacturerId: number | null) {
   return useInfiniteQuery({
     queryKey: qk.demands(manufacturerId ?? 0),
     enabled: manufacturerId != null,
+    /**
+     * `staleTime: 0` — every visit re-reads. Each row carries an ePIN that rotates after any
+     * action on that demand, so a cached list shows a code the VCP's app will reject. The rows
+     * themselves would happily cache; the code on them will not.
+     */
+    staleTime: 0,
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
       api.get<DemandList>(
@@ -84,6 +114,16 @@ export function useSubmitDemand() {
     onSuccess: (_result, body) => {
       qc.invalidateQueries({ queryKey: qk.demands(body.manufacturer_id) });
       qc.invalidateQueries({ queryKey: qk.home() });
+    },
+    /**
+     * DISTRICT_INVALID means the `district_id` this submission carried names no district — the
+     * industry tree it came from is stale. Drop it here rather than in the screen: the district
+     * and the manufacturer tiles come from the SAME cached payload, so re-fetching is what
+     * makes the next attempt use a district that still resolves. Nothing was stored, so the
+     * draft is untouched and the user only has to re-pick.
+     */
+    onError: (error) => {
+      if (isStaleDistrict(error)) qc.invalidateQueries({ queryKey: qk.industries() });
     },
   });
 }

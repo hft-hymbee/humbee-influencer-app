@@ -143,6 +143,23 @@ These are the rules most likely to be broken by good intentions:
 - **Do not add features.** The scope is `08-screen-inventory.md`. If something looks missing — search,
   a notification bell in the header, chat, referral — it was deliberately excluded.
 
+### 5.1 Divergences on record
+
+Places where shipped UI does **not** match the handoff, each a deliberate client decision rather
+than drift. Anything not listed here is a bug.
+
+| What | Where | Why |
+| --- | --- | --- |
+| **My Demands cards carry a status chip** | `08-my-demands.md` shows none | The server now derives `fulfilment` (`OPEN` / `PARTIALLY_FULFILLED` / `FULFILLED`) from allocations. The no-chip design was built on V2's "a demand carries no status", which is no longer true. **The screen spec needs updating to match** — `06-inputs-needed.md` 15l |
+| **Demand cards use `radius.l` (16), not the 8px default** | Every other card is 8 | Asked for at the client's direction. `Card` takes an opt-in `cornerRadius` prop that must be passed a TOKEN, never a number, so one screen's softer corners cannot drift the system. The scale has no 12 — **if 16 reads too round, the fix is a new token in the design spec, not a magic number in a feature file** |
+| **The site flow has no in-app permission dialog** | `construction-site-address-capture.md` S3 | The Android system prompt already asks the same question with the same three choices; ours went first and could grant nothing |
+| **No recentre FAB on the map picker** | S2/S4 | Duplicated "Use Current Location", two centimetres below it in the sheet |
+| **S6's Pincode / District / State are read-only** | S6 shows editable inputs | The server derives them from the pincode and **rejects** contradicting ids. An editable field the server will refuse invites a correction that can only fail at submit. The spec's own note under those fields already says "change the pin to change them" |
+| **No derived chips on the map sheet** | `construction-site-address-capture.md` S4 makes them "the point of this sheet" | Client decision, 2026-09-21. The sheet confirms *the place* and the formatted address already says it; the same geography is shown read-only one screen later on S6, next to `Change On Map`, which is where a wrong pin is actually corrected. `DerivedChip` is deleted |
+| **No minimum length on S6's typed fields** | Spec says Address Line 1 is 3–120 and Landmark 3–80 | Client decision, 2026-09-21. Real plot numbers are shorter than three characters — "14", "B2", "7A" — so the rule rejected correct input and the only way to clear the error was to pad it. Required and the upper caps both stand |
+| **The centre pin is an SVG teardrop, tip-anchored** | S2/S4 describe a 34/40px mark on a grey ground pad | Client direction, 2026-09-21, against a supplied reference. A 45°-rotated square makes a wide blunt tail; the mark is a circle with two straight tangents to a point. The **tip** sits on the map centre — centring the whole mark put it half a pin low, ~25 m at street zoom |
+| **App name is `Humbee Samarth`, not `HumbeeInfluencer`** | Neither spec names the app | Client decision, 2026-09-21. `strings.xml` + `CFBundleDisplayName`; the bundle id and Xcode product name are unchanged |
+
 ---
 
 ## 6. Accessibility rules

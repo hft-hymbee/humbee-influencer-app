@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A deliberately empty icon for the platform splash screen. See values-v31/styles.xml — the
+  Android 12+ splash cannot be turned off, only emptied, and this is the "nothing" it draws.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+</shape>

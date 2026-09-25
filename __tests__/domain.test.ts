@@ -10,10 +10,37 @@ import {
 import { statusStyle, GIFT_STATUSES } from '../src/domain/status';
 import { can, DEFAULT_ENTITLEMENTS, isKnownModule } from '../src/domain/entitlements';
 import {
-  canAddLine, draftItems, EMPTY_DRAFT, effectiveUom, isDraftSubmittable, isDuplicateLine,
-  resets, showQuantity, uomList,
+  allManufacturers, canAddLine, draftItems, EMPTY_DRAFT, effectiveUom, isDraftSubmittable,
+  isDuplicateLine, resets, showQuantity, uomList,
 } from '../src/domain/demand';
-import type { CatalogManufacturer, ManufacturerProducts } from '../src/api/types';
+import {
+  accuracyLabel, addressLine1Error, demandSiteLine, draftSiteLine, isPinServiceable,
+  isSiteComplete, landmarkError, siteFromGeocode, siteInput, type DraftSite,
+} from '../src/domain/site';
+import type {
+  CatalogManufacturer, DemandSite, Industry, ManufacturerProducts, ReverseGeocode,
+} from '../src/api/types';
+
+/**
+ * A confirmed site. Every submit test needs one now: a demand without geography is not
+ * submittable (spec R2), so this is what the other rules are exercised on top of.
+ */
+const SITE: DraftSite = {
+  coords: { latitude: '25.0089183', longitude: '88.1391062' },
+  source: 'gps',
+  accuracyM: 8,
+  addressLine1: 'Plot 14, Sector 3',
+  addressLine2: 'Near the water tank',
+  landmark: 'Opposite the primary school',
+  pincodeId: 732101,
+  districtId: 434,
+  districtName: 'MALDA',
+  stateId: 24,
+  stateName: 'WEST BENGAL',
+  locationId: 828,
+  locationName: 'ADINA STATION',
+  formattedAddress: 'Plot 14, Sector 3, ADINA STATION, MALDA, WEST BENGAL, 732101',
+};
 
 describe('en-IN formatting', () => {
   it('groups the Indian way, not the US way', () => {
@@ -105,6 +132,35 @@ describe('entitlements', () => {
   });
 });
 
+describe('the flattened manufacturer picker', () => {
+  const mfr = (id: number, name: string): CatalogManufacturer =>
+    ({ id, name, mono: name.slice(0, 2), logo_url: null, base_unit: null, uoms: [] });
+  const catalogue: Industry[] = [
+    { id: 1, code: 'CEMENT', name: 'Cement', manufacturers: [mfr(10, 'Dalmia'), mfr(11, 'Shree')] },
+    // Dalmia again, under a second industry — the API takes the manufacturer id alone.
+    { id: 2, code: 'STEEL', name: 'Steel', manufacturers: [mfr(10, 'Dalmia'), mfr(12, 'Welspun')] },
+  ];
+
+  it('flattens every industry into one list, in server order', () => {
+    expect(allManufacturers(catalogue).map(m => m.id)).toEqual([10, 11, 12]);
+  });
+
+  it('shows a manufacturer listed under two industries exactly once', () => {
+    expect(allManufacturers(catalogue).filter(m => m.id === 10)).toHaveLength(1);
+  });
+
+  it('keeps the industry on each entry — the trail and the draft still need it', () => {
+    const [dalmia, , welspun] = allManufacturers(catalogue);
+    // First listing wins, so Dalmia carries Cement rather than Steel.
+    expect(dalmia).toMatchObject({ industryId: 1, industryCode: 'CEMENT', industryName: 'Cement' });
+    expect(welspun).toMatchObject({ industryId: 2, industryCode: 'STEEL' });
+  });
+
+  it('is empty, not broken, for a catalogue with no manufacturers', () => {
+    expect(allManufacturers([{ id: 1, code: 'CEMENT', name: 'Cement', manufacturers: [] }])).toEqual([]);
+  });
+});
+
 describe('demand state machine', () => {
   const mfr: CatalogManufacturer = {
     id: 288311, name: 'Welspun Shield TMT', mono: 'WT', logo_url: null,
@@ -150,7 +206,7 @@ describe('demand state machine', () => {
   });
 
   it('blocks submit until there is at least one valid line', () => {
-    const base = { ...EMPTY_DRAFT, manufacturerId: 288311 };
+    const base = { ...EMPTY_DRAFT, manufacturerId: 288311, site: SITE };
     expect(isDraftSubmittable(base)).toBe(false);
     expect(isDraftSubmittable({ ...base, productId: 231 })).toBe(false); // no qty
     expect(isDraftSubmittable({ ...base, productId: 231, qty: '0' })).toBe(false); // zero
@@ -158,7 +214,17 @@ describe('demand state machine', () => {
     // A committed line is enough on its own — the in-progress one may be empty.
     expect(isDraftSubmittable({ ...base, lines: [line] })).toBe(true);
     // ...but a manufacturer is always required: it is the body's only mandatory field.
-    expect(isDraftSubmittable({ ...EMPTY_DRAFT, lines: [line] })).toBe(false);
+    expect(isDraftSubmittable({ ...EMPTY_DRAFT, lines: [line], site: SITE })).toBe(false);
+  });
+
+  it('blocks submit until a construction site is attached', () => {
+    const ready = { ...EMPTY_DRAFT, manufacturerId: 288311, lines: [line] };
+    // Everything else in place, no site: a demand with no destination is not actionable.
+    expect(isDraftSubmittable(ready)).toBe(false);
+    expect(isDraftSubmittable({ ...ready, site: SITE })).toBe(true);
+    // A site that is PRESENT but incomplete is no better than none — the block is all-or-nothing.
+    expect(isDraftSubmittable({ ...ready, site: { ...SITE, pincodeId: null } })).toBe(false);
+    expect(isDraftSubmittable({ ...ready, site: { ...SITE, landmark: '' } })).toBe(false);
   });
 
   it('folds the in-progress line into the body, so one product needs no Add tap', () => {
@@ -171,13 +237,18 @@ describe('demand state machine', () => {
 
   it('clears downstream choices on every reset — a stranded form is unsubmittable', () => {
     const full = { ...EMPTY_DRAFT, industryId: 2, manufacturerId: 288311, productId: 231, qty: '4', uom: 'Kg', lines: [line] };
-    expect(resets.onIndustry(3)).toEqual({ ...EMPTY_DRAFT, industryId: 3 });
     // Switching manufacturer MUST empty the cart: its lines are the old manufacturer's product
     // ids, and sending one against another manufacturer is a PRODUCT_NOT_FOUND.
-    const afterMfr = resets.onManufacturer(full, 293612);
-    expect(afterMfr).toMatchObject({ manufacturerId: 293612, productId: null, qty: '', uom: '', lines: [] });
-    // Re-tapping the SAME manufacturer is a no-op, not a wipe.
-    expect(resets.onManufacturer(full, 288311)).toBe(full);
+    const afterMfr = resets.onManufacturer(full, 293612, 7);
+    expect(afterMfr).toMatchObject({
+      industryId: 7, manufacturerId: 293612, productId: null, qty: '', uom: '', lines: [],
+    });
+    // ...but the SITE survives it (spec R6): it is where the material is going, and that does
+    // not change because the brand did.
+    expect(resets.onManufacturer({ ...full, site: SITE }, 293612, 7).site).toBe(SITE);
+    // Re-tapping the SAME manufacturer UNSELECTS it and empties everything with it — the tile
+    // is a tick, so a second tap unticks. A cart of its product ids means nothing without it.
+    expect(resets.onManufacturer(full, 288311, 2)).toEqual(EMPTY_DRAFT);
   });
 
   it('moves the composed line into the cart and clears it for the next product', () => {
@@ -187,5 +258,93 @@ describe('demand state machine', () => {
     expect(added.productId).toBeNull();
     expect(added.qty).toBe('');
     expect(resets.removeLine(added, 231).lines).toEqual([]);
+  });
+});
+
+describe('construction site', () => {
+  const geocode: ReverseGeocode = {
+    formatted_address: 'Plot 14, Sector 3, Adina Station, Malda, West Bengal 732101, India',
+    address_line_1: 'Plot 14, Sector 3',
+    address_line_2: 'Near the water tank',
+    landmark: 'Opposite the primary school',
+    state_id: 24, state_name: 'WEST BENGAL',
+    district_id: 434, district_name: 'MALDA',
+    location_id: 828, location_name: 'ADINA STATION',
+    pincode_id: 732101,
+    geo_coordinates: { latitude: '25.0089183', longitude: '88.1391062' },
+  };
+
+  it('carries the geocode coordinates through as STRINGS, digit for digit', () => {
+    const site = siteFromGeocode(geocode, { source: 'gps', accuracyM: 8 });
+    // The contract echoes geo_coordinates precisely so the digits stored are the digits
+    // resolved. Parsing to a float and back would round the pin.
+    expect(site.coords).toEqual({ latitude: '25.0089183', longitude: '88.1391062' });
+    expect(siteInput(site)!.latitude).toBe('25.0089183');
+  });
+
+  it('treats a pin with no pincode as unusable, even though the geocode succeeded', () => {
+    const noPin = siteFromGeocode({ ...geocode, pincode_id: null }, { source: 'manual_pin' });
+    expect(isPinServiceable(noPin)).toBe(false);
+    expect(isSiteComplete(noPin)).toBe(false);
+    // ...and a null LOCATION is routine, not an error — it is sent through as null.
+    const noLocality = siteFromGeocode({ ...geocode, location_id: null }, { source: 'manual_pin' });
+    expect(isSiteComplete(noLocality)).toBe(true);
+    expect(siteInput(noLocality)!.location_id).toBeNull();
+  });
+
+  it('refuses to build a partial site block — all or nothing', () => {
+    expect(siteInput(null)).toBeUndefined();
+    expect(siteInput({ ...SITE, addressLine1: '' })).toBeUndefined();
+    expect(siteInput({ ...SITE, addressLine1: '   ' })).toBeUndefined();  // whitespace is empty
+    expect(siteInput({ ...SITE, landmark: '' })).toBeUndefined();         // required
+    expect(siteInput({ ...SITE, pincodeId: null })).toBeUndefined();
+  });
+
+  // There is NO minimum length on the typed lines: "14" and "B2" are real plot numbers, and a
+  // rule that rejects them leaves the user padding a correct answer to clear an error.
+  it('accepts a two-character plot number', () => {
+    expect(addressLine1Error('14')).toBeNull();
+    expect(landmarkError('KV')).toBeNull();
+    expect(siteInput({ ...SITE, addressLine1: 'B2' })!.address_line_1).toBe('B2');
+  });
+
+  it('sends ids, never names, and trims an empty optional line to null', () => {
+    const body = siteInput({ ...SITE, addressLine2: '   ' })!;
+    expect(body).toEqual({
+      address_line_1: 'Plot 14, Sector 3',
+      address_line_2: null,
+      landmark: 'Opposite the primary school',
+      pincode_id: 732101,
+      district_id: 434,
+      state_id: 24,
+      location_id: 828,
+      latitude: '25.0089183',
+      longitude: '88.1391062',
+    });
+    // No name of any kind reaches the wire: the site is stored against the platform's geography.
+    expect(JSON.stringify(body)).not.toContain('MALDA');
+    expect(JSON.stringify(body)).not.toContain('WEST BENGAL');
+  });
+
+  it("prefers the server's own line on a demand row, and tolerates a row with no site", () => {
+    const site = { formatted_address: 'Plot 14, Sector 3, MALDA, WEST BENGAL, 732101' } as DemandSite;
+    expect(demandSiteLine(site)).toBe('Plot 14, Sector 3, MALDA, WEST BENGAL, 732101');
+    // Demands captured before sites existed. The row still renders — without the address block.
+    expect(demandSiteLine(null)).toBeNull();
+    expect(demandSiteLine({ formatted_address: '  ' } as DemandSite)).toBeNull();
+  });
+
+  it('composes the cart card line from the parts, since a draft has no server line', () => {
+    expect(draftSiteLine(SITE)).toBe(
+      'Near the water tank, near Opposite the primary school, ADINA STATION, MALDA, WEST BENGAL',
+    );
+  });
+
+  it('only claims an accuracy it actually measured', () => {
+    expect(accuracyLabel(8, 'gps')).toEqual({ text: 'Accurate to 8 m · GPS', weak: false });
+    expect(accuracyLabel(140, 'gps')).toEqual({ text: 'Weak signal — check the pin', weak: true });
+    // A pin the user placed by hand was never measured — there is nothing honest to claim.
+    expect(accuracyLabel(8, 'manual_pin')).toBeNull();
+    expect(accuracyLabel(null, 'gps')).toBeNull();
   });
 });

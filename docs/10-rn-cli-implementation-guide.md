@@ -75,6 +75,12 @@ belongs *before* the first commit, not after.
 | `expo-updates` native config | `Expo.plist` (iOS), `AndroidManifest` metadata + `strings.xml` (Android). **You maintain these by hand — they must survive every RN upgrade merge** |
 | Deep link scheme | `humbee://` — `AndroidManifest` intent filter + iOS `CFBundleURLTypes` |
 | Firebase | `google-services.json` / `GoogleService-Info.plist`, per flavor if per-tenant |
+| **Google Maps key** | `HUMBEE_MAPS_API_KEY` in `android/gradle.properties` → `manifestPlaceholders` → `com.google.android.geo.API_KEY`. Overridable per machine in `~/.gradle/gradle.properties`, or in CI as `ORG_GRADLE_PROJECT_HUMBEE_MAPS_API_KEY`. **Needs both the Maps SDK for Android AND the Places API enabled** — they are separate console toggles, and a Geocoding-only key makes every address search return `ADDRESS_SEARCH_FAILED` |
+| **Location permissions** | `ACCESS_FINE_LOCATION` + `ACCESS_COARSE_LOCATION` in `AndroidManifest`. **Never** `ACCESS_BACKGROUND_LOCATION`. iOS: `NSLocationWhenInUseUsageDescription`, whose copy must match what the app tells the user |
+| **App display name** | `Humbee Samarth` — `res/values/strings.xml` `app_name` and `Info.plist` `CFBundleDisplayName`. Two places, no shared source: **change both** |
+| **Launcher icons** | Generated from `src/assets/humbee-logomark.svg` on a white plate. Android: legacy PNGs per density **plus** `mipmap-anydpi-v26/` adaptive icons — mark at **46%** of the 108dp canvas, inside the 66dp the launcher guarantees against its mask. iOS: nine sizes in `AppIcon.appiconset`, and they must carry **no alpha channel** — the App Store rejects an icon that has one even when it is opaque throughout, and every stock macOS route to strip it either keeps alpha or goes through JPEG and rings the logo's edges |
+| **Launch window** | Android `android:windowBackground` is pinned to `@color/humbee_surface`. Unset it inherits the `DayNight` parent and opens **black** on a device in dark mode, flashing before the white splash. iOS `LaunchScreen.storyboard` is deliberately blank white for the same reason |
+| **The platform splash (Android 12+)** | Targeting API 31+ means the OS draws the launcher icon before any app frame — a second splash nobody wrote, on top of `src/views/splash/SplashScreen.tsx`. It **cannot be disabled** (`setKeepOnScreenCondition` only makes it last longer); `res/values-v31/styles.xml` empties it instead — white background, transparent `windowSplashScreenAnimatedIcon`. The theme is split into `AppThemeBase` + `AppTheme` because a style redefined for a higher API **replaces** its namesake rather than merging, so keep the two in step |
 
 ---
 
@@ -129,6 +135,16 @@ default — see §12.1.
 | `lottie-react-native` | `celebration.json`, `success-green.json` | |
 | `expo-linear-gradient` | The two permitted gradients | |
 | `expo-font` | Bundled Lato | |
+
+### 2.5b Maps and location — the construction-site picker
+
+| Package | Purpose | Notes |
+| --- | --- | --- |
+| `react-native-maps` | The site picker's map (S2/S4/S8 of `construction-site-address-capture.md`) | `PROVIDER_GOOGLE` on **Android only**; iOS takes the platform default (Apple Maps) so it needs no second SDK and no second key. iOS requires `pod install` |
+| `@react-native-community/geolocation` | One position, on an explicit tap. No watcher | Behind `src/platform/location.ts`, which is the only file allowed to touch GPS or a permission prompt |
+
+Neither is optional to the Demand module, and both are **native** — a JS-only reload will not
+pick them up after a fresh clone.
 
 ### 2.6 Delivery, i18n, observability
 

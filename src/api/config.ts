@@ -6,16 +6,40 @@
  * are gone — they were a way to build screens before the backend existed, and it exists now.
  */
 
-import { Platform } from 'react-native';
-
 /**
- * THE ANDROID EMULATOR CANNOT SEE `localhost` — that resolves to the emulator itself, not to the
- * machine running Docker. `10.0.2.2` is the AVD's alias for the host loopback. iOS simulators
- * share the host's network stack, so `localhost` is correct there, and a physical device needs
- * the host's LAN IP instead (set DEV_HOST below).
+ * `localhost` ON A USB-CONNECTED ANDROID DEVICE MEANS THE DEVICE ITSELF — it is not the Mac
+ * running the backend. What makes the line below work is a REVERSE PORT FORWARD, which has to
+ * be re-run after every replug, reboot or `adb kill-server`:
+ *
+ *     npm run dev:reverse          # every attached device, :8001 and :8081
+ *     adb reverse tcp:8001 tcp:8001   # or by hand, one device
+ *
+ * `npm run android` and `npm run start` both run `dev:reverse` first, so the usual way in is
+ * already covered; do it by hand only after a replug mid-session.
+ *
+ * That tells the phone to tunnel its own :8001 back over USB to the host's :8001 — the same
+ * mechanism Metro already uses on :8081, which is why the JS bundle loads while API calls fail.
+ * A "Network request failed" with Metro working is almost always this forward being absent.
+ *
+ * Verify the forward is in place (most retail Androids ship no curl or wget, so check the
+ * forward table rather than trying to make a request from the phone):
+ *     adb reverse --list          # expects a line for tcp:8001
+ *     npm run api:smoke           # and that the backend answers on the Mac at all
+ *
+ * The other cases, for when this file is next changed:
+ *   Android emulator  `10.0.2.2` — the AVD's alias for the host loopback
+ *   iOS simulator     `localhost` — it shares the host's network stack
+ *   iOS real device   the host's LAN IP (e.g. 192.168.1.x). There is no `adb reverse` for iOS,
+ *                     so `localhost` cannot work there; the Mac and the phone must share a
+ *                     network and the backend must bind 0.0.0.0, not 127.0.0.1.
  */
-const DEV_HOST = Platform.OS === 'android' ? '10.0.2.2' : 'localhost';
-const DEV_ORIGIN = `http://${DEV_HOST}:8001`;
+const DEV_ORIGIN = 'http://localhost:8001';
+
+/** The deployed QA backend. HTTPS, so it works on any device with no `adb reverse`. */
+const QA_ORIGIN = 'https://api-qa.humbee.in';
+
+/** Which backend this build talks to. Flip to `DEV_ORIGIN` for a local backend. */
+const ORIGIN = QA_ORIGIN;
 
 /**
  * The influencer API and the platform API are the same deployment locally (one container serves
@@ -23,9 +47,9 @@ const DEV_ORIGIN = `http://${DEV_HOST}:8001`;
  * `main_influencer:app` runs as its own gunicorn process. Keeping them as two constants means
  * splitting them later is a one-line change.
  */
-export const API_BASE_URL = `${DEV_ORIGIN}/influencer/v1`;
+export const API_BASE_URL = `${ORIGIN}/influencer/v1`;
 
 /** Account deletion is the platform's own flow, outside /influencer/v1 (V2 §7). */
-export const PLATFORM_BASE_URL = DEV_ORIGIN;
+export const PLATFORM_BASE_URL = ORIGIN;
 
 export const REQUEST_TIMEOUT_MS = 15_000;

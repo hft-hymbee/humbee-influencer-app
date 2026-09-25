@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The launcher plate behind the logomark, and the window the app opens on before the
+         first JS frame. Both are the design system's `surface`. -->
+    <color name="ic_launcher_background">#FFFFFF</color>
+    <color name="humbee_surface">#FFFFFF</color>
+</resources>

@@ -6,6 +6,9 @@ buildscript {
         targetSdkVersion = 36
         ndkVersion = "27.1.12297006"
         kotlinVersion = "2.2.0"
+        // Read by react-native-maps AND by the app's own Maps warm-up (MainApplication), so the
+        // two always resolve the same play-services-maps.
+        googlePlayServicesMapsVersion = "19.1.0"
     }
     repositories {
         google()

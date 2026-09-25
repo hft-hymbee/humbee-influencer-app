@@ -49,8 +49,14 @@ export function HomeScreen({
         <BannerCarousel banners={vm.banners} />
 
         <View style={{ flexDirection: 'row', gap: spacing.s }}>
+          {/*
+            The label names the PERIOD the server actually counts over. `stats.rewards_allotted`
+            arrives in the same block as `allocations_this_year` / `points_this_year` and is
+            scoped to `stats.financial_year`, while "My Rewards" below is all-time — which is
+            why a Feb-2026 gift can sit under a 0. See useHomeScreen.ts.
+          */}
           <StatTile
-            label="Rewards allotted · all manufacturers"
+            label={vm.rewardsAllottedLabel}
             value={vm.rewardsAllotted}
             valueColor={colors.success100}
           />
@@ -64,7 +70,7 @@ export function HomeScreen({
         {/* Quick links — 2x2, above My Rewards. Filtered by entitlement. */}
         {vm.quickLinks.length ? (
           <View style={{ gap: spacing.s10 }}>
-            <Text variant="overline" color={colors.textTertiary}>Quick Links</Text>
+            <Text variant="sectionHeader">Quick Links</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.s12 }}>
               {vm.quickLinks.map(link => (
                 <Pressable
@@ -95,7 +101,7 @@ export function HomeScreen({
         {vm.canSeeRewards ? (
           <View style={{ gap: spacing.s10 }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text variant="overline" color={colors.textTertiary} style={{ flex: 1 }}>My Rewards</Text>
+              <Text variant="sectionHeader" style={{ flex: 1 }}>My Rewards</Text>
               <Pressable onPress={() => onNavigate('Rewards')} accessibilityRole="button">
                 <Text variant="metaBold" color={colors.primary100}>View All</Text>
               </Pressable>

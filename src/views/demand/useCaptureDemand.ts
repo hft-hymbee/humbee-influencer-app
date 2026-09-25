@@ -6,23 +6,30 @@
  *
  * V2 shape: industries → manufacturers (two levels), then a SEPARATE products call for the
  * chosen manufacturer, then an atomic multi-product submission.
+ *
+ * The SCREEN, though, has one picker, not two: `allManufacturers` flattens the tree so the
+ * influencer taps a manufacturer straight away. The industry rides along on each entry and is
+ * recorded on the draft when a tile is tapped.
  */
 import { useMemo } from 'react';
 import {
-  useIndustriesQuery, useManufacturerScope, useProductsQuery, useSubmitDemand,
+  useIndustriesQuery, useManufacturerScope, useProductsQuery, useRefreshCatalogue, useSubmitDemand,
 } from '../../api';
 import { useDemandDraftStore } from '../../store/demandDraftStore';
+import { isSiteComplete, siteInput } from '../../domain/site';
 import {
-  canAddLine, draftItems, draftSummary, effectiveUom, findIndustry, findManufacturer,
-  findProduct, isDraftSubmittable, isDuplicateLine, showQuantity, uomList,
+  allManufacturers, canAddLine, draftItems, draftSummary, effectiveUom, findIndustry,
+  findManufacturer, findProduct, isDraftSubmittable, isDuplicateLine, showQuantity, uomList,
 } from '../../domain/demand';
 import type { CreateDemandResult } from '../../api/types';
 
 export function useCaptureDemand() {
-  const { data: catalog, isPending } = useIndustriesQuery();
+  const industriesQuery = useIndustriesQuery();
+  const { data: catalog, isPending } = industriesQuery;
   const draft = useDemandDraftStore(s => s.draft);
   const store = useDemandDraftStore();
   const submit = useSubmitDemand();
+  const refreshCatalogue = useRefreshCatalogue();
 
   /**
    * The influencer's own manufacturer mappings, from GET /me. Used ONLY to attach the matching
@@ -34,8 +41,24 @@ export function useCaptureDemand() {
 
   // Memoised: a fresh [] on every render would re-run the lookups below every time.
   const industries = useMemo(() => catalog?.industries ?? [], [catalog]);
+
+  /**
+   * The district the demand will be FILED against — read live from the industries payload,
+   * never snapshotted into the draft.
+   *
+   * The contract asks that a cached tree cannot carry a stale district into a submit. Reading
+   * `catalog.district_id` at submit time gives that for free: the same query that produced the
+   * manufacturer tiles produces the district, so the two can never disagree, and a refetch
+   * updates both at once. Copying it into the zustand draft when a tile is tapped would be the
+   * one way to get them out of step.
+   *
+   * NOT `/me`'s district — see the comment on `CreateDemandBody.district_id`.
+   */
+  const districtId = catalog?.district_id;
   const industry = findIndustry(industries, draft.industryId);
   const manufacturer = findManufacturer(industries, draft.manufacturerId);
+  /** The picker's only list: every manufacturer in the catalogue, deduped, industry attached. */
+  const manufacturers = useMemo(() => allManufacturers(industries), [industries]);
 
   // Step 2 of the contract: the SKU list is fetched for the chosen manufacturer only.
   const productsQuery = useProductsQuery(draft.manufacturerId);
@@ -56,10 +79,14 @@ export function useCaptureDemand() {
   const lineCount = draft.lines.length + (canAddLine(draft) ? 1 : 0);
   const trailSteps = [
     {
-      label: 'Industry',
+      // Step 1 is the manufacturer now — the industry step is off the screen, so naming the
+      // trail step "Industry" would point at a choice the user is never asked to make.
+      label: 'Manufacturer',
       icon: 'Cluster' as const,
-      done: !!industry && !!manufacturer,
-      value: manufacturer ? `${industry?.code ?? ''} · ${manufacturer.name}`.trim() : industry?.name ?? 'Not chosen',
+      done: !!manufacturer,
+      value: manufacturer
+        ? `${industry?.code ? `${industry.code} · ` : ''}${manufacturer.name}`
+        : 'Not chosen',
     },
     {
       label: 'Product',
@@ -82,8 +109,8 @@ export function useCaptureDemand() {
     industries,
     industry,
     manufacturer,
-    /** Manufacturers of the chosen industry — the second and final level of the picker. */
-    manufacturers: industry?.manufacturers ?? [],
+    /** THE picker — every manufacturer, flat. No industry step precedes it. */
+    manufacturers,
     draft,
     uoms,
     uom,
@@ -96,10 +123,18 @@ export function useCaptureDemand() {
     canAdd: canAddLine(draft),
     isDuplicate: isDuplicateLine(draft, draft.productId),
     canSubmit: isDraftSubmittable(draft),
+    /**
+     * Why Submit is disabled, in the user's terms — or null when it is live. Only the SITE gets
+     * a line: a missing product is obvious from an empty cart, whereas a missing site is a card
+     * further up the screen that is easy to scroll past.
+     */
+    submitBlockedReason:
+      draft.manufacturerId != null && !isSiteComplete(draft.site)
+        ? 'Add the construction site to submit'
+        : null,
     summary: draftSummary(draft, manufacturer, products),
     trailSteps,
 
-    chooseIndustry: store.chooseIndustry,
     chooseManufacturer: store.chooseManufacturer,
     chooseProduct: store.chooseProduct,
     setQty: store.setQty,
@@ -107,6 +142,24 @@ export function useCaptureDemand() {
     addLine: () => store.addLine(product?.label ?? '', uom),
     removeLine: store.removeLine,
     reset: store.reset,
+
+    /**
+     * Pull to refresh. Re-reads the catalogue AND empties the draft.
+     *
+     * The wipe is not incidental — it is what makes the refresh safe. Every id on the draft
+     * (manufacturer, products, the cart's lines) was resolved against the catalogue that is
+     * being replaced, and a refresh is how a user reacts to the picker looking wrong or to a
+     * DISTRICT_INVALID. Keeping a half-built cart across it would let ids from the old tree
+     * ride into a submit against the new one, which is exactly the PRODUCT_NOT_FOUND the reset
+     * rules exist to prevent. Nothing is lost that was stored: capture is online-only and a
+     * draft never left the device.
+     */
+    refresh: () => {
+      store.reset();
+      return refreshCatalogue();
+    },
+    /** `isPending` is the first load — that is the skeleton's job, not the spinner's. */
+    isRefreshing: industriesQuery.isFetching && !industriesQuery.isPending,
 
     isSubmitting: submit.isPending,
 
@@ -119,11 +172,37 @@ export function useCaptureDemand() {
       if (draft.manufacturerId == null) return null;
       const items = draftItems(draft, uom);
       if (!items.length) return null;
-      return submit.mutateAsync({
+      const result = await submit.mutateAsync({
         manufacturer_id: draft.manufacturerId,
         company_esi_id: esiFor(draft.manufacturerId),
+        district_id: districtId,
+        /**
+         * ONE SITE PER SUBMISSION, shared by every line. `siteInput` returns undefined rather
+         * than a partial block, so an incomplete site is structurally unable to reach the wire
+         * — the contract's site is all-or-nothing and this is where that is enforced.
+         *
+         * Note `site.district_id` inside this block is NOT the `district_id` above it: the top
+         * level one is where the influencer trades, this one is where the material is going.
+         */
+        site: siteInput(draft.site),
         items,
       });
+
+      /**
+       * SUBMITTED MEANS SPENT. The draft is cleared the moment the server accepts it, not when
+       * the user next navigates, so there is no window in which a cart that has already been
+       * filed is still sitting on the screen waiting to be filed again. V2 capture carries no
+       * client ref, so a duplicate submission cannot be de-duplicated server-side — which makes
+       * the window a real risk rather than a tidiness concern.
+       *
+       * Safe to clear here because the receipt (screen 07) renders from the RESPONSE passed
+       * through navigation, never from the draft.
+       *
+       * Only on success: a rejection leaves every selection exactly as the user meant it, which
+       * is the whole point of an atomic submission.
+       */
+      store.reset();
+      return result;
     },
   };
 }

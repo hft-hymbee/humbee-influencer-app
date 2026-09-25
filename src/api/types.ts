@@ -147,6 +147,195 @@ export type Quantity = { value: number; uom: string };
 export type DemandManufacturer = { id: number; name: string; mono: string; logo_url: string | null };
 
 /**
+ * ---------- the construction site ----------
+ *
+ * Coordinates are STRINGS on every one of these types, and that is deliberate: the contract
+ * says to echo `geo_coordinates` back exactly as it arrived, digit for digit. Parsing to a
+ * float and re-serialising would quietly round the pin the device reported (V2 §4).
+ */
+export type GeoCoordinates = { latitude: string; longitude: string };
+
+/**
+ * `GET /address/reverse-geocode` — a pin in, the platform's own geography out.
+ *
+ * THE IDS ARE THE POINT. The `*_name` fields exist so the user can confirm what they picked;
+ * the ids are what a site is stored against. Never send a name back.
+ *
+ * `pincode_id` can be null, and a null pin is UNUSABLE for a site: the server derives state and
+ * district from the pincode, so a site without one cannot be filed. `location_id` can also be
+ * null — that one is routine (the locality Google names is simply not one the platform lists)
+ * and is sent through as null.
+ */
+export type ReverseGeocode = {
+  formatted_address: string;
+  address_line_1: string;
+  address_line_2: string | null;
+  landmark: string | null;
+  state_id: number | null;
+  state_name: string | null;
+  district_id: number | null;
+  district_name: string | null;
+  location_id: number | null;
+  location_name: string | null;
+  pincode_id: number | null;
+  geo_coordinates: GeoCoordinates;
+};
+
+/**
+ * `GET /address/search` — one row of the dropdown.
+ *
+ * A suggestion is a CANDIDATE, not an address: it carries no coordinates and no component ids.
+ * `place_id` is the only field that goes back to the server, and it is opaque and short-lived —
+ * Google's ids are not stable identifiers. Never persist one, never send one as a site's
+ * address; a stale one returns `PLACE_NOT_FOUND` and the answer is to search again.
+ *
+ * `main_text` / `secondary_text` are Google's split for a two-line row; `description` is the
+ * two joined for a one-line row. Render one shape or the other, not both.
+ */
+export type AddressSuggestion = {
+  place_id: string;
+  description: string | null;
+  main_text: string | null;
+  secondary_text: string | null;
+  /** Where the typed words matched, as [offset, length] into the string each list names. */
+  main_text_matched: { offset: number; length: number }[];
+  description_matched: { offset: number; length: number }[];
+  types: string[];
+  /**
+   * Present only when the request carried coordinates, and STRAIGHT-LINE, not travel distance.
+   * Never sort by it: the list arrives in Google's relevance order, which already accounts for
+   * proximity, and re-sorting would demote the better match.
+   */
+  distance_metres: number | null;
+};
+
+export type AddressSearchResult = {
+  /**
+   * Echoed back so a LATE ANSWER CAN BE DISCARDED. Autocomplete fires per keystroke and the
+   * replies arrive out of order — a response for "adi" landing after one for "adina" would
+   * otherwise repaint the list with stale rows.
+   */
+  query: string;
+  session_token: string | null;
+  /** Empty is a normal answer — nothing matched. It is not an error and not a retry prompt. */
+  suggestions: AddressSuggestion[];
+};
+
+/**
+ * `GET /address/places/{place_id}` — a chosen suggestion, resolved.
+ *
+ * IDENTICAL to the reverse-geocode response plus the two place fields, and deliberately so:
+ * the app has ONE path from "an address the user settled on" into the `site` block, whether
+ * they searched for it or dropped a pin on it. The component ids come from geocoding the
+ * place's COORDINATES through the same resolver the pin uses, not from parsing Google's
+ * address text — so a searched place and a pin on the same spot cannot land in different
+ * districts.
+ */
+export type PlaceDetails = ReverseGeocode & {
+  place_id: string;
+  /** The place's own label ("Adina Station"). Not part of the address and not stored. */
+  place_name: string | null;
+};
+
+/**
+ * The `site` block on a demand submission. Built from a reverse-geocode, with the two free-text
+ * lines and the landmark editable — a plot number is never in a geocode.
+ *
+ * ALL OR NOTHING. `site` may be omitted from the body entirely, but a site that is present must
+ * carry every required field; there is no half-captured site. `domain/site.ts` is where that is
+ * enforced, so a partial one cannot reach the wire.
+ *
+ * THE PINCODE WINS. The stored state and district are the pincode's, not these. A `district_id`
+ * or `state_id` that CONTRADICTS the pincode is rejected outright rather than corrected, so
+ * these must be the ids the geocode returned and not ids assembled from anywhere else.
+ */
+export type SiteInput = {
+  address_line_1: string;
+  address_line_2?: string | null;
+  landmark?: string | null;
+  /** REQUIRED and the anchor — state and district are derived from it server-side. */
+  pincode_id: number;
+  /** Optional but recommended: 28 pincodes span two districts and this disambiguates. */
+  district_id?: number | null;
+  state_id?: number | null;
+  location_id?: number | null;
+  latitude: string;
+  longitude: string;
+};
+
+/**
+ * The site as it comes BACK — on the create response and on every demand row. It carries the
+ * resolved names beside the ids, plus `formatted_address`, the server's single already
+ * de-duplicated line. PREFER `formatted_address` over joining the parts in the app: a geocode
+ * routinely repeats the locality in `address_line_2` and again as the location name.
+ */
+export type DemandSite = {
+  id: number;
+  address_line_1: string;
+  address_line_2: string | null;
+  landmark: string | null;
+  pincode_id: number;
+  district_id: number;
+  district: string;
+  state_id: number;
+  state: string;
+  location_id: number | null;
+  location: string | null;
+  latitude: string;
+  longitude: string;
+  formatted_address: string;
+};
+
+/**
+ * The code the influencer READS OUT to a VCP to confirm an allocation against this demand.
+ * Uber's trip PIN, for cement.
+ *
+ * It is on the influencer's OWN list and on no other endpoint — a dealer who could read it
+ * would not need to ask, and the asking is the whole point: it is how the demand records that
+ * the influencer agreed to this allocation.
+ *
+ * NEVER CACHE IT. It rotates after every action on the demand — a successful verification
+ * issues a new one, and so does an allocation being attributed — so a code shown from a stale
+ * list WILL BE REJECTED. That is why the demand list is excluded from the persisted query
+ * cache (api/queryClient.ts) and refetches on mount.
+ *
+ * `attempts_remaining` counts down as the VCP mistypes; at zero the demand cannot be verified
+ * until the code rotates. It is shown to the INFLUENCER precisely because they are the one who
+ * can see something going wrong and say so.
+ *
+ * `code` is null on rows predating the column — render the card without the block, not a blank.
+ */
+export type DemandEpin = {
+  /** Length is server config (`DEMAND_EPIN_LENGTH`), today 4. Never assume it in a layout. */
+  code: string | null;
+  issued_at: string | null;
+  attempts_remaining: number;
+  /** The LAST successful verification — which used the PREVIOUS code, not this one. */
+  verified_at: string | null;
+};
+
+/**
+ * How much of a demand has been met.
+ *
+ * RENDERED as the status chip on My Demands (client decision, Sep 2026), superseding V2's "a
+ * demand carries no status" and the no-chip design built on it. It is still NOT the PRD's
+ * Submitted → Confirmed → Allocated → Closed chain — `Confirmed` needs an acknowledgement
+ * nothing emits — so do not map these three onto those four.
+ *
+ * `status` is the stable key to branch on (`OPEN`, `PARTIALLY_FULFILLED`, `FULFILLED`);
+ * `status_label` is the localised copy to render. Never derive the status from the numbers:
+ * the rule is `allocated >= demanded`, it belongs to the VCP order system, and it lives on the
+ * server so the two cannot drift. All three quantities are in the BASE unit.
+ */
+export type DemandFulfilment = {
+  status: string;
+  status_label: string | null;
+  demanded: Quantity;
+  allocated: Quantity;
+  remaining: Quantity;
+};
+
+/**
  * A demand row. It carries NO status, NO VCP, NO points and NO `date_label` — those arrive
  * with the fulfilment mechanism that does not exist yet (V2 §4). Do not render a status chip
  * or a points figure against a claim.
@@ -158,6 +347,18 @@ export type Demand = {
   product: string;
   quantity: Quantity;
   normalised_quantity: Quantity;
+  /**
+   * NULL for demands captured before sites existed, or by a build that sends none. Render
+   * those rows WITHOUT the address block — never hide the row itself.
+   */
+  site: DemandSite | null;
+  /** The code read out to a VCP. Display what the latest read returned; never cache it. */
+  epin: DemandEpin;
+  /**
+   * Optional because rows predating the derivation carry none — those render with no chip
+   * rather than a fabricated "Open".
+   */
+  fulfilment?: DemandFulfilment;
   /** ISO. The app formats it — there is no server-composed label. */
   date: string;
 };
@@ -169,6 +370,38 @@ export type CreateDemandBody = {
   manufacturer_id: number;
   /** Optional in V2. Send it when the manufacturer is one the influencer is mapped to. */
   company_esi_id?: number;
+  /**
+   * THE DISTRICT THE DEMAND IS FILED AGAINST — and there are two districts in this app that
+   * are NOT interchangeable:
+   *
+   *   `GET /demand-capture/industries` → `district_id`  the district they TRADE in (the VCP
+   *                                                     behind their last allocation). ✅ this one
+   *   `GET /me` → `influencer.district_id`              the district they REGISTERED in. ❌ never
+   *
+   * For a mason onboarded in one district but buying through the next one's VCPs these differ,
+   * and `/me`'s value would file the demand against a district that never offered them this
+   * manufacturer. The picker only lists manufacturers active in the trading district, so the
+   * industries payload is the only correct source.
+   *
+   * Optional on the wire ONLY as a compatibility shim for builds that predate the field — those
+   * fall back to the server resolving the district. New builds always send it. An id naming no
+   * district is `DISTRICT_INVALID` and stores nothing. Not echoed in the response: it is stored
+   * for per-district demand reporting, never rendered.
+   */
+  district_id?: number;
+  /**
+   * The construction site — ONE PER SUBMISSION, shared by every line, because the user picks a
+   * location once and then ticks the SKUs they need there.
+   *
+   * `site.district_id` IS NOT the `district_id` above. The top-level one is where the influencer
+   * TRADES (from the picker); this one is where the concrete is GOING. They differ whenever
+   * someone buys near home for a site a district away, and nothing reconciles them — both are
+   * sent, each from its own source.
+   *
+   * Optional on the wire only so older builds keep working; this build always sends it, and the
+   * screen will not let a demand be submitted without one.
+   */
+  site?: SiteInput;
   items: DemandItemInput[];
 };
 /** Atomic: if any line fails validation nothing is stored, so this can never list a phantom. */
