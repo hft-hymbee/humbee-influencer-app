@@ -8,12 +8,34 @@
  * The manufacturer tabs come from GET /me, which is the only payload carrying the
  * `company_esi_id` this endpoint requires alongside the manufacturer id.
  */
-import { useLeaderboardQuery, useManufacturerScope } from '../../api';
+import { useCallback, useState } from 'react';
+import { useLeaderboardQuery, useManufacturerScope, useMeQuery } from '../../api';
 
 export function useLeaderboardScreen() {
   const scope = useManufacturerScope();
+  const me = useMeQuery();
   const q = useLeaderboardQuery(scope.manufacturerId, scope.companyEsiId);
   const d = q.data;
+
+  /**
+   * Pull-to-refresh re-reads /me AS WELL as the board: /me is where a newly linked or unlinked
+   * manufacturer shows up, and a failed /me is what the error state may be showing. The
+   * leaderboard is refetched only when it has a scope — `refetch()` bypasses `enabled` and
+   * would send nulls; once /me produces a scope the query enables itself and fetches.
+   *
+   * The spinner tracks the PULL, not `isFetching`, so a background refetch on focus does not
+   * yank the indicator down on its own.
+   */
+  const [isRefreshing, setRefreshing] = useState(false);
+  const hasScope = scope.manufacturerId != null && scope.companyEsiId != null;
+  const refresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([me.refetch(), hasScope ? q.refetch() : null]);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [me, q, hasScope]);
 
   return {
     tabs: scope.tabs,
@@ -26,10 +48,12 @@ export function useLeaderboardScreen() {
      * Per-query, not global: switching to a CACHED manufacturer is instant with no skeleton.
      * A global loading flag would break that, and the design requires it.
      */
-    isSkeleton: scope.isPending || q.isPending,
+    // A disabled query stays `isPending` forever, so without the scope guard a failed /me or an
+    // unmapped influencer would sit on the skeleton and never reach their own states.
+    isSkeleton: scope.isPending || (hasScope && q.isPending),
     isError: q.isError || scope.isError,
-    refetch: q.refetch,
-    isRefreshing: q.isFetching && !q.isPending,
+    refetch: refresh,
+    isRefreshing,
 
     manufacturerName: d?.manufacturer.name ?? '',
     unit: d?.unit ?? '',

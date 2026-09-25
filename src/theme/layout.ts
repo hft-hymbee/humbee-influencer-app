@@ -44,6 +44,7 @@ export const motion = {
   fill: 400,         // progress bar
   carousel: 420,
   carouselInterval: 4000,
+  shimmer: 1200,     // skeleton sweep, linear, infinite (C21)
   stagger: { row: 35, demandCard: 45, allocationCard: 50 },
 } as const;
 

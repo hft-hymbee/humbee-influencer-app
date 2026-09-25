@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleProp, ViewStyle } from 'react-native';
 import WebView from 'react-native-webview';
+import { SkeletonFill } from './Skeleton';
+
+/** The URL lands inside an HTML attribute; a stray quote must not end it. */
+function escapeAttr(value: string) {
+  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
 
 interface RemoteSvgProps {
   uri: string;
@@ -12,6 +18,12 @@ interface RemoteSvgProps {
 }
 
 const RemoteSvg: React.FC<RemoteSvgProps> = ({ uri, width = '100%', height = '100%', style, fit = 'contain' }) => {
+  /**
+   * The skeleton stays until the IMAGE reports, not the WebView: `onLoadEnd` fires once the
+   * wrapper HTML is parsed, while the logo itself is still downloading. Error counts as settled
+   * too — a broken logo shows an empty tile, not a pulse that never ends.
+   */
+  const [settled, setSettled] = useState(false);
   const html = `
     <!DOCTYPE html>
     <html>
@@ -36,7 +48,7 @@ const RemoteSvg: React.FC<RemoteSvgProps> = ({ uri, width = '100%', height = '10
         </style>
       </head>
       <body>
-        <img src="${uri}" />
+        <img src="${escapeAttr(uri)}" onload="window.ReactNativeWebView.postMessage('settled')" onerror="window.ReactNativeWebView.postMessage('settled')" />
       </body>
     </html>
   `;
@@ -50,9 +62,11 @@ const RemoteSvg: React.FC<RemoteSvgProps> = ({ uri, width = '100%', height = '10
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         originWhitelist={['*']}
-        javaScriptEnabled={false}
-        allowFileAccess
+        // Only for the two inline handlers above; the page is ours and loads nothing else.
+        javaScriptEnabled
+        onMessage={() => setSettled(true)}
       />
+      <SkeletonFill visible={!settled} />
     </View>
   );
 };

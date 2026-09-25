@@ -11,12 +11,12 @@
  *   S4  a GPS fix — camera recentred on it, accuracy circle, the pin has grown
  *   S8  permission denied or GPS off — banner, and the manual pin still completes the flow (R5)
  */
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import MapView, { Circle, PROVIDER_GOOGLE, type Details, type Region } from 'react-native-maps';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, elevation, hitSlopFor, radius, spacing } from '../../../theme';
-import { Icon, Text } from '../../../components';
+import { Icon, SkeletonFill, Text } from '../../../components';
 import { accuracyLabel, type DraftSite } from '../../../domain/site';
 import type { GeoCoordinates } from '../../../api/types';
 import { isGeocodeRetryable } from '../../../api';
@@ -29,6 +29,9 @@ import { useSiteCapture } from './useSiteCapture';
  * 0.01 ≈ street level, which is the spec's "zoom 16".
  */
 const STREET_DELTA = 0.01;
+
+/** Longest the skeleton stays once the map is ready — see `revealed`. */
+const MAP_REVEAL_CAP_MS = 1500;
 
 /**
  * NEW DELHI — Connaught Place. The default camera when there is no site on the draft and no
@@ -100,7 +103,12 @@ export function MapPickerScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target?.nonce]);
 
-  const initialRegion = useMemo<Region>(() => (
+  /**
+   * Read ONCE, at mount. `initialRegion` is only meant to be honoured on the first render, but
+   * a new object on every pin move is still a prop change the native map has to diff — and
+   * the pin moves on every camera rest. Later camera moves go through `cameraTarget` above.
+   */
+  const [initialRegion] = useState<Region>(() => (
     vm.pin.coords
       ? {
           latitude: Number(vm.pin.coords.latitude),
@@ -109,7 +117,24 @@ export function MapPickerScreen({
           longitudeDelta: STREET_DELTA,
         }
       : FALLBACK_REGION
-  ), [vm.pin.coords]);
+  ));
+
+  /**
+   * The skeleton covers ONLY the blank moment — the flat grey rectangle while the renderer
+   * starts, where a pulse reads as "loading" and grey reads as "broken".
+   *
+   * It lifts on `onMapLoaded` or MAP_REVEAL_CAP_MS after `onMapReady`, whichever is first.
+   * `onMapLoaded` alone is too late on a real phone: Google fires it only once EVERY visible
+   * tile and label has finished, which on a slow connection is seconds after the roads are
+   * already drawn — and the skeleton was hiding a usable map for all of it. Once the map is
+   * ready, tiles stream in progressively, and a half-drawn map beats a shimmer.
+   */
+  const [revealed, setRevealed] = useState(false);
+  const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (revealTimer.current) clearTimeout(revealTimer.current); }, []);
+  const onMapReady = useCallback(() => {
+    revealTimer.current = setTimeout(() => setRevealed(true), MAP_REVEAL_CAP_MS);
+  }, []);
 
   /**
    * Every camera rest reports the centre as the new pin. The VM debounces the geocode behind
@@ -145,11 +170,21 @@ export function MapPickerScreen({
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         style={StyleSheet.absoluteFill}
         initialRegion={initialRegion}
+        onMapReady={onMapReady}
+        onMapLoaded={() => setRevealed(true)}
         onRegionChangeComplete={onRegionChangeComplete}
         // The blue dot is the OS's own and needs the permission; the pin is ours either way.
         showsUserLocation={vm.permission === 'granted'}
         showsMyLocationButton={false}
         toolbarEnabled={false}
+        /**
+         * Nothing on this screen needs 3D buildings or indoor floor plans — the pin goes on a
+         * site gate at street level. Both are on by default and both are extra tile data and
+         * draw work on a 2 GB phone, so the map is usable sooner without them.
+         */
+        showsBuildings={false}
+        showsIndoors={false}
+        showsIndoorLevelPicker={false}
         // A11y: the map itself is decorative — the sheet carries the address in text.
         importantForAccessibility="no-hide-descendants"
       >
@@ -166,6 +201,7 @@ export function MapPickerScreen({
           />
         ) : null}
       </MapView>
+      <SkeletonFill visible={!revealed} />
 
       {/* The pin does not move with the map — it IS the centre of the screen. */}
       <CentrePin size={hasFix ? 40 : 34} showTooltip={!movedOnce} dragChip={hasFix} />

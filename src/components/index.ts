@@ -12,7 +12,7 @@ export { ChipRow } from './Chip';
 export type { ChipOption, ChipVariant } from './Chip';
 export { StatusBadge } from './StatusBadge';
 export { StatTile } from './StatTile';
-export { SkeletonBlock, SkeletonCards, SkeletonTiles } from './Skeleton';
+export { SkeletonBlock, SkeletonCards, SkeletonFill, SkeletonTiles } from './Skeleton';
 export { EmptyState } from './EmptyState';
 export { ManufacturerTabs } from './ManufacturerTabs';
 export { PeriodPills } from './PeriodPills';
