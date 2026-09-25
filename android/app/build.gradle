@@ -126,6 +126,9 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    // MainApplication pre-loads the Maps renderer; react-native-maps keeps this `implementation`,
+    // so the app needs its own compile-time reference. Same version, one artifact in the APK.
+    implementation("com.google.android.gms:play-services-maps:${rootProject.ext.googlePlayServicesMapsVersion}")
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
