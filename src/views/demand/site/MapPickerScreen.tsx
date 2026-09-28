@@ -92,14 +92,24 @@ export function MapPickerScreen({
    * on the same fix.
    */
   const target = vm.cameraTarget;
-  useEffect(() => {
-    if (!target) return;
+  /**
+   * Whether the native map can take a camera command yet. The search step UNMOUNTS this
+   * screen, so a search pick lands on a fresh MapView — and Android silently drops an
+   * `animateToRegion` sent before `onMapReady`. A target raised before then waits here and is
+   * replayed from `onMapReady`, otherwise the pin's coordinates change and the camera does not.
+   */
+  const mapReady = useRef(false);
+  const flyTo = useCallback((coords: GeoCoordinates) => {
     map.current?.animateToRegion({
-      latitude: Number(target.coords.latitude),
-      longitude: Number(target.coords.longitude),
+      latitude: Number(coords.latitude),
+      longitude: Number(coords.longitude),
       latitudeDelta: STREET_DELTA,
       longitudeDelta: STREET_DELTA,
     }, 350);
+  }, []);
+  useEffect(() => {
+    if (!target || !mapReady.current) return;
+    flyTo(target.coords);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [target?.nonce]);
 
@@ -108,16 +118,19 @@ export function MapPickerScreen({
    * a new object on every pin move is still a prop change the native map has to diff — and
    * the pin moves on every camera rest. Later camera moves go through `cameraTarget` above.
    */
-  const [initialRegion] = useState<Region>(() => (
-    vm.pin.coords
+  const [initialRegion] = useState<Region>(() => {
+    // A search pick outranks the draft's site: it is where the user just asked to go, and
+    // opening there means the map starts under the pin instead of flying to it.
+    const start = seedCoords ?? vm.pin.coords;
+    return start
       ? {
-          latitude: Number(vm.pin.coords.latitude),
-          longitude: Number(vm.pin.coords.longitude),
+          latitude: Number(start.latitude),
+          longitude: Number(start.longitude),
           latitudeDelta: STREET_DELTA,
           longitudeDelta: STREET_DELTA,
         }
-      : FALLBACK_REGION
-  ));
+      : FALLBACK_REGION;
+  });
 
   /**
    * The skeleton covers ONLY the blank moment — the flat grey rectangle while the renderer
@@ -132,9 +145,13 @@ export function MapPickerScreen({
   const [revealed, setRevealed] = useState(false);
   const revealTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (revealTimer.current) clearTimeout(revealTimer.current); }, []);
+  const pendingTarget = useRef(target);
+  pendingTarget.current = target;
   const onMapReady = useCallback(() => {
+    mapReady.current = true;
+    if (pendingTarget.current) flyTo(pendingTarget.current.coords);
     revealTimer.current = setTimeout(() => setRevealed(true), MAP_REVEAL_CAP_MS);
-  }, []);
+  }, [flyTo]);
 
   /**
    * Every camera rest reports the centre as the new pin. The VM debounces the geocode behind
