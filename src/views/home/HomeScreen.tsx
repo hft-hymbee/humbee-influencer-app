@@ -135,7 +135,7 @@ export function HomeScreen({
               // The designed no-rewards state. Quick links stay.
               <Card padding={16}>
                 <Text variant="body" color={colors.textSecondary}>
-                  No gifts yet. Capture demands to enter the next lucky draw.
+                  No gifts yet.
                 </Text>
               </Card>
             )}

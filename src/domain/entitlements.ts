@@ -31,3 +31,17 @@ export function isKnownModule(id: string): id is ModuleId {
  * broken app (doc 09 §4).
  */
 export const DEFAULT_ENTITLEMENTS: Entitlements = { modules: [...MODULE_IDS] };
+
+/**
+ * Modules withheld from the user in this build REGARDLESS of entitlement. The session store
+ * strips them from both the bundled default and every server `/config`, so the bottom nav, Home
+ * quick links and deep links all drop them. `can()` and the registry stay pure entitlement logic.
+ * Empty this list to restore them.
+ */
+export const HIDDEN_MODULES: readonly ModuleId[] = ['leaderboard', 'demand'];
+
+export function withoutHidden(entitlements: Entitlements): Entitlements {
+  return {
+    modules: entitlements.modules.filter(m => !(HIDDEN_MODULES as readonly string[]).includes(m)),
+  };
+}

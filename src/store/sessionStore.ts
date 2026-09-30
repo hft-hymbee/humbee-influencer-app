@@ -8,7 +8,7 @@
  */
 import { create } from 'zustand';
 import type { Entitlements } from '../domain/entitlements';
-import { DEFAULT_ENTITLEMENTS } from '../domain/entitlements';
+import { DEFAULT_ENTITLEMENTS, withoutHidden } from '../domain/entitlements';
 import type { ThemeOverride } from '../theme/ThemeProvider';
 import { setAccessToken } from '../api/client';
 import { secureStore } from './secureStore';
@@ -37,7 +37,7 @@ type SessionState = {
 export const useSessionStore = create<SessionState>(set => ({
   status: 'booting',
   influencerName: null,
-  entitlements: DEFAULT_ENTITLEMENTS,
+  entitlements: withoutHidden(DEFAULT_ENTITLEMENTS),
   tenantId: null,
   themeOverride: null,
   featureFlags: {},
@@ -76,7 +76,7 @@ export const useSessionStore = create<SessionState>(set => ({
     set({
       status: 'unauthenticated',
       influencerName: null,
-      entitlements: DEFAULT_ENTITLEMENTS,
+      entitlements: withoutHidden(DEFAULT_ENTITLEMENTS),
       tenantId: null,
       themeOverride: null,
       featureFlags: {},
@@ -85,7 +85,7 @@ export const useSessionStore = create<SessionState>(set => ({
 
   applyConfig: ({ entitlements, tenantId, themeOverride, featureFlags }) =>
     set(state => ({
-      entitlements: entitlements ? { modules: entitlements } : state.entitlements,
+      entitlements: entitlements ? withoutHidden({ modules: entitlements }) : state.entitlements,
       tenantId: tenantId ?? state.tenantId,
       themeOverride: themeOverride ?? state.themeOverride,
       featureFlags: featureFlags ?? state.featureFlags,
