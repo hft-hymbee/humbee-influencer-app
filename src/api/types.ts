@@ -508,6 +508,7 @@ export type Gift = {
  * without them rather than printing "null".
  */
 export type Utsav = {
+  event_id: number;
   eligible: boolean; city: string; venue: string | null; date: string;
   invited_count: number; banner_image_url: string | null;
   invited_count_label: string; date_label: string;
@@ -516,7 +517,8 @@ export type RewardsSummary = {
   company_esi_id: number;
   manufacturer: SummaryManufacturer;
   period: PeriodWindow;
-  utsav: Utsav | null;
+  /** Every Umang Utsav event in scope — a LIST, one carousel card per event. May be empty. */
+  utsav: Utsav[];
   /** Ordered, "All" first, a status with no rows still gets `count: 0`. Render in server order. */
   counts: { value: string; label: string; count: number }[];
   generated_at: string;
