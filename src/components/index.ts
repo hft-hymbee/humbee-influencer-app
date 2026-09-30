@@ -20,6 +20,7 @@ export { ProductMark } from './ProductMark';
 export { ListContainer } from './ListContainer';
 export { ProgressBar } from './ProgressBar';
 export { Disclosure } from './Disclosure';
+export { PointsExplainer } from './PointsExplainer';
 export { Screen, ScreenHeader } from './Screen';
 export { OfflineBanner, useIsOffline } from './OfflineBanner';
 export { BannerCarousel } from './BannerCarousel';

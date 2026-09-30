@@ -110,7 +110,7 @@ proven in Phase 0** or the framework choice has to be revisited.
    "900 pts earned".
 5. **Points conversion is config-driven.** Never hardcode a ratio, a base unit or a multiplier. The
    `/catalog/points-rules` endpoint was removed in V2 — the same block now arrives inline as
-   `points_rule` on `GET /leaderboard`, and the per-SKU rate as `points_hint` on
+   `points_rule` on `GET /leaderboard` and `GET /allocations`, and the per-SKU rate as `points_hint` on
    `GET /demand-capture/manufacturers/{id}/products`.
 6. **Role is resolved per industry, never global.** An Influencer can be a Barbender in Steel *and* a
    Contractor in Cement simultaneously; any UI showing an allocation or activity must show the role for

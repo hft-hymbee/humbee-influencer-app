@@ -480,6 +480,12 @@ export type Allocation = {
   points: number;
   points_label: string;
 };
+/**
+ * One page of `GET /allocations`. `points_rule` is the same "How You Earn Points" block the
+ * leaderboard carries, scoped to the influencer's state — identical on every page, so read it
+ * from the first.
+ */
+export type AllocationsPage = Paged<Allocation> & { company_esi_id: number; points_rule: PointsRule };
 export type PeriodWindow = { value: Period; label: string; from_date: string; to_date: string };
 export type SummaryManufacturer = { id: number; name: string; mono: string; logo_url: string | null };
 export type AllocationsSummary = {

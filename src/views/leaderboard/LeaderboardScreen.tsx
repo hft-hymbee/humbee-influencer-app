@@ -8,12 +8,12 @@ import React from 'react';
 import { View } from 'react-native';
 import { spacing } from '../../theme';
 import {
-  EmptyState, ManufacturerTabs, Screen, ScreenHeader, SkeletonBlock, SkeletonCards,
+  EmptyState, ManufacturerTabs, PointsExplainer, Screen, ScreenHeader, SkeletonBlock,
+  SkeletonCards,
 } from '../../components';
 import { Podium } from './components/Podium';
 import { LeaderboardTable } from './components/LeaderboardTable';
 import { StickyMeCard } from './components/StickyMeCard';
-import { PointsExplainer } from './components/PointsExplainer';
 import { useLeaderboardScreen } from './useLeaderboardScreen';
 
 export function LeaderboardScreen({ onOpenProfile }: { onOpenProfile: () => void }) {

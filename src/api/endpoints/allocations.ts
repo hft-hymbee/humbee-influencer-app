@@ -7,7 +7,7 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { api, query } from '../client';
 import { qk } from '../keys';
-import { DEFAULT_PAGE_SIZE, type Allocation, type AllocationsSummary, type Paged, type Period } from '../types';
+import { DEFAULT_PAGE_SIZE, type AllocationsPage, type AllocationsSummary, type Period } from '../types';
 
 /** The pair is always sent together: an esi from another manufacturer is an ESI_MISMATCH. */
 type Scope = { manufacturerId: number | null; companyEsiId: number | null; period: Period };
@@ -18,7 +18,7 @@ export function useAllocationsQuery({ manufacturerId, companyEsiId, period }: Sc
     enabled: manufacturerId != null && companyEsiId != null,
     initialPageParam: 1,
     queryFn: ({ pageParam }) =>
-      api.get<Paged<Allocation> & { company_esi_id: number }>(
+      api.get<AllocationsPage>(
         `/allocations${query({
           manufacturer_id: manufacturerId,
           company_esi_id: companyEsiId,

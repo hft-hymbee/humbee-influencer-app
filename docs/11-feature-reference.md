@@ -78,7 +78,7 @@ decisions — do not reorder them. A long influencer name **wraps**; never trunc
 
 | | |
 | --- | --- |
-| Code | `src/views/leaderboard/` — `LeaderboardScreen.tsx`, `useLeaderboardScreen.ts`, `components/{Podium,LeaderboardTable,StickyMeCard,PointsExplainer}.tsx` |
+| Code | `src/views/leaderboard/` — `LeaderboardScreen.tsx`, `useLeaderboardScreen.ts`, `components/{Podium,LeaderboardTable,StickyMeCard}.tsx`; `PointsExplainer` is in the shared kit (`src/components/`) |
 | Spec | `docs/design-spec/04-screens/05-leaderboard.md` |
 | API | `GET /leaderboard?manufacturer_id=&company_esi_id=` — **no period param** |
 | Watch out | **NO time or date filter.** This is the live standing; do not add `PeriodPills`. `rank`, `gap_to_top10`, `gap_label` and `show_podium` are server-computed. Rank marks are hexagons for **all** ranks — only the colour changes for the top three |
@@ -89,7 +89,8 @@ so the client no longer assembles that string — the copy question it used to w
 closed by the contract.
 
 `points_rule` arrives **inline on this payload**. The standalone `/catalog/points-rules` endpoint
-was deleted, so `PointsExplainer` reads it from here and there is no second way to fetch it.
+was deleted, so `PointsExplainer` reads it from here — or from `GET /allocations`, which carries
+the identical block (screen 09).
 
 ### `demand` — screens 06, 07, 08 · the core action
 
@@ -292,6 +293,11 @@ two Lotties mount once; re-mounting restarts the burst and reads as a glitch.
 
 Long VCP names ellipsise on one line. Product pills (`products[]`, was `skus[]`) wrap and the
 card grows. `date_label` and `points_label` are server-composed — do not re-format them.
+
+**"How You Earn Points" (`PointsExplainer`, C17) heads the list**, as on the leaderboard. The
+block is `points_rule` on the `GET /allocations` page — the same server-built block the
+leaderboard carries, scoped to the influencer's state — identical on every page, so the screen
+reads it from the first. It is not on the design spec for screen 09; it was added on request.
 
 ### `rewards` — screen 10
 
