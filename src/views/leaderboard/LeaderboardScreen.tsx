@@ -8,12 +8,12 @@ import React from 'react';
 import { View } from 'react-native';
 import { spacing } from '../../theme';
 import {
-  EmptyState, ManufacturerTabs, Screen, ScreenHeader, SkeletonBlock, SkeletonCards,
+  EmptyState, ManufacturerTabs, PointsExplainer, Screen, ScreenHeader, SkeletonBlock,
+  SkeletonCards,
 } from '../../components';
 import { Podium } from './components/Podium';
 import { LeaderboardTable } from './components/LeaderboardTable';
 import { StickyMeCard } from './components/StickyMeCard';
-import { PointsExplainer } from './components/PointsExplainer';
 import { useLeaderboardScreen } from './useLeaderboardScreen';
 
 export function LeaderboardScreen({ onOpenProfile }: { onOpenProfile: () => void }) {
@@ -44,7 +44,7 @@ export function LeaderboardScreen({ onOpenProfile }: { onOpenProfile: () => void
    */
   if (vm.hasNoManufacturer) {
     return (
-      <Screen header={header}>
+      <Screen header={header} onRefresh={vm.refetch} refreshing={vm.isRefreshing}>
         <EmptyState
           title="No manufacturer linked yet"
           body="Your HUMBEE ranking appears once a manufacturer is linked to your account."
@@ -55,7 +55,7 @@ export function LeaderboardScreen({ onOpenProfile }: { onOpenProfile: () => void
 
   if (vm.isError) {
     return (
-      <Screen header={header}>
+      <Screen header={header} onRefresh={vm.refetch} refreshing={vm.isRefreshing}>
         <EmptyState title="Could not load the leaderboard" body="Pull down to try again." />
       </Screen>
     );

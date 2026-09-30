@@ -22,6 +22,7 @@ export const colors = {
   white: '#FFFFFF',
   surface: '#FFFFFF', // this app is white-first
   sunken: '#F2F2F2', // stat tiles, progress track, row hairlines, UOM group
+  skeletonHighlight: '#EAEAEA', // the shimmer's travelling band over `sunken` (C21)
   border: '#E5E5E5', // card borders, header/nav divider
   dotInactive: '#D9D9D9',
   textTertiary: '#8C8C8C', // meta, overlines, inactive tab label

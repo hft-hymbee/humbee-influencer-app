@@ -13,13 +13,20 @@ import { StyleSheet, View } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { colors, spacing } from '../../theme';
 import {
-  Card, ChipRow, EmptyState, Icon, ManufacturerTabs, PeriodPills, ProductMark, Screen,
+  CardCarousel, Card, ChipRow, EmptyState, Icon, ManufacturerTabs, PeriodPills, ProductMark, Screen,
   ScreenHeader, SkeletonBlock, SkeletonCards, StatusBadge, Text,
 } from '../../components';
 import { UtsavBanner } from './components/UtsavBanner';
-import { useConfigQuery, useManufacturerScope, useRewardsQuery, useRewardsSummaryQuery } from '../../api';
+import {
+  useConfigQuery, useManufacturerScope, useRewardsPeriodChange, useRewardsQuery, useRewardsSummaryQuery,
+} from '../../api';
 import { useSelectionStore } from '../../store/selectionStore';
-import type { Gift } from '../../api/types';
+import type { Gift, Utsav } from '../../api/types';
+
+/** Only events the influencer is ELIGIBLE for get a banner. `?? []` covers a cached old payload. */
+const eligibleUtsav = (utsav: Utsav[] | null | undefined) => (utsav ?? []).filter(u => u.eligible);
+
+const utsavKey = (u: Utsav) => String(u.event_id);
 
 function GiftCard({ gift }: { gift: Gift }) {
   return (
@@ -53,7 +60,7 @@ export function RewardsScreen({ onOpenProfile }: { onOpenProfile: () => void }) 
   const scope = useManufacturerScope();
 
   const period = useSelectionStore(s => s.period);
-  const setPeriod = useSelectionStore(s => s.setPeriod);
+  const setPeriod = useRewardsPeriodChange(scope.manufacturerId, useSelectionStore(s => s.setPeriod));
 
   const [filter, setFilter] = useState('All');
 
@@ -96,7 +103,7 @@ export function RewardsScreen({ onOpenProfile }: { onOpenProfile: () => void }) 
     );
   }
 
-  const utsav = summary.data?.utsav;
+  const utsav = eligibleUtsav(summary.data?.utsav);
 
   return (
     <Screen header={header} padded={false} scroll={false}>
@@ -115,8 +122,12 @@ export function RewardsScreen({ onOpenProfile }: { onOpenProfile: () => void }) 
         ListHeaderComponent={
           <View style={{ gap: spacing.s12, paddingBottom: spacing.s12 }}>
             <PeriodPills options={config?.periods} value={period} onChange={setPeriod} />
-            {/* The banner and the filters STAY when a filter returns nothing. */}
-            {utsav?.eligible ? <UtsavBanner utsav={utsav} /> : null}
+            {/* The banners and the filters STAY when a filter returns nothing. */}
+            <CardCarousel
+              items={utsav}
+              keyExtractor={utsavKey}
+              renderItem={u => <UtsavBanner utsav={u} />}
+            />
             <ChipRow
               options={summary.data?.counts ?? [{ value: 'All', label: 'All' }]}
               value={filter}

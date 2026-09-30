@@ -18,6 +18,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import './src/i18n';
 import { ThemeProvider } from './src/theme/ThemeProvider';
 import { RootNavigator } from './src/navigation/RootNavigator';
+import { SplashGate } from './src/views/splash/SplashScreen';
 import { hydrateQueryCache, persistQueryCache, queryClient } from './src/api/queryClient';
 import { useSessionStore } from './src/store/sessionStore';
 import { setStorageTenant } from './src/store/storage';
@@ -64,13 +65,22 @@ export default function App() {
     return () => sub.remove();
   }, []);
 
+  /**
+   * The splash holds until the session has resolved as well as until its three seconds are up,
+   * which is why it reads `status` here rather than owning a timer of its own. The navigator
+   * renders UNDERNEATH it the whole time — that is what does the resolving.
+   */
+  const booting = useSessionStore(s => s.status) === 'booting';
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <ConfigGate>
             <StatusBar barStyle="dark-content" />
-            <RootNavigator />
+            <SplashGate booted={!booting}>
+              <RootNavigator />
+            </SplashGate>
           </ConfigGate>
         </QueryClientProvider>
       </SafeAreaProvider>

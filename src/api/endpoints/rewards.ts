@@ -7,7 +7,8 @@
  * The status filter still runs IN MEMORY (no refetch, no skeleton on a chip tap), even though
  * the endpoint would accept a `status` param.
  */
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useCallback } from 'react';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, query } from '../client';
 import { qk } from '../keys';
 import { DEFAULT_PAGE_SIZE, type Gift, type Paged, type Period, type RewardsSummary } from '../types';
@@ -46,4 +47,23 @@ export function useRewardsSummaryQuery({ manufacturerId, companyEsiId, period }:
       ),
     enabled: manufacturerId != null && companyEsiId != null,
   });
+}
+
+/**
+ * Changing the period ALWAYS goes to the server. The period is in both query keys, so a new
+ * period already fetches — but one viewed within `staleTime` would be served from cache with no
+ * request. Marking both of that period's queries stale first means the switch refetches them;
+ * any cached rows still paint while the request is in flight.
+ */
+export function useRewardsPeriodChange(manufacturerId: number | null, setPeriod: (p: Period) => void) {
+  const qc = useQueryClient();
+  return useCallback(
+    (p: Period) => {
+      const mfr = manufacturerId ?? 0;
+      qc.invalidateQueries({ queryKey: qk.rewards(mfr, p), exact: true });
+      qc.invalidateQueries({ queryKey: qk.rewardsSummary(mfr, p), exact: true });
+      setPeriod(p);
+    },
+    [qc, manufacturerId, setPeriod],
+  );
 }

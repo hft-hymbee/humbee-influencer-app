@@ -13,6 +13,12 @@ export type RootStackParamList = {
   Notifications: undefined;
   /** Screen 07 REPLACES the demand screen and hides the nav — the two buttons are the only exits. */
   DemandCaptured: { result: CreateDemandResult | null };
+  /**
+   * The construction-site flow (map → search → address form) as ONE root route. It is full
+   * screen and outside the tabs: the map is edge-to-edge behind the status bar, and a bottom
+   * nav under a map picker would sit on top of the confirm button.
+   */
+  SiteCapture: undefined;
 };
 
 export type TabParamList = {

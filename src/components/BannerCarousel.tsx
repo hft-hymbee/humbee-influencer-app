@@ -6,10 +6,11 @@
  * for, so it is obvious there is more than one banner. A single slide hides the dots and
  * disables auto-advance (docs/design-spec/04-screens/03-home.md).
  */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Dimensions, Image, ScrollView, StyleSheet, View } from 'react-native';
 import { colors, motion, radius, spacing } from '../theme';
 import type { Banner } from '../api/types';
+import { SkeletonFill } from './Skeleton';
 
 /**
  * Banners are remote, always. `GET /home` sends absolute CloudFront URLs and Ops changes them
@@ -22,36 +23,39 @@ function sourceFor(url: string) {
 
 /**
  * The design shows each banner at its NATURAL aspect ratio, full width — the caption strip
- * baked into the artwork must not be cropped. Bundled assets carry their own dimensions;
- * a remote URL is measured once.
+ * baked into the artwork must not be cropped.
+ *
+ * The ratio is read from the image's own `onLoad`, not a separate `Image.getSize`: that was a
+ * second download of every banner, and until it answered the slide had no height at all — the
+ * carousel was a zero-height strip that popped open. Until the artwork lands the slide holds
+ * the skeleton's height with the pulse over it, so the screen does not jump twice.
  */
-function useAspect(url: string): number | null {
-  const source = useMemo(() => sourceFor(url), [url]);
-  const [aspect, setAspect] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (aspect != null || !source.uri) return;
-    let live = true;
-    Image.getSize(source.uri, (w, h) => { if (live && h > 0) setAspect(w / h); }, () => {});
-    return () => { live = false; };
-  }, [aspect, source]);
-
-  return aspect;
-}
-
 function Slide({ banner, width, rounded }: { banner: Banner; width: number; rounded: boolean }) {
-  const aspect = useAspect(banner.image_url);
+  const [aspect, setAspect] = useState<number | null>(null);
+  const [settled, setSettled] = useState(false);
+
   return (
-    <Image
-      source={sourceFor(banner.image_url)}
-      accessibilityLabel={banner.alt}
-      resizeMode="cover"
+    <View
       style={[
         styles.slide,
         rounded ? styles.slideRounded : null,
-        { width, aspectRatio: aspect ?? undefined },
+        aspect ? { width, aspectRatio: aspect } : { width, height: PLACEHOLDER_HEIGHT },
       ]}
-    />
+    >
+      <Image
+        source={sourceFor(banner.image_url)}
+        accessibilityLabel={banner.alt}
+        resizeMode="cover"
+        style={StyleSheet.absoluteFill}
+        onLoad={e => {
+          const { width: w, height: h } = e.nativeEvent.source;
+          if (h > 0) setAspect(w / h);
+        }}
+        // Settled either way: a failed banner leaves the sunken slot, not an endless pulse.
+        onLoadEnd={() => setSettled(true)}
+      />
+      <SkeletonFill visible={!settled} />
+    </View>
   );
 }
 
@@ -112,6 +116,9 @@ export function BannerCarousel({ banners }: { banners: Banner[] }) {
   );
 }
 
+/** Slide height before the artwork reports its ratio — the Home skeleton's carousel block. */
+const PLACEHOLDER_HEIGHT = 150;
+
 /** How much of the next banner shows at the right edge. */
 const PEEK = 24;
 
@@ -120,7 +127,7 @@ const styles = StyleSheet.create({
   // The track is full-bleed either way; the INSET moves the slides, not the viewport.
   track: { marginHorizontal: -spacing.m },
   trackInset: { paddingHorizontal: spacing.m, gap: spacing.s12 },
-  slide: { backgroundColor: colors.sunken },
+  slide: { backgroundColor: colors.sunken, overflow: 'hidden' },
   slideRounded: { borderRadius: radius.m },
   dots: { flexDirection: 'row', gap: spacing.s6, justifyContent: 'center' },
   // Active dot is 20px wide (C18) — not a wider pill, not a circle.

@@ -98,6 +98,7 @@ export function Screen({
    * Inventory Allocated. In the scrolling case flex:1 would instead fight the ScrollView's
    * content sizing, so it is applied only where it belongs.
    */
+  const insets = useSafeAreaInsets();
   const body = (
     <View style={[scroll ? null : styles.fill, padded ? styles.padded : null, contentStyle]}>
       {children}
@@ -111,6 +112,13 @@ export function Screen({
         <ScrollView
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
+          /**
+           * Clear the gesture bar / nav buttons. Without it the last element of a scrolling
+           * screen — usually the primary button — ends flush against the system bar and is
+           * partly under it. `contentContainerStyle`, not `style`, so it pads the CONTENT and
+           * does not shrink the scrollable area.
+           */
+          contentContainerStyle={{ paddingBottom: insets.bottom + spacing.s }}
           refreshControl={
             onRefresh ? <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={colors.primary100} /> : undefined
           }

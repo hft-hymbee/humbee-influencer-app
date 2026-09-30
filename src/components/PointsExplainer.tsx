@@ -9,14 +9,20 @@
  *   label 13/18 `#333333` left and value 13/18/700 right — chestnut on premium tiers — then
  *   the note in 11/16 `#8C8C8C`.
  *
- * The rate table comes from the server's `pointsRule`. Points conversion is CONFIGURATION:
- * never hardcode a ratio, a base unit or a multiplier here (docs/03-api-integration-and-data.md §3.3).
+ * The rate table comes from the server's `points_rule`, which arrives inline on both
+ * `GET /leaderboard` (screen 05) and `GET /allocations` (screen 09) — the same block, built by
+ * the same server code. It lives in the shared kit because a module may never import another
+ * (docs/09 §5). Points conversion is CONFIGURATION: never hardcode a ratio, a base unit or a
+ * multiplier here (docs/03-api-integration-and-data.md §3.3).
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
-import { colors, hitSlopFor, motion, radius, spacing } from '../../../theme';
-import { Card, HexMark, Icon, Text } from '../../../components';
-import type { PointsRule } from '../../../api/types';
+import { colors, hitSlopFor, motion, radius, spacing } from '../theme';
+import type { PointsRule } from '../api/types';
+import { Card } from './Card';
+import { HexMark } from './HexMark';
+import { Icon } from './Icon';
+import { Text } from './Text';
 
 /** Fixed copy from the spec. Do not paraphrase it. */
 const NOTE = 'Premium SKUs carry multiplied points. Points post once your distributor confirms the allocation.';

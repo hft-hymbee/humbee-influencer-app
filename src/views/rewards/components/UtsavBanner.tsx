@@ -24,7 +24,7 @@ export function UtsavBanner({ utsav }: { utsav: Utsav }) {
       locations={[...gradients.utsavBanner.locations]}
       start={gradients.utsavBanner.start}
       end={gradients.utsavBanner.end}
-      style={{ borderRadius: radius.m, overflow: 'hidden', borderWidth: 1, borderColor: colors.primary25 }}
+      style={{ flexGrow: 1, borderRadius: radius.m, overflow: 'hidden', borderWidth: 1, borderColor: colors.primary25 }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.s12, padding: spacing.s14 }}>
         <ProductMark name="UmangUtsav" size={48} />

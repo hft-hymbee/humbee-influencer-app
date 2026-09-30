@@ -18,6 +18,7 @@ import { OtpScreen } from '../views/auth/OtpScreen';
 import { ProfileScreen } from '../views/profile/ProfileScreen';
 import { NotificationsScreen } from '../views/notifications/NotificationsScreen';
 import { DemandCapturedScreen } from '../views/demand/DemandCapturedScreen';
+import { SiteCaptureFlow } from '../views/demand/site/SiteCaptureFlow';
 import { useSessionStore } from '../store/sessionStore';
 import { useDemandDraftStore } from '../store/demandDraftStore';
 import { restoreSession, setUnauthorizedHandler } from '../api/client';
@@ -80,6 +81,16 @@ export function RootNavigator() {
             </Stack.Screen>
             <Stack.Screen name="Notifications">
               {({ navigation }) => <NotificationsScreen onBack={() => navigation.goBack()} />}
+            </Stack.Screen>
+            <Stack.Screen name="SiteCapture">
+              {({ navigation }) => (
+                <SiteCaptureFlow
+                  // Both exits pop back to the cart. The site itself was written to the draft,
+                  // so the cart re-reads it rather than being handed anything.
+                  onDone={() => navigation.goBack()}
+                  onCancel={() => navigation.goBack()}
+                />
+              )}
             </Stack.Screen>
             <Stack.Screen name="DemandCaptured" options={{ gestureEnabled: false }}>
               {({ navigation, route }) => (

@@ -18,10 +18,18 @@ export type CardProps = {
   /** The leaderboard current-user card: 1.5px chestnut ring + elevation-2. */
   emphasis?: boolean;
   raised?: boolean;
+  /**
+   * Corner radius, when a surface wants softer corners than the 8px default — pass a TOKEN
+   * (`radius.l`), never a number. Existing screens keep the default, so this cannot drift the
+   * design system by accident.
+   */
+  cornerRadius?: number;
   style?: StyleProp<ViewStyle>;
 };
 
-export function Card({ children, padding = 14, selected, emphasis, raised, style }: CardProps) {
+export function Card({
+  children, padding = 14, selected, emphasis, raised, cornerRadius, style,
+}: CardProps) {
   const borderWidth = selected ? 2 : emphasis ? 1.5 : 1;
   const borderColor = selected || emphasis ? colors.primary100 : colors.border;
   // Compensate so the content box stays put when the ring thickens.
@@ -32,7 +40,7 @@ export function Card({ children, padding = 14, selected, emphasis, raised, style
       style={[
         {
           backgroundColor: colors.surface,
-          borderRadius: radius.m,
+          borderRadius: cornerRadius ?? radius.m,
           borderWidth,
           borderColor,
           padding: pad,

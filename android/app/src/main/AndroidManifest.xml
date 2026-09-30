@@ -2,6 +2,15 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!--
+      Construction-site capture only. FINE for the pin accuracy a site needs, COARSE so the
+      flow still works on a device that grants only approximate location. Never
+      ACCESS_BACKGROUND_LOCATION: the app reads a position when the user taps for one and at
+      no other time, and asking for background would be both untrue and a store rejection.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -11,6 +20,10 @@
       android:theme="@style/AppTheme"
       android:usesCleartextTraffic="${usesCleartextTraffic}"
       android:supportsRtl="true">
+      <!-- Construction-site map picker. Key injected from gradle.properties, never committed. -->
+      <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="${humbeeMapsApiKey}" />
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

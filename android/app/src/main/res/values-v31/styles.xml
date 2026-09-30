@@ -1,0 +1,25 @@
+<resources>
+
+    <!--
+      THE SECOND SPLASH LIVES HERE.
+
+      From Android 12, every app that targets API 31+ gets a splash screen from the PLATFORM,
+      before a single frame of the app runs. It draws the launcher icon on a coloured window —
+      so once the launcher icon became the HUMBEE mark, the app showed the mark, then showed
+      `src/views/splash/SplashScreen.tsx` with the mark AND the tagline. Two splashes, and the
+      first one was never written by anyone.
+
+      It cannot be switched off — `SplashScreen.setKeepOnScreenCondition` only makes it last
+      LONGER, and there is no attribute that skips it. What it can be is empty: a white window
+      with a transparent icon, indistinguishable from the white the JS splash sits on. The
+      hand-off then reads as one screen that simply takes a moment to draw its logo.
+
+      Keep this in step with `AppThemeBase` — the splash attributes are the only difference.
+    -->
+    <style name="AppTheme" parent="AppThemeBase">
+        <item name="android:windowSplashScreenBackground">@color/humbee_surface</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon_none</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+    </style>
+
+</resources>

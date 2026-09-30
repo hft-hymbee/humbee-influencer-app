@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 8+ takes this over the PNG in mipmap-*/. The launcher masks the foreground to
+  whatever shape the device uses (circle, squircle, teardrop), so the mark is drawn at 46% of
+  the 108dp canvas — inside the 66dp the platform guarantees is never clipped.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+    <monochrome android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>

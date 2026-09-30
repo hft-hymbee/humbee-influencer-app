@@ -6,14 +6,18 @@
  * server. A row's `quantity` is the raw stocking-unit figure and `normalised_quantity` is the
  * same volume in the unit the tile sums; the two units differ BY DESIGN, so the card shows the
  * first and the tile the second.
+ *
+ * "How You Earn Points" (C17) heads the list exactly as it heads the leaderboard: the list
+ * payload carries the same server-built `points_rule`. It is identical on every page, so it
+ * is read from the first one.
  */
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { colors, radius, spacing } from '../../theme';
 import {
-  Card, EmptyState, HexMark, Icon, ManufacturerTabs, PeriodPills, Screen, ScreenHeader,
-  SkeletonCards, SkeletonTiles, StatTile, Text,
+  Card, EmptyState, HexMark, Icon, ManufacturerTabs, PeriodPills, PointsExplainer, Screen,
+  ScreenHeader, SkeletonCards, SkeletonTiles, StatTile, Text,
 } from '../../components';
 import {
   useAllocationsQuery, useAllocationsSummaryQuery, useConfigQuery, useManufacturerScope,
@@ -71,6 +75,8 @@ export function AllocationScreen({ onOpenProfile }: { onOpenProfile: () => void 
 
   // Offset paging: flatten the pages the user has actually scrolled to.
   const items = list.data?.pages.flatMap(p => p.items) ?? [];
+  const pointsRule = list.data?.pages[0]?.points_rule;
+  const manufacturerName = scope.tabs.find(t => t.id === scope.manufacturerId)?.name ?? '';
 
   const header = (
     <>
@@ -118,6 +124,9 @@ export function AllocationScreen({ onOpenProfile }: { onOpenProfile: () => void 
         onEndReached={() => { if (list.hasNextPage && !list.isFetchingNextPage) list.fetchNextPage(); }}
         ListHeaderComponent={
           <View style={{ gap: spacing.s12, paddingBottom: spacing.s12 }}>
+            {pointsRule ? (
+              <PointsExplainer manufacturerName={manufacturerName} rule={pointsRule} />
+            ) : null}
             <PeriodPills options={config?.periods} value={period} onChange={setPeriod} />
             <View style={{ flexDirection: 'row', gap: spacing.s12 }}>
               {/* Inventory Allocated is the ONE screen where the label sits above the value (C6).

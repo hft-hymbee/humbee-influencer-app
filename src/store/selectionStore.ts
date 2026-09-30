@@ -15,6 +15,8 @@ type SelectionState = {
   period: Period;
   setManufacturer: (id: number) => void;
   setPeriod: (p: Period) => void;
+  /** Back to first-run defaults. Called on sign-out — a manufacturer is per-USER, not per-device. */
+  reset: () => void;
 };
 
 export const useSelectionStore = create<SelectionState>()(
@@ -26,6 +28,7 @@ export const useSelectionStore = create<SelectionState>()(
       period: '3m',
       setManufacturer: id => set({ manufacturerId: id }),
       setPeriod: period => set({ period }),
+      reset: () => set({ manufacturerId: null, period: '3m' }),
     }),
     { name: 'selection', storage: createJSONStorage(() => mmkvJSONStorage) },
   ),

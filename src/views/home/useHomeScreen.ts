@@ -40,6 +40,26 @@ export function useHomeScreen() {
     banners: data?.banners ?? [],
     // Prefer the server's label; formatNumber is the fallback for a cached payload without one.
     rewardsAllotted: data ? formatNumber(data.stats.rewards_allotted) : '0',
+    /**
+     * CONTRACT MISMATCH, LABELLED RATHER THAN COMPUTED AROUND.
+     *
+     * The spec asks this tile for "Rewards allotted · all manufacturers" — an all-time count
+     * matching the My Rewards list below it. The server does not send that number. What it
+     * sends is `stats.rewards_allotted`, which sits in the same block as `allocations_this_year`
+     * and `points_this_year` and is scoped to `stats.financial_year`: a live account returns
+     *   { rewards_allotted: 0, points_this_year: 1008, financial_year: "2026-27" }
+     * while `recent_rewards` carries a gift released 11 Feb 2026 — FY 2025-26, so outside the
+     * window. The 0 is arithmetically right and the label was wrong.
+     *
+     * We cannot recount it here: `recent_rewards` is only the 4 most recent, and /rewards is
+     * manufacturer- and period-scoped, so any client-side total would be a number the server
+     * never sent (working rule 3). So the label names the window instead. Raised as a contract
+     * gap in docs/06-inputs-needed.md — if the tile is meant to be all-time, the fix is an
+     * all-time field on /home, not arithmetic here.
+     */
+    rewardsAllottedLabel: data?.stats.financial_year
+      ? `Rewards allotted · FY ${data.stats.financial_year}`
+      : 'Rewards allotted',
     pointsThisYear: data?.stats.points_this_year_label ?? (data ? formatNumber(data.stats.points_this_year) : '0'),
     recentRewards: data?.recent_rewards ?? [],
     quickLinks,

@@ -42,11 +42,22 @@ export function hydrateQueryCache() {
   }
 }
 
+/**
+ * Queries that must NEVER survive the process.
+ *
+ * The demand list carries each demand's ePIN, and that code rotates after every action on the
+ * demand. Painting a persisted one on a cold start would show the influencer a code the VCP's
+ * app will reject — and they would read it out, twice, before anyone suspected the app. Offline
+ * -first is worth a stale points total; it is not worth a stale credential.
+ */
+const NEVER_PERSIST = ['demand-capture'];
+
 export function persistQueryCache() {
   try {
     const queries = queryClient
       .getQueryCache()
       .getAll()
+      .filter(q => !NEVER_PERSIST.includes(String(q.queryKey[0])))
       .filter(q => q.state.status === 'success' && q.state.data !== undefined)
       .map(q => [q.queryKey, q.state.data] as [readonly unknown[], unknown]);
     storage.set(CACHE_KEY, JSON.stringify({ at: Date.now(), queries }));

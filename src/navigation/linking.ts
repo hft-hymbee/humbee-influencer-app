@@ -7,9 +7,10 @@
 import type { LinkingOptions } from '@react-navigation/native';
 import type { RootStackParamList } from './types';
 import { ALL_MODULES } from '../modules/registry';
+import { HIDDEN_MODULES } from '../domain/entitlements';
 
 const screens = Object.fromEntries(
-  ALL_MODULES.filter(m => m.deepLinks?.length).map(m => [
+  ALL_MODULES.filter(m => m.deepLinks?.length && !HIDDEN_MODULES.includes(m.id)).map(m => [
     m.route,
     (m.deepLinks![0].split('://')[1] ?? m.route.toLowerCase()),
   ]),

@@ -1,9 +1,21 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
+    <!--
+      Split in two so `values-v31/styles.xml` can add the platform splash attributes without
+      restating everything here: a style redefined for a higher API REPLACES its lower-API
+      namesake rather than merging with it.
+    -->
+    <style name="AppThemeBase" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+        <!--
+          The window the OS paints BEFORE the first JS frame. Left unset it inherits the
+          DayNight parent, which is dark on a device in dark mode — a black flash ahead of a
+          white splash. The app is light-only, so this is pinned to the same surface the
+          splash uses and the hand-off is invisible.
+        -->
+        <item name="android:windowBackground">@color/humbee_surface</item>
     </style>
+
+    <style name="AppTheme" parent="AppThemeBase" />
 
 </resources>
