@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev:reverse": "node scripts/dev-reverse.mjs",
+    "dev:reverse": "adb reverse tcp:8001 tcp:8001 || true",
     "android": "npm run dev:reverse && react-native run-android",
     "ios": "react-native run-ios",
     "start": "npm run dev:reverse && react-native start",

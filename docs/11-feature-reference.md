@@ -513,7 +513,7 @@ Six steps, and step 1 is the one people skip.
 ```bash
 npm start                  # Metro (runs dev:reverse first)
 npm run android            # device/emulator (runs dev:reverse first)
-npm run dev:reverse        # adb reverse :8001 and :8081 onto every attached device
+npm run dev:reverse        # adb reverse :8001 onto the attached device (run-android forwards :8081 itself)
 npm run typecheck          # tsc --noEmit
 npm test                   # jest — domain + module-isolation
 npm run verify             # typecheck + lint + test
@@ -626,7 +626,7 @@ present as "the app cannot reach the internet"** and neither is a network proble
 | --- | --- | --- |
 | `POST /auth/otp/request` returns *"Something went wrong. Please try again later."*, validation logs show `value_error` on `mobile_number` | The platform **decrypts** that field. Plain digits — what the V2 doc shows — cannot be decrypted | `src/api/crypto.ts`. An empty body returns a *correct* "Mobile Number is required", which is how you tell a validation failure from a decryption one |
 | **No API call ever reaches the backend** — the app looks offline, `npm run api:smoke` passes | `adb reverse tcp:8001` missing. `localhost` on a phone is the phone. The forward does not survive a replug, a reboot or `adb kill-server`, and `react-native run-android` only sets up Metro's **:8081** | `npm run dev:reverse`. `npm run start` / `npm run android` run it first |
-| App boots to `TurboModuleRegistry.getEnforcing(...): 'PlatformConstants' could not be found` — **and therefore makes no HTTP request at all**, which reads as a network fault and is not one | Another RN project's Metro owned port 8081, so the app loaded **the VCP app's bundle** (RN 0.79 against this 0.87 binary) and the JS runtime never started. Logcat says `Loading from localhost:8081…` just above the invariant | **Free the port** — stop the other Metro, start this one. `npm run dev:reverse` names the offending process by its working directory. A USB device *can* be redirected instead (`adb reverse tcp:8081 tcp:<other>`, since it asks its own `localhost`); an **emulator cannot** — RN there fetches from `10.0.2.2:8081`, a host route no forward touches |
+| App boots to `TurboModuleRegistry.getEnforcing(...): 'PlatformConstants' could not be found` — **and therefore makes no HTTP request at all**, which reads as a network fault and is not one | Another RN project's Metro owned port 8081, so the app loaded **the VCP app's bundle** (RN 0.79 against this 0.87 binary) and the JS runtime never started. Logcat says `Loading from localhost:8081…` just above the invariant | **Free the port** — stop the other Metro, start this one. `lsof -nP -iTCP:8081 -sTCP:LISTEN` names the offending process. A USB device *can* be redirected instead (`adb reverse tcp:8081 tcp:<other>`, since it asks its own `localhost`); an **emulator cannot** — RN there fetches from `10.0.2.2:8081`, a host route no forward touches |
 | `installDebug` → *"Failed to install on any devices"* after a successful build | The APK was built for one ABI and the emulator is another. On Apple Silicon the emulator is **arm64-v8a**, not x86_64 | `./gradlew app:installDebug -PreactNativeArchitectures=arm64-v8a` |
 
 ## 8c. Native build gotchas — hit and fixed, keep for the next upgrade
